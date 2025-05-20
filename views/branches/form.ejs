@@ -1,27 +1,40 @@
 <% layout('layouts/main') %>
 
-<h1><%= title %></h1>
+<div class="h-full flex items-center justify-center py-10 px-4">
+  <div class="bg-white w-full max-w-2xl p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center"><%= title %></h1>
 
-<% if(errors) { %>
-  <div style="color:red"><%= errors %></div>
-<% } %>
+    <% if(errors) { %>
+      <div class="text-red-500 font-semibold mb-4 text-center"><%= errors %></div>
+    <% } %>
 
-<form method="POST" action="<%= branch._id ? '/admin/branches/' + branch._id + '/edit' : '/admin/branches/new' %>">
-  <div>
-    <label>Tên Branch</label>
-    <input type="text" name="name" required value="<%= branch.name || '' %>">
+    <form method="POST" action="<%= branch._id ? '/admin/branches/' + branch._id + '/edit' : '/admin/branches/new' %>" class="space-y-5">
+
+      <div>
+        <label class="block font-medium mb-1">Tên Branch</label>
+        <input type="text" name="name" required value="<%= branch.name || '' %>"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">Agency</label>
+        <select name="agencyId" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">-- Chọn Agency --</option>
+          <% agencies.forEach(agency => { %>
+            <option value="<%= agency._id %>" <%= branch.agency && (branch.agency.toString() === agency._id.toString()) ? 'selected' : '' %>><%= agency.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
+          Lưu
+        </button>
+        <a href="/admin/branches"
+          class="text-gray-600 hover:text-red-600 font-medium transition duration-150">Hủy</a>
+      </div>
+    </form>
   </div>
-
-  <div>
-    <label>Agency</label>
-    <select name="agencyId" required>
-      <option value="">-- Chọn Agency --</option>
-      <% agencies.forEach(agency => { %>
-        <option value="<%= agency._id %>" <%= branch.agency && (branch.agency.toString() === agency._id.toString()) ? 'selected' : '' %>><%= agency.name %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <button type="submit">Lưu</button>
-  <a href="/admin/branches">Hủy</a>
-</form>
+</div>

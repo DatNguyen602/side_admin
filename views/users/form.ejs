@@ -1,44 +1,65 @@
 <% layout('layouts/main') %>
 
-<h1><%= title %></h1>
+<div class="h-full flex items-center justify-center py-10 px-4">
+  <div class="bg-white w-full max-w-2xl p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center"><%= title %></h1>
 
-<% if (errors) { %>
-  <div style="color:red"><%= errors %></div>
-<% } %>
+    <% if (errors) { %>
+      <div class="text-red-500 font-semibold mb-4 text-center"><%= errors %></div>
+    <% } %>
 
-<form method="POST" action="<%= userData._id ? '/admin/users/' + userData._id + '/edit' : '/admin/users/new' %>">
-  <div>
-    <label>Username</label>
-    <input type="text" name="username" required value="<%= userData.username || '' %>">
+    <form method="POST" action="<%= userData._id ? '/admin/users/' + userData._id + '/edit' : '/admin/users/new' %>" class="space-y-5">
+
+      <div>
+        <label class="block font-medium mb-1">Username</label>
+        <input type="text" name="username" required value="<%= userData.username || '' %>"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">Email</label>
+        <input type="email" name="email" required value="<%= userData.email || '' %>"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <% if (!userData._id) { %>
+      <div>
+        <label class="block font-medium mb-1">Password</label>
+        <input type="password" name="password" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+      <% } %>
+
+      <div>
+        <label class="block font-medium mb-1">Role</label>
+        <select name="roleId" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">-- Chọn Role --</option>
+          <% roles.forEach(role => { %>
+            <option value="<%= role._id %>" <%= userData.role && (userData.role.toString() === role._id.toString()) ? 'selected' : '' %>><%= role.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">Agency</label>
+        <select name="agencyId"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">-- Chọn Agency --</option>
+          <% agencies.forEach(agency => { %>
+            <option value="<%= agency._id %>" <%= userData.agency && (userData.agency.toString() === agency._id.toString()) ? 'selected' : '' %>><%= agency.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
+          Lưu
+        </button>
+        <a href="/admin/users"
+          class="text-gray-600 hover:text-red-600 font-medium transition duration-150">Hủy</a>
+      </div>
+    </form>
   </div>
-
-  <% if (!userData._id) { /* Only show password on create */ %>
-  <div>
-    <label>Password</label>
-    <input type="password" name="password" required>
-  </div>
-  <% } %>
-
-  <div>
-    <label>Role</label>
-    <select name="roleId" required>
-      <option value="">-- Chọn Role --</option>
-      <% roles.forEach(role => { %>
-        <option value="<%= role._id %>" <%= userData.role && (userData.role.toString() === role._id.toString()) ? 'selected' : '' %>><%= role.name %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div>
-    <label>Agency</label>
-    <select name="agencyId">
-      <option value="">-- Chọn Agency --</option>
-      <% agencies.forEach(agency => { %>
-        <option value="<%= agency._id %>" <%= userData.agency && (userData.agency.toString() === agency._id.toString()) ? 'selected' : '' %>><%= agency.name %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <button type="submit">Lưu</button>
-  <a href="/admin/users">Hủy</a>
-</form>
+</div>

@@ -1,95 +1,37 @@
 <% layout('layouts/main') %>
 
-<div class="login-container flex flex-col content-center w-full h-full">
-    <h1 class="text-2xl font-bold">Đăng nhập</h1>
+<div class="h-full flex items-center justify-center">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">Đăng nhập</h1>
 
     <% if (error) { %>
-    <p class="error"><%= error %></p>
+      <p class="text-red-500 font-semibold text-sm text-center mb-4"><%= error %></p>
     <% } else if (query && query.registered) { %>
-    <p class="success">Đăng ký thành công! Mời bạn đăng nhập.</p>
+      <p class="text-green-600 font-semibold text-sm text-center mb-4">Đăng ký thành công! Mời bạn đăng nhập.</p>
     <% } %>
-    <form class="md:max-w-2xl mx-auto" action="/login" method="post">
-        <label
-        class="mb-4 mt-8 text-start">Username</label>
-        <input type="text" name="username" required>
-        <label
-        class="mb-4 mt-8 text-start">Password</label>
-        <input id="password" type="password" name="password" required>
-        <button
-        class="px-8 py-4 my-6 bg-blue-500 rounded-2xl text-gray-200"
-        type="submit">Đăng nhập</button>
+
+    <form class="md:max-w-2xl mx-auto flex flex-col items-center" action="/login" method="post">
+      <div class="w-full my-4">
+        <label for="username" class="block font-medium mb-1">Username</label>
+        <input type="text" id="username" name="username" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+      </div>
+
+      <div class="w-full my-4">
+        <label for="password" class="block font-medium mb-1">Password</label>
+        <input type="password" id="password" name="password" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+      </div>
+
+      <button type="submit"
+        class="px-8 py-2 my-3 bg-blue-500 rounded-xl text-gray-200">
+        Đăng nhập
+      </button>
     </form>
-    <p>Chưa có tài khoản? <a class="text-green-700 hover:text-orange-700" href="/register">Đăng ký</a></p>
+
+    <p class="text-center text-sm mt-4">
+      Chưa có tài khoản?
+      <a href="/register" class="text-indigo-500 hover:underline font-semibold">Đăng ký</a>
+    </p>
+  </div>
 </div>
-
-<style>
-    /* Container đăng nhập */
-.login-container {
-    padding: 30px;
-    text-align: center;
-}
-
-.login-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-/* Thông báo lỗi và thành công */
-.error-message {
-    color: red;
-    font-weight: bold;
-}
-
-.success-message {
-    color: green;
-    font-weight: bold;
-}
-
-/* Form đăng nhập */
-.form-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-label {
-    font-weight: bold;
-    display: block;
-    text-align: start;
-    margin-bottom: 5px;
-    padding-left: 12px;
-}
-
-input {
-    width: 100%;
-    padding: 4px 10px;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
-    outline: none;
-}
-
-/* Button đăng nhập */
-.submit-btn {
-    width: 100%;
-    background: #667eea;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-top: 15px;
-}
-
-.submit-btn:hover {
-    background: #764ba2;
-}
-</style>
