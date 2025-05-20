@@ -1,0 +1,95 @@
+<% layout('layouts/main') %>
+
+<div class="login-container flex flex-col content-center w-full h-full">
+    <h1 class="text-2xl font-bold">Đăng nhập</h1>
+
+    <% if (error) { %>
+    <p class="error"><%= error %></p>
+    <% } else if (query && query.registered) { %>
+    <p class="success">Đăng ký thành công! Mời bạn đăng nhập.</p>
+    <% } %>
+    <form class="md:max-w-2xl mx-auto" action="/login" method="post">
+        <label
+        class="mb-4 mt-8 text-start">Username</label>
+        <input type="text" name="username" required>
+        <label
+        class="mb-4 mt-8 text-start">Password</label>
+        <input id="password" type="password" name="password" required>
+        <button
+        class="px-8 py-4 my-6 bg-blue-500 rounded-2xl text-gray-200"
+        type="submit">Đăng nhập</button>
+    </form>
+    <p>Chưa có tài khoản? <a class="text-green-700 hover:text-orange-700" href="/register">Đăng ký</a></p>
+</div>
+
+<style>
+    /* Container đăng nhập */
+.login-container {
+    padding: 30px;
+    text-align: center;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Thông báo lỗi và thành công */
+.error-message {
+    color: red;
+    font-weight: bold;
+}
+
+.success-message {
+    color: green;
+    font-weight: bold;
+}
+
+/* Form đăng nhập */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    text-align: start;
+    margin-bottom: 5px;
+    padding-left: 12px;
+}
+
+input {
+    width: 100%;
+    padding: 4px 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+    outline: none;
+}
+
+/* Button đăng nhập */
+.submit-btn {
+    width: 100%;
+    background: #667eea;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 15px;
+}
+
+.submit-btn:hover {
+    background: #764ba2;
+}
+</style>

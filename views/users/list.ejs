@@ -1,0 +1,36 @@
+<% layout('layouts/main') %>
+
+<h1 class="text-2xl font-bold mb-4 text-center"><%= title %></h1>
+
+<a class="px-4 hover:text-green-500" href="/admin/users/new">+ Tạo User mới</a>
+
+<table class="mx-auto w-full mt-6 table-auto border-collapse border" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Role</th>
+      <th>Agency</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if(users.length === 0) { %>
+      <tr><td colspan="5">Chưa có user nào.</td></tr>
+    <% } %>
+    <% users.forEach(u => { %>
+      <tr>
+        <td><%= u._id %></td>
+        <td><%= u.username %></td>
+        <td><%= u.role ? u.role.name : '-' %></td>
+        <td><%= u.agency ? u.agency.name : '-' %></td>
+        <td>
+          <a href="/admin/users/<%= u._id %>/edit">Sửa</a> | 
+          <form action="/admin/users/<%= u._id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Xóa user này?');">
+            <button type="submit">Xóa</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

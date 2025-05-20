@@ -1,0 +1,63 @@
+<% 
+  // Nếu res.locals.user chưa được set (undefined), gán về object rỗng
+  const perms = (typeof user !== 'undefined' && user && user.permissions) 
+                ? user.permissions 
+                : []; 
+
+  let state = false;
+%>
+
+<header>
+  <nav>
+    <ul class="nav flex relative p-4">
+      <span class="md:hidden parent relative inline-block w-[32px] h-[32px]">
+        <svg class="relative w-full h-full text-gray-600 hover:text-blue-600 transition" 
+        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+        </svg>
+        <input type="checkbox" id="menu-toggle" 
+        class="absolute opacity-0 w-full h-full cursor-pointer top-0"/>
+      </span>
+      <div
+       id="mobile-menu"
+      class="flex flex-col z-10 hidden md:flex
+      left-1/2 transform -translate-x-1/2
+      md:left-0 md:-translate-x-0
+      absolute top-[100%] rounded-2xl p-6 bg-gray-300 w-[90%]
+      md:flex-row md:relative md:p-0 md:bg-transparent md:w-max">
+        <% if (perms.includes('dashboard:view')) { %>
+          <li class="nav-item text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3"><a href="/admin/dashboard" class="nav-link">Dashboard</a></li>
+        <% } %>
+
+        <% if (perms.includes('users:read')) { %>
+          <li class="nav-item text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3"><a href="/admin/users" class="nav-link">Users</a></li>
+        <% } %>
+
+        <% if (perms.includes('agencies:read')) { %>
+          <li class="nav-item text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3"><a href="/admin/agencies" class="nav-link">Agencies</a></li>
+        <% } %>
+
+        <% if (perms.includes('branches:read')) { %>
+          <li class="nav-item text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3"><a href="/admin/branches" class="nav-link">Branches</a></li>
+        <% } %>
+
+        <% if (perms.includes('keys:read')) { %>
+          <li class="nav-item text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3"><a href="/admin/keys" class="nav-link">Keys</a></li>
+        <% } %>
+      </div>
+
+      <% if (user) { %>
+        <li class="flex-1"></li>
+        <li class="nav-item text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3"><a href="/login" class="nav-link">Logout</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  @media (max-width: 768px) {
+    .parent:has(input[type="checkbox"]:checked) + #mobile-menu {
+      display: flex;
+    }
+  }
+</style>

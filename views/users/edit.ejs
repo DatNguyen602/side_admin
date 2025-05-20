@@ -1,0 +1,24 @@
+<% layout('layouts/main') %>
+
+<h2>Chỉnh sửa người dùng: <%= user.username %></h2>
+
+<form action="/admin/users/<%= user %>/edit" method="POST">
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email" value="<%= user.email || '' %>" required><br><br>
+
+  <label for="role">Vai trò:</label><br>
+  <select id="role" name="role">
+    <% roles.forEach(r => { 
+    let selected = '';
+    if(user.role && user.role._id && r._id.toString() === user.role._id.toString()) {
+        selected = 'selected';
+    }
+    %>
+    <option value="<%= r._id %>" <%= selected %>><%= r.name %></option>
+    <% }) %>
+  </select><br><br>
+
+  <button type="submit">Lưu thay đổi</button>
+</form>
+
+<a href="/admin/users">← Quay lại danh sách</a>

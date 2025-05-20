@@ -1,0 +1,124 @@
+<% layout('layouts/main') %>
+
+<div class="register-container">
+    <h1>Tạo tài khoản</h1>
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <form action="/register" method="post" class="register-form">
+        <div class="form-group">
+            <label for="username">👤 Username</label>
+            <input type="text" id="username" name="username" placeholder="Nhập username..." required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">🔒 Password</label>
+            <input class="font-4" type="password" id="password" name="password" placeholder="Nhập mật khẩu..." required>
+        </div>
+
+        <div class="form-group">
+            <label for="roleName">🔧 Role</label>
+            <select id="roleName" name="roleName">
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="agent">Agent</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="agencyId">🏢 Agency</label>
+            <select id="agencyId" name="agencyId" required>
+                <option value="">-- Chọn Agency --</option>
+                <% agencies.forEach(a => { %>
+                    <option value="<%= a._id %>" <%= (a._id.toString()===query.agencyId)?'selected':'' %>><%= a.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <button type="submit" class="submit-btn">🚀 Đăng ký ngay</button>
+    </form>
+
+    <p class="login-link">Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+</div>
+
+<style>
+    .register-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    background: #667eea;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 15px;
+}
+
+.submit-btn:hover {
+    background: #764ba2;
+}
+
+.login-link {
+    margin-top: 20px;
+}
+
+.login-link a {
+    color: #667eea;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login-link a:hover {
+    color: #764ba2;
+}
+
+/* Link đăng ký */
+.register-link {
+    margin-top: 20px;
+}
+
+.register-link a {
+    color: #667eea;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.register-link a:hover {
+    color: #764ba2;
+}
+</style>

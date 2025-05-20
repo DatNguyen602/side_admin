@@ -1,0 +1,45 @@
+<% layout('layouts/main') %>
+
+<h1 class="text-2xl font-bold mb-4 text-center"><%= title %></h1>
+
+<a class="px-4 hover:text-green-500" href="/admin/keys/new">+ Tạo Key mới</a>
+
+<table class="mx-auto w-full mt-6 table-auto border-collapse border" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Token</th>
+            <th>Branch</th>
+            <th>Agency</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (keys.length === 0) { %>
+        <tr>
+            <td colspan="6">Chưa có key nào.</td>
+        </tr>
+        <% } %> <% keys.forEach(k => { %>
+        <tr>
+            <td><%= k._id %></td>
+            <td><%= k.token %></td>
+            <td><%= k.branch ? k.branch.name : '-' %></td>
+            <td>
+                <%= k.branch && k.branch.agency ? k.branch.agency.name : '-' %>
+            </td>
+            <td><%= k.status %></td>
+            <td>
+                <form
+                    action="/admin/keys/<%= k._id%>/delete"
+                    method="POST"
+                    style="display: inline"
+                    onsubmit="return confirm('Xóa key này?');"
+                >
+                    <button type="submit">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>

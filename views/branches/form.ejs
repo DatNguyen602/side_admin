@@ -1,0 +1,27 @@
+<% layout('layouts/main') %>
+
+<h1><%= title %></h1>
+
+<% if(errors) { %>
+  <div style="color:red"><%= errors %></div>
+<% } %>
+
+<form method="POST" action="<%= branch._id ? '/admin/branches/' + branch._id + '/edit' : '/admin/branches/new' %>">
+  <div>
+    <label>Tên Branch</label>
+    <input type="text" name="name" required value="<%= branch.name || '' %>">
+  </div>
+
+  <div>
+    <label>Agency</label>
+    <select name="agencyId" required>
+      <option value="">-- Chọn Agency --</option>
+      <% agencies.forEach(agency => { %>
+        <option value="<%= agency._id %>" <%= branch.agency && (branch.agency.toString() === agency._id.toString()) ? 'selected' : '' %>><%= agency.name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button type="submit">Lưu</button>
+  <a href="/admin/branches">Hủy</a>
+</form>

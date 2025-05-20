@@ -1,0 +1,44 @@
+<% layout('layouts/main') %>
+
+<h1><%= title %></h1>
+
+<% if (errors) { %>
+  <div style="color:red"><%= errors %></div>
+<% } %>
+
+<form method="POST" action="<%= userData._id ? '/admin/users/' + userData._id + '/edit' : '/admin/users/new' %>">
+  <div>
+    <label>Username</label>
+    <input type="text" name="username" required value="<%= userData.username || '' %>">
+  </div>
+
+  <% if (!userData._id) { /* Only show password on create */ %>
+  <div>
+    <label>Password</label>
+    <input type="password" name="password" required>
+  </div>
+  <% } %>
+
+  <div>
+    <label>Role</label>
+    <select name="roleId" required>
+      <option value="">-- Chọn Role --</option>
+      <% roles.forEach(role => { %>
+        <option value="<%= role._id %>" <%= userData.role && (userData.role.toString() === role._id.toString()) ? 'selected' : '' %>><%= role.name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div>
+    <label>Agency</label>
+    <select name="agencyId">
+      <option value="">-- Chọn Agency --</option>
+      <% agencies.forEach(agency => { %>
+        <option value="<%= agency._id %>" <%= userData.agency && (userData.agency.toString() === agency._id.toString()) ? 'selected' : '' %>><%= agency.name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button type="submit">Lưu</button>
+  <a href="/admin/users">Hủy</a>
+</form>

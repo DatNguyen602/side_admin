@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Admin</title>
+  <link rel="stylesheet" href="../../public/css/styles.css">
+  <!-- <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"> -->
+  <link href="../../public/css/tailwind.css" rel="stylesheet">
+  <style>
+/* Main content */
+.main-content {
+    flex-grow: 1;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 512px;
+    position: relative;
+}
+
+.content-wrapper {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 64px;
+    bottom: 64px;
+}
+  </style>
+</head>
+<body 
+class="flex flex-col items-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-600 font-[Poppins] m-0">
+  <header class="site-header bg-gray-900 w-full px-4">
+    <%- include('../partials/header') %>
+  </header>
+
+  <main class="main-content px-4">
+    <div class="content-wrapper w-[95%] md:w-[80%]">
+      <%- body %>
+    </div>
+  </main>
+
+  <footer class="site-footer bg-gray-900 w-full p-8 text-center text-gray-200">
+    <%- include('../partials/footer') %>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>

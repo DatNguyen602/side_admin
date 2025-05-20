@@ -1,0 +1,22 @@
+<% layout('layouts/main') %>
+
+<h1><%= title %></h1>
+
+<% if(errors) { %>
+  <div style="color:red"><%= errors %></div>
+<% } %>
+
+<form method="POST" action="<%= agency._id ? '/admin/agencies/' + agency._id + '/edit' : '/admin/agencies/new' %>">
+  <div>
+    <label>Tên Agency</label>
+    <input type="text" name="name" required value="<%= agency.name || '' %>">
+  </div>
+
+  <div>
+    <label>Mô tả</label>
+    <textarea name="description"><%= agency.description || '' %></textarea>
+  </div>
+
+  <button type="submit">Lưu</button>
+  <a href="/admin/agencies">Hủy</a>
+</form>

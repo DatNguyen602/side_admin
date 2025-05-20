@@ -1,0 +1,22 @@
+<% layout('layouts/main') %>
+
+<h1><%= title %></h1>
+
+<% if(errors) { %>
+  <div style="color:red"><%= errors %></div>
+<% } %>
+
+<form method="POST" action="/admin/keys/new">
+  <div>
+    <label>Branch</label>
+    <select name="branchId" required>
+      <option value="">-- Chọn Branch --</option>
+      <% branches.forEach(branch => { %>
+        <option value="<%= branch._id %>"><%= branch.name %> (Agency: <%= branch.agency ? branch.agency.name : '-' %>)</option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button type="submit">Tạo Key</button>
+  <a href="/admin/keys">Hủy</a>
+</form>
