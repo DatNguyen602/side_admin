@@ -36,7 +36,7 @@
           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
           <option value="">-- Chọn Role --</option>
           <% roles.forEach(role => { %>
-            <option value="<%= role.name %>"><%= role.name %></option>
+            <option value="<%= role.name %>" <%= userData.role && (userData.role.toString() === role._id.toString()) ? 'selected' : '' %>><%= role.name %></option>
           <% }) %>
         </select>
       </div>

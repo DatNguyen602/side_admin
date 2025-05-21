@@ -9,6 +9,7 @@ const Agency = require('../models/Agency');
 const Branch = require('../models/Branch');
 const User = require('../models/User');
 const Key = require('../models/Key');
+const Session = require('../models/Session');  // Import thêm Session model
 
 async function seed() {
   await mongoose.connect(process.env.MONGO_URI, {
@@ -23,7 +24,8 @@ async function seed() {
     Agency.deleteMany({}),
     Branch.deleteMany({}),
     User.deleteMany({}),
-    Key.deleteMany({})
+    Key.deleteMany({}),
+    Session.deleteMany({})  // Xóa luôn dữ liệu cũ của Session
   ]);
   console.log('✔ All collections cleared\n');
 
@@ -73,26 +75,40 @@ async function seed() {
   // 4. Seed Admin User
   const adminUsername = 'admin';
   const adminPassword = 'admin';
-  const hashedPassword = await bcrypt.hash(adminPassword, 10);
+  // const hashedPassword = await bcrypt.hash(adminPassword, 10);
   const adminRole = roles.find(r => r.name === 'admin');
   const admin = await User.create({
     username: adminUsername,
-    password: hashedPassword,
+    password: adminPassword,
+    email: 'admin@example.com',  // Bổ sung email nếu schema yêu cầu
     role: adminRole._id,
     agency: agencies[0]._id
   });
   console.log(`✔ Admin user created (username: ${adminUsername}, password: ${adminPassword})`);
 
   // 5. Seed Keys
+  const createdKeys = [];
   for (const br of branches) {
-    const token = crypto.randomBytes(8).toString('hex');
-    await Key.create({
+    const token = crypto.randomBytes(16).toString('hex');
+    const keyDoc = await Key.create({
       token,
       branch: br._id,
       status: 'issued',
       issuedAt: new Date()
     });
+    createdKeys.push(keyDoc);
     console.log(`✔ Key issued for branch ${br.name} — Token: ${token}`);
+  }
+
+  // 6. Seed Sessions (bổ sung)
+  for (const key of createdKeys) {
+    await Session.create({
+      key: key._id,      // Trường bắt buộc
+      user: admin._id,   // Gán admin làm user của session
+      startedAt: new Date()
+      // Các trường khác nếu cần
+    });
+    console.log(`✔ Session created for key: ${key.token}`);
   }
 
   console.log('\n✅ Seeding completed successfully');

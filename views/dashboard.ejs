@@ -1,7 +1,7 @@
 <% layout('layouts/main') %>
 
 <h1>Admin Dashboard</h1>
-<div class="container flex justify-center flex-wrap gap-1 p-4">
+<div class="container flex justify-center flex-wrap gap-1 p-4 mb-6">
   <div class="card w-[90%] rounded-xl bg-gray-200 p-4">
     <h2 class="">Users</h2>
     <p class="px-4"><%= stats.userCount %></p>
@@ -18,4 +18,35 @@
     <h2 class="">Active Keys</h2>
     <p class="px-4"><%= stats.keyCount %></p>
   </div>
+</div>
+
+<h2>Phiên làm việc gần đây</h2>
+<div class="overflow-x-auto mx-auto max-w-6xl px-4"></div>
+  <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">User</th>
+        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Email</th>
+        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Key Token</th>
+        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300 text-center">Key Status</th>
+        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Bắt đầu</th>
+        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Kết thúc</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% sessions.forEach(session => { %>
+        <tr class="hover:bg-gray-50 transition duration-200">
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= session?.user?.username %></td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= session?.user?.email %></td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= session?.key?.token %></td>
+          <td class="px-4 py-3 border-b border-gray-200 text-center
+          <%= session?.key?.status === 'issued' ? 'text-green-500' : 'text-red-500' %>
+           text-sm font-medium"
+           ><%= session?.key?.status === 'issued' ? 'Active' : 'InActive' %></td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= session.startedAt.toLocaleString() %></td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= session.endedAt ? session.endedAt.toLocaleString() : 'Đang hoạt động' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 </div>

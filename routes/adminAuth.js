@@ -3,6 +3,8 @@ const router = require("express").Router();
 const Agency = require('../models/Agency');
 const jwt = require("jsonwebtoken");
 const { register, login } = require("../controllers/authController");
+const { sendLoginNotification } = require('../utils/mailer');
+const User = require('../models/User'); // để tìm email user
 
 // GET login form
 router.get("/login", (req, res) => {
@@ -38,6 +40,14 @@ router.post("/login", async (req, res) => {
       httpOnly: true,
       sameSite: "lax",
     });
+    const user = await User.findOne({ username });
+
+    if (user?.email) {
+      sendLoginNotification(user.email, user.username)
+        .then(() => console.log(`Email thông báo đã gửi đến ${user.email}`))
+        .catch(err => console.error("Lỗi gửi email thông báo:", err));
+    }
+
     return res.redirect("/admin/dashboard");
 
   } catch (err) {

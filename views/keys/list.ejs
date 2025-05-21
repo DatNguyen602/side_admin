@@ -29,7 +29,7 @@
     token: k.token,
     branch: k.branch ? k.branch.name : '-',
     agency: k.branch && k.branch.agency ? k.branch.agency.name : '-',
-    status: (k.status === 'active')
+    status: (k.status === 'issued')
       ? `<span class="inline-block px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Active</span>`
       : `<span class="inline-block px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">Inactive</span>`,
     actions: (perms.includes('keys:delete')) ? `

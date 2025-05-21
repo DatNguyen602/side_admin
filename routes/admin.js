@@ -4,6 +4,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const rbac = require("../middleware/rbac");
 const { register } = require("../controllers/authController");
+const Session = require('../models/Session');
 
 // Models
 const User = require("../models/User");
@@ -14,16 +15,23 @@ const Key = require("../models/Key");
 
 // --- DASHBOARD ---
 router.get("/dashboard", auth, rbac("dashboard:view"), async (req, res) => {
-    const [userCount, agencyCount, branchCount, keyCount] = await Promise.all([
+    const [userCount, agencyCount, branchCount, keyCount, sessions] = await Promise.all([
         User.countDocuments(),
         Agency.countDocuments(),
         Branch.countDocuments(),
         Key.countDocuments({ status: "issued" }),
+        Session.find()
+          .populate('user', 'username email')
+          .populate('key', 'token status')
+          .sort({ startedAt: -1 })
+          .limit(20)  // Giới hạn số bản ghi để không quá nặng
     ]);
+
     res.render("dashboard", {
         title: "Dashboard",
         stats: { userCount, agencyCount, branchCount, keyCount },
         user: req.user,
+        sessions,   // thêm dữ liệu session vào
     });
 });
 

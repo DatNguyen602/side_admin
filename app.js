@@ -32,7 +32,6 @@ app.use(express.urlencoded({ extended: false })); // để parse form-encoded
 app.use(cookieParser());
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
 app.use("/api/v1/users", require("./routes/users"));
 app.use("/api/v1/agencies", require("./routes/agencies"));
 app.use("/api/v1/branches", require("./routes/branches"));
@@ -55,7 +54,8 @@ app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, 
-    () => {
-        console.log(`Server running on port ${PORT}`);
-        console.log(`http://localhost:${PORT}/login`)
-    });
+  () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`http://localhost:${PORT}/login`)
+  }
+);
