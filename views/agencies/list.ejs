@@ -1,42 +1,41 @@
 <% layout('layouts/main') %>
 
-<h1 class="text-3xl font-extrabold mb-6 text-center text-gray-800"><%= title %></h1>
+<%
+  const perms = (typeof user !== 'undefined' && user && user.permissions)
+                ? user.permissions
+                : [];
+%>
 
-<div class="flex px-6 mb-6">
-  <a href="/admin/agencies/new" class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 shadow-md">
-    + Tạo Agency mới
-  </a>
-</div>
+<%- include('../partials/table', {
+  title: title,
+  action_new: `
+    ${(perms.includes('agencies:create')) ? 
+    `<div class="flex px-6 mb-6">
+      <a href="/admin/agencies/new" class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 shadow-md">
+        + Tạo Agency mới
+      </a>
+    </div>` : ``}
+  `,
+  headers: [
+    { label: 'ID', key: '_id' },
+    { label: 'Tên Agency', key: 'name' },
+    { label: 'Mô tả', key: 'description' },
+    { label: 'Actions', key: 'actions', center: true, minWidth: 'min-w-[9rem]', canAction: !(perms.includes('agencies:update') || perms.includes('agencies:delete')) }
+  ],
+  rows: agencies.map(a => ({
+    _id: a._id,
+    name: a.name,
+    description: a.description || '-',
+    actions: `
+      ${(perms.includes('agencies:update')) ? 
+        `<a href="/admin/agencies/${a._id}/edit" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Sửa</a>` 
+        : ''}
 
-<div class="overflow-x-auto mx-auto max-w-5xl px-4">
-  <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-    <thead class="bg-gray-100">
-      <tr>
-        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">ID</th>
-        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Tên Agency</th>
-        <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Mô tả</th>
-        <th class="text-center px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (agencies.length === 0) { %>
-        <tr>
-          <td colspan="4" class="text-center py-6 text-gray-500 italic">Chưa có agency nào.</td>
-        </tr>
-      <% } %>
-      <% agencies.forEach(a => { %>
-        <tr class="hover:bg-gray-50 transition duration-200">
-          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= a._id %></td>
-          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-800 font-medium"><%= a.name %></td>
-          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"><%= a.description || '-' %></td>
-          <td class="px-4 py-3 border-b border-gray-200 text-sm text-center space-x-2">
-            <a href="/admin/agencies/<%= a._id %>/edit" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Sửa</a>
-            <form action="/admin/agencies/<%= a._id %>/delete" method="POST" class="inline-block" onsubmit="return confirm('Xóa agency này?');">
-              <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Xóa</button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+      ${(perms.includes('agencies:delete')) ? 
+        `<form action="/admin/agencies/${a._id}/delete" method="POST" class="inline" onsubmit="return confirm('Xóa agency này?');">
+          <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300" type="submit">Xóa</button>
+        </form>` 
+        : ''}
+    `
+  }))
+}) %>

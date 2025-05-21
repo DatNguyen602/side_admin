@@ -1,0 +1,38 @@
+<h1 class="text-3xl font-extrabold mb-6 text-center text-gray-800"><%= title %></h1>
+
+<%- action_new %>
+
+<div class="overflow-x-auto mx-auto max-w-6xl px-4">
+  <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <% headers.forEach(h => { %>
+          <% if (!h.canAction) { %>
+            <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300 <%= h.center ? 'text-center' : '' %>">
+              <%= h.label %>
+            </th>
+          <% } %>
+        <% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (rows.length === 0) { %>
+        <tr>
+          <td colspan="<%= headers.length %>" class="text-center py-6 text-gray-500 italic">Chưa có dữ liệu.</td>
+        </tr>
+      <% } else { %>
+        <% rows.forEach(r => { %>
+          <tr class="hover:bg-gray-50 transition duration-200">
+            <% headers.forEach(h => { %>
+              <% if (!h.canAction) { %>
+                <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700 <%= h.center ? 'text-center' : '' %> <%= h.minWidth ? h.minWidth : '' %>">
+                  <%- typeof r[h.key] !== 'undefined' ? r[h.key] : '-' %>
+                </td>
+              <% } %>
+            <% }) %>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>

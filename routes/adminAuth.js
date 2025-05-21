@@ -84,6 +84,7 @@ router.post('/register', async (req, res) => {
 
     res.redirect('/login?registered=1');
   } catch (err) {
+    console.log(err)
     const agencies = await Agency.find().sort('name');
     res.render('register', {
       title: 'Tạo tài khoản',

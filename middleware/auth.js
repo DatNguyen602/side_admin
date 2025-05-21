@@ -22,6 +22,7 @@ module.exports = async (req, res, next) => {
     // 4) Gán req.user và res.locals.user để templates có thể dùng
     req.user = {
       id: user._id,
+      email: user.email,
       username: user.username,
       role: user.role.name,
       permissions: user.role.permissions,  // array of strings

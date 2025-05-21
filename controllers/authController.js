@@ -3,9 +3,9 @@ const User = require('../models/User');
 const Role = require('../models/Role');
 const jwt = require('jsonwebtoken');
 exports.register = async (req,res) => {
-  const { username, password, roleName, agencyId } = req.body;
+  const { username, email, password, roleName, agencyId } = req.body;
   const role = await Role.findOne({ name: roleName });
-  const user = new User({ username, password, role: role._id, agency: agencyId });
+  const user = new User({ username, email, password, role: role._id, agency: agencyId });
   await user.save();
   res.json({ message: 'Registered' });
 };
