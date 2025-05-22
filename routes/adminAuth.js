@@ -42,11 +42,11 @@ router.post("/login", async (req, res) => {
     });
     const user = await User.findOne({ username });
 
-    if (user?.email) {
-      sendLoginNotification(user.email, user.username)
-        .then(() => console.log(`Email thông báo đã gửi đến ${user.email}`))
-        .catch(err => console.error("Lỗi gửi email thông báo:", err));
-    }
+    // if (user?.email) {
+    //   sendLoginNotification(user.email, user.username)
+    //     .then(() => console.log(`Email thông báo đã gửi đến ${user.email}`))
+    //     .catch(err => console.error("Lỗi gửi email thông báo:", err));
+    // }
 
     return res.redirect("/admin/dashboard");
 

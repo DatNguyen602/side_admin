@@ -6,6 +6,7 @@ const rbac = require("../middleware/rbac");
 const { register } = require("../controllers/authController");
 const Session = require("../models/Session");
 const mongoose = require("mongoose");
+const path = require('path');
 
 // Models
 const User = require("../models/User");
@@ -15,7 +16,7 @@ const Branch = require("../models/Branch");
 const Key = require("../models/Key");
 
 // --- DASHBOARD ---
-router.get("/dashboard", auth, rbac("dashboard:view"), async (req, res) => {
+router.get("/dashboard", auth, rbac("dashboards:view"), async (req, res) => {
     const [userCount, agencyCount, branchCount, keyCount, sessions] =
         await Promise.all([
             User.countDocuments(),
@@ -112,9 +113,10 @@ const multer = require("multer");
 const xlsx = require("xlsx");
 const upload = multer({ dest: "uploads/" });
 
-router.post("/users/import", upload.single("excelFile"), async (req, res) => {
+router.post("/users/import", auth, upload.single("excelFile"), async (req, res) => {
     try {
         const allowedTypes = [".xlsx", ".xls", ".csv"];
+        console.log(req.file.originalname)
         const ext = path.extname(req.file.originalname).toLowerCase();
         if (!allowedTypes.includes(ext)) {
             return res
@@ -506,7 +508,10 @@ router.get("/roles", auth, async (req, res) => {
 
 // Lấy danh sách các models (ngoại trừ Role)
 const getModels = () => {
-    return Object.keys(mongoose.models).filter((model) => model !== "Role").map(x => x.toLowerCase());
+    return [
+        "dashboard",
+        ...Object.keys(mongoose.models).filter((model) => model !== "Role").map(x => x.toLowerCase())
+    ];
 };
 
 const permissions = ["read", "verify", "view", "create", "update", "delete"]; 

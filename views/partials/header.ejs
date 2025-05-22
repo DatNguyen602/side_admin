@@ -6,7 +6,7 @@
 %>
 
 <header>
-  <nav>
+  <nav class="relative">
     <ul class="nav flex relative p-4">
       <span class="md:hidden parent relative inline-block w-[32px] h-[32px]">
         <svg class="relative w-full h-full text-gray-600 hover:text-blue-600 transition" 
@@ -23,7 +23,7 @@
       md:left-0 md:-translate-x-0
       absolute top-[100%] rounded-2xl p-6 bg-gray-300 w-[90%]
       md:flex-row md:relative md:p-0 md:bg-transparent md:w-max">
-        <% if (perms.includes('dashboard:view')) { %>
+        <% if (perms.includes('dashboards:view')) { %>
           <li class="nav-item py-4">
             <a href="/admin/dashboard" class="nav-link text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3">Dashboard</a></li>
         <% } %>
@@ -60,6 +60,7 @@
           <a href="/login" class="nav-link text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3">Logout</a></li>
       <% } %>
     </ul>
+    <div class="absolute mt-4 me-6 right-0 top-[100%] text-gray-200 text-end" id="clock"></div>
   </nav>
 </header>
 

@@ -221,6 +221,7 @@ Trả về danh sách các phiên làm việc đang hoạt động hoặc đã k
 | user01   | user01@mail.com | 123456   | Admin | CN1    |
 
 > * Cột **role** và **agency** cần đúng tên đã có trong hệ thống.
+> (.xlsx, .xls, .csv)
 
 ---
 
