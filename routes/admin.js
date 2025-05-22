@@ -4,7 +4,8 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const rbac = require("../middleware/rbac");
 const { register } = require("../controllers/authController");
-const Session = require('../models/Session');
+const Session = require("../models/Session");
+const mongoose = require("mongoose");
 
 // Models
 const User = require("../models/User");
@@ -15,23 +16,24 @@ const Key = require("../models/Key");
 
 // --- DASHBOARD ---
 router.get("/dashboard", auth, rbac("dashboard:view"), async (req, res) => {
-    const [userCount, agencyCount, branchCount, keyCount, sessions] = await Promise.all([
-        User.countDocuments(),
-        Agency.countDocuments(),
-        Branch.countDocuments(),
-        Key.countDocuments({ status: "issued" }),
-        Session.find()
-          .populate('user', 'username email')
-          .populate('key', 'token status')
-          .sort({ startedAt: -1 })
-          .limit(20)  // Giới hạn số bản ghi để không quá nặng
-    ]);
+    const [userCount, agencyCount, branchCount, keyCount, sessions] =
+        await Promise.all([
+            User.countDocuments(),
+            Agency.countDocuments(),
+            Branch.countDocuments(),
+            Key.countDocuments({ status: "issued" }),
+            Session.find()
+                .populate("user", "username email")
+                .populate("key", "token status")
+                .sort({ startedAt: -1 })
+                .limit(20), // Giới hạn số bản ghi để không quá nặng
+        ]);
 
     res.render("dashboard", {
         title: "Dashboard",
         stats: { userCount, agencyCount, branchCount, keyCount },
         user: req.user,
-        sessions,   // thêm dữ liệu session vào
+        sessions, // thêm dữ liệu session vào
     });
 });
 
@@ -103,6 +105,48 @@ router.post("/users/new", auth, rbac("users:create"), async (req, res) => {
                       .join(", ")
                 : err.message,
         });
+    }
+});
+
+const multer = require("multer");
+const xlsx = require("xlsx");
+const upload = multer({ dest: "uploads/" });
+
+router.post("/users/import", upload.single("excelFile"), async (req, res) => {
+    try {
+        const allowedTypes = [".xlsx", ".xls", ".csv"];
+        const ext = path.extname(req.file.originalname).toLowerCase();
+        if (!allowedTypes.includes(ext)) {
+            return res
+                .status(400)
+                .send("Chỉ chấp nhận file Excel (.xlsx, .xls, .csv)");
+        }
+
+        const workbook = xlsx.readFile(req.file.path);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data = xlsx.utils.sheet_to_json(sheet);
+
+        const usersToInsert = await Promise.all(
+            data.map(async (row) => {
+                const role = await Role.findOne({ name: row.role });
+                const agency = await Agency.findOne({ name: row.agency });
+
+                return {
+                    username: row.username,
+                    email: row.email,
+                    password: row.password, // sẽ hash trong model
+                    role: role?._id,
+                    agency: agency?._id,
+                };
+            })
+        );
+
+        await User.insertMany(usersToInsert);
+
+        res.redirect("/admin/users");
+    } catch (err) {
+        console.error("Import error:", err);
+        res.status(500).send("Đã xảy ra lỗi khi import users");
     }
 });
 
@@ -348,11 +392,13 @@ router.get("/keys", auth, rbac("keys:read"), async (req, res) => {
 // Create form
 router.get("/keys/new", auth, rbac("keys:create"), async (req, res) => {
     const branches = await Branch.find().populate("agency");
+    const users = await User.find();
     res.render("keys/form", {
         title: "Tạo Key",
         keyData: {},
         branches,
         user: req.user,
+        users: users ?? [],
         errors: null,
     });
 });
@@ -360,8 +406,37 @@ router.get("/keys/new", auth, rbac("keys:create"), async (req, res) => {
 // Handle create
 router.post("/keys/new", auth, rbac("keys:create"), async (req, res) => {
     try {
+        const { branchId, userIds, dateStartUse, dateEndUse } = req.body;
+        // Chuyển đổi ngày để kiểm tra
+        const today = new Date().setHours(0, 0, 0, 0);
+        const startDate = new Date(dateStartUse).setHours(0, 0, 0, 0);
+        const endDate = new Date(dateEndUse).setHours(0, 0, 0, 0);
+
+        if (startDate < today || endDate < today) {
+            return res.status(400).json({
+                message: "Ngày bắt đầu và kết thúc phải từ hôm nay trở đi.",
+            });
+        }
+
+        if (endDate <= startDate) {
+            return res.status(400).json({
+                message: "Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.",
+            });
+        }
+        // userIds có thể là string hoặc mảng
+        const normalizedUserIds = Array.isArray(userIds)
+            ? userIds
+            : userIds
+            ? [userIds]
+            : [];
         const token = require("crypto").randomBytes(16).toString("hex");
-        await Key.create({ token, branch: req.body.branchId });
+        await Key.create({
+            token,
+            branch: branchId,
+            userIds: normalizedUserIds,
+            dateStartUse: dateStartUse,
+            dateEndUse: dateEndUse,
+        });
         res.redirect("/admin/keys");
     } catch (err) {
         const branches = await Branch.find().populate("agency");
@@ -375,10 +450,120 @@ router.post("/keys/new", auth, rbac("keys:create"), async (req, res) => {
     }
 });
 
+// GET edit page
+router.get("/keys/:id/edit", auth, rbac("keys:update"), async (req, res) => {
+    const key = await Key.findById(req.params.id).populate("branch").lean();
+    const branches = await Branch.find().populate("agency").lean();
+    const users = await User.find().populate("agency").lean();
+    res.render("keys/edit", {
+        title: "Chỉnh sửa Key",
+        errors: null,
+        key,
+        branches,
+        users,
+    });
+});
+
+// POST update
+router.post("/keys/:id/edit", auth, rbac("keys:update"), async (req, res) => {
+    const { branchId, dateStartUse, dateEndUse, userIds, status } = req.body;
+
+    try {
+        await Key.findByIdAndUpdate(req.params.id, {
+            branch: branchId,
+            dateStartUse,
+            dateEndUse,
+            status,
+            userIds: Array.isArray(userIds) ? userIds : [userIds],
+        });
+        res.redirect("/admin/keys");
+    } catch (err) {
+        res.render("keys/edit", {
+            title: "Chỉnh sửa Key",
+            errors: "Có lỗi xảy ra khi cập nhật key.",
+            key: await Key.findById(req.params.id).lean(),
+            branches: await Branch.find().populate("agency").lean(),
+            users: await User.find().populate("agency").lean(),
+        });
+    }
+});
+
 // Delete
 router.post("/keys/:id/delete", auth, rbac("keys:delete"), async (req, res) => {
     await Key.findByIdAndDelete(req.params.id);
     res.redirect("/admin/keys");
+});
+
+// List role
+router.get("/roles", auth, async (req, res) => {
+    const roles = await Role.find({ name: { $ne: "admin" } });
+    res.render("roles/list", {
+        title: "Roles",
+        roles,
+        user: req.user,
+    });
+});
+
+// Lấy danh sách các models (ngoại trừ Role)
+const getModels = () => {
+    return Object.keys(mongoose.models).filter((model) => model !== "Role").map(x => x.toLowerCase());
+};
+
+const permissions = ["read", "verify", "view", "create", "update", "delete"]; 
+
+// Route hiển thị danh sách quyền theo Role
+router.get("/roles/:id/view", auth, async (req, res) => {
+    const roles = await Role.find();
+    const role = await Role.findById(req.params.id);
+    const models = getModels();
+
+    res.render("roles/view", {
+        title: "Roles",
+        errors: null,
+        roles,
+        role,
+        models,
+        permissions,
+        user: req.user,
+    });
+});
+
+router.get("/roles/new", async (req, res) => {
+    const models = getModels(); // Lấy danh sách các models có trong DB
+    res.render("roles/create", { title: "Tạo Role Mới", models, permissions });
+});
+
+// Tạo mới Role
+router.post("/roles/create", auth, async (req, res) => {
+    const { name, permissions } = req.body;
+    console.log(name);
+    console.log(permissions);
+    const newRole = new Role({ name, permissions: permissions });
+    await newRole.save();
+    res.redirect("/admin/roles");
+});
+
+router.get("/roles/:id/edit", auth, async (req, res) => {
+    const role = await Role.findById(req.params.id);
+    if (!role) return res.status(404).send("Role không tồn tại");
+
+    const models = getModels();
+    
+    res.render("roles/edit", { title: `Chỉnh Sửa Role ${role.name}`, role, models, permissions });
+});
+
+// Chỉnh sửa Role
+router.post("/roles/:id/edit", auth, async (req, res) => {
+    const { name, permissions } = req.body;
+
+    await Role.findByIdAndUpdate(req.params.id, { name, permissions: permissions });
+    res.redirect(`/admin/roles/${req.params.id}/view`);
+});
+
+// Delete
+router.post("/roles/:id/delete", auth, async (req, res) => {
+    await Role.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/roles");
 });
 
 module.exports = router;

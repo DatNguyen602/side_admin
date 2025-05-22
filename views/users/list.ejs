@@ -11,10 +11,44 @@
   title: title,
   action_new: `
     ${(perms.includes('users:create')) ? 
-    `<div class="flex px-6 mb-6">
-      <a href="/admin/users/new" class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 shadow-md">
+    `<div class="flex px-6 mb-6 justify-between">
+      <a href="/admin/users/new" class="h-10 px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 shadow-md">
         + Tạo User mới
       </a>
+
+      <div class="flex flex-col items-center">
+        <form action="/admin/users/import" method="POST" enctype="multipart/form-data">
+          <input type="file" name="excelFile" accept=".xlsx,.xls,.csv" required>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Import Excel</button>
+        </form>
+
+        <div class="mt-4 border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
+          <h3 class="text-lg font-semibold mb-2">📄 Mẫu file Excel:</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full table-auto border border-gray-300 text-sm text-left text-gray-700">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="border px-4 py-2">username</th>
+                  <th class="border px-4 py-2">email</th>
+                  <th class="border px-4 py-2">password</th>
+                  <th class="border px-4 py-2">role</th>
+                  <th class="border px-4 py-2">agency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border px-4 py-2">user01</td>
+                  <td class="border px-4 py-2">user01@mail.com</td>
+                  <td class="border px-4 py-2">123456</td>
+                  <td class="border px-4 py-2">Admin</td>
+                  <td class="border px-4 py-2">CN1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-gray-500 mt-2 text-sm">* Cột <strong>role</strong> và <strong>agency</strong> cần đúng tên đã có trong hệ thống.</p>
+        </div>
+      </div>
     </div>` : ``}
   `,
   headers: [

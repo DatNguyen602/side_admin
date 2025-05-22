@@ -47,6 +47,11 @@
           <li class="nav-item py-4">
             <a href="/admin/keys" class="nav-link text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3">Keys</a></li>
         <% } %>
+
+        <% if (user?.role && user.role === 'admin') { %>
+          <li class="nav-item py-4">
+            <a href="/admin/roles" class="nav-link text-blue-500 text-lg rounded-xl hover:bg-green-200 hover:text-blue-800 px-4 py-3">Roles</a></li>
+        <% } %>
       </div>
 
       <% if (user) { %>

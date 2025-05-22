@@ -1,0 +1,50 @@
+<% layout('layouts/main') %>
+
+<div class="mt-4 border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
+    <h3 class="text-lg font-semibold mb-6">✏️ Chỉnh Sửa Role: <%= role.name %></h3>
+
+    <form action="/admin/roles/<%= role._id %>/edit" method="POST">
+        <label class="block font-semibold mb-2">Tên Role:</label>
+        <input type="text" name="name" value="<%= role.name %>" class="border px-3 py-2 rounded w-full mb-4" required>
+
+        <h4 class="text-md font-semibold mt-4">🔒 Danh sách quyền:</h4>
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto border border-gray-300 text-sm text-left text-gray-700">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border px-4 py-2"></th>
+                        <% permissions.forEach(permission => { %>
+                        <th class="border px-4 py-2 text-center"><%= permission %></th>
+                        <% }) %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% models.forEach(model => { %>
+                    <tr>
+                        <td class="border px-4 py-2 font-semibold"><%= model %></td>
+                        <% permissions.forEach(permission => { %>
+                        <td class="border px-4 py-2 text-center">
+                            <label class="block">
+                                <input type="checkbox" name="permissions" 
+                                       value="<%= `${model}s:${permission}` %>"
+                                       <%= role.permissions.includes(`${model}s:${permission}`) ? 'checked' : '' %> >
+                            </label>
+                        </td>
+                        <% }) %>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <button type="submit" class="mt-4 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 shadow-md">
+                💾 Cập Nhật Role
+            </button>
+            <a href="/admin/roles"
+            class="text-gray-600 hover:text-red-600 font-medium transition duration-150">
+            Hủy
+            </a>
+        </div>
+    </form>
+</div>

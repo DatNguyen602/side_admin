@@ -214,6 +214,16 @@ Trả về danh sách các phiên làm việc đang hoạt động hoặc đã k
 
 ---
 
+## 📄 Mẫu file Excel (Dùng để import nhiều user cùng lúc):
+
+| username | email         | password | role  | agency |
+|----------|--------------|----------|-------|--------|
+| user01   | user01@mail.com | 123456   | Admin | CN1    |
+
+> * Cột **role** và **agency** cần đúng tên đã có trong hệ thống.
+
+---
+
 ## 📌 Ghi chú
 
 - Tất cả mật khẩu người dùng được mã hóa bằng `bcrypt`.

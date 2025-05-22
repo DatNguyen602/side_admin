@@ -11,28 +11,25 @@
   <link href="../../public/img/LOGO_EPIC-01.png" rel="icon" type="image/png">
   <link href="../../../public/img/LOGO_EPIC-01.png" rel="icon" type="image/png">
   <style>
-/* Main content */
-.main-content {
-    flex-grow: 1;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 512px;
-    position: relative;
-}
+    /* Main content */
+    .main-content {
+        flex-grow: 1;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 512px;
+        position: relative;
+    }
 
-.content-wrapper {
-    background: rgba(255, 255, 255, 0.95);
-    background-size: 32px 32px;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    position: absolute;
-    top: 64px;
-    bottom: 64px;
-}
+    .content-wrapper {
+        background: rgba(255, 255, 255, 0.95);
+        background-size: 32px 32px;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
   </style>
 </head>
 <body 
@@ -41,8 +38,8 @@ class="flex flex-col items-center min-h-screen bg-gradient-to-r from-indigo-500 
     <%- include('../partials/header') %>
   </header>
 
-  <main class="main-content px-4">
-    <div class="content-wrapper w-[95%] md:w-[80%] overflow-y-auto">
+  <main class="main-content p-4 h-full">
+    <div class="content-wrapper w-[95%] md:w-[80%] absolute top-12 bottom-12 overflow-y-auto">
       <%- body %>
     </div>
   </main>

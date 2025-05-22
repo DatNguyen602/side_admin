@@ -1,0 +1,44 @@
+<% layout('layouts/main') %>
+
+<div class="mt-4 border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
+    <h3 class="text-lg font-semibold mb-6">🔒 Bảng quản lý quyền: <%= role.name %></h3>
+
+    <div class="overflow-x-auto">
+        <table
+            class="min-w-full table-auto border border-gray-300 text-sm text-left text-gray-700"
+        >
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border px-4 py-2"></th>
+                    <% permissions.forEach(permission => { %>
+                    <th class="border px-4 py-2 text-center">
+                        <%= permission %>
+                    </th>
+                    <% }) %>
+                </tr>
+            </thead>
+            <tbody>
+                <% models.forEach(model => { %>
+                <tr>
+                    <td class="border px-4 py-2 font-semibold">
+                        <%= model %>
+                    </td>
+                    <% permissions.forEach(permission => { %>
+                    <td class="border px-4 py-2 text-center">
+                        <label class="block">
+                            <%= (role.permissions.includes(`${model.toLowerCase()}s:${permission}`)) ? '✔️' : '❌' %>
+                        </label>
+                    </td>
+                    <% }) %>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <div class="flex items-center justify-end mt-8">
+        <a href="/admin/roles"
+        class="inline-block px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300">
+        Quay lại
+        </a>
+    </div>
+</div>
