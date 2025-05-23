@@ -1,0 +1,46 @@
+<% layout('layouts/main') %>
+
+<div class="h-full flex items-center justify-center py-10 px-4">
+  <div class="bg-white w-full max-w-2xl p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center"><%= title || "Gửi Email Thông Báo" %></h1>
+
+    <% if(errors) { %>
+      <div class="text-red-500 font-semibold mb-4 text-center"><%= errors %></div>
+    <% } %>
+
+    <% if(alert) { %>
+      <div class="text-green-500 font-semibold mb-4 text-center"><%= alert %></div>
+    <% } %>
+
+    <form method="POST" action="/mail/send-email" class="space-y-5">
+      <div>
+        <label for="email" class="block font-medium mb-1">Email</label>
+        <input list="email-list" id="email" name="email" placeholder="Nhập email hoặc chọn user..." 
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400" />
+        <datalist id="email-list">
+          <% if (users && users.length > 0) { %>
+            <% users.forEach(user => { %>
+              <option value="<%= user.email %>"><%= user.username %> - <%= user.email %></option>
+            <% }) %>
+          <% } else { %>
+            <option value="" disabled>Không có user nào</option>
+          <% } %>
+        </datalist>
+      </div>
+
+      <div>
+        <label for="emailContent" class="block font-medium mb-1">Nội dung Email</label>
+        <textarea id="emailContent" name="emailContent" rows="4" placeholder="Nhập nội dung email..." 
+          class="w-full h-[392px] min-h-[256px] max-h-[450px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"></textarea>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
+          Gửi Email
+        </button>
+      </div>
+      
+    </form>
+  </div>
+</div>

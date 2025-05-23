@@ -38,6 +38,7 @@ app.use("/api/v1/branches", require("./routes/branches"));
 app.use("/api/v1/keys", require("./routes/keys"));
 app.use("/admin", require("./routes/admin"));
 app.use("/", require("./routes/adminAuth"));
+app.use("/mail", require("./routes/emailRouter"));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'public/js'))); // nếu cần
 app.get('*', (req, res, next) => {

@@ -12,28 +12,28 @@
 <div class="container flex justify-center flex-wrap gap-1 p-4 mb-6">
   <a href= "<%= (perms.includes('user:read')) ? '/admin/users' : '' %>" 
     class="card w-[90%] rounded-xl bg-gray-200 
-    <%= (perms.includes('user:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    <%= (perms.includes('user:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> 
     p-4 transition">
     <h2 class="">Users</h2>
     <p class="px-4"><%= stats.userCount %></p>
   </a>
   <a href= "<%= (perms.includes('agency:read')) ? '/admin/agencies' : '' %>" 
     class="card w-[90%] rounded-xl bg-gray-200 
-    <%= (perms.includes('agency:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    <%= (perms.includes('agency:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> 
     p-4 transition">
     <h2 class="">Agencies</h2>
     <p class="px-4"><%= stats.agencyCount %></p>
   </a>
   <a href= "<%= (perms.includes('branch:read')) ? '/admin/branches' : '' %>" 
     class="card w-[90%] rounded-xl bg-gray-200 
-    <%= (perms.includes('branch:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    <%= (perms.includes('branch:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> 
     p-4 transition">
     <h2 class="">Branches</h2>
     <p class="px-4"><%= stats.branchCount %></p>
   </a>
   <a href= "<%= (perms.includes('key:read')) ? '/admin/keys' : '' %>" 
     class="card w-[90%] rounded-xl bg-gray-200 
-    <%= (perms.includes('key:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    <%= (perms.includes('key:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> 
     p-4 transition">
     <h2 class="">Keys</h2>
     <p class="px-4"><%= stats.keyCount %></p>

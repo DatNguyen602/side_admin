@@ -7,6 +7,7 @@ const { register } = require("../controllers/authController");
 const Session = require("../models/Session");
 const mongoose = require("mongoose");
 const path = require('path');
+require("dotenv").config(); // Import dotenv
 
 // Models
 const User = require("../models/User");
@@ -536,7 +537,7 @@ const getModels = () => {
     ];
 };
 
-const permissions = ["read", "verify", "view", "create", "update", "delete"]; 
+const permissions = process.env.PERMISSIONS ? process.env.PERMISSIONS.split(",") : [];
 
 // Route hiển thị danh sách quyền theo Role
 router.get("/roles/:id/view", auth, async (req, res) => {
