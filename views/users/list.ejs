@@ -11,12 +11,12 @@
   title: title,
   action_new: `
     ${(perms.includes('user:create')) ?
-    `<div class="flex px-6 mb-6 justify-between relative">
-      <div class="flex">
-        <a href="/admin/users/new" class="trapezoid1 w-32 h-10 mb-4 px-5 py-2 bg-green-600 text-white rounded-l-md hover:bg-green-500 transition duration-300 shadow-md">
+    `<div class="flex mb-6 justify-between relative">
+      <div class="flex newsbtn">
+        <a href="/admin/users/new" class="trapezoid1 w-32 h-10 py-2 bg-green-600 text-white rounded-l-md hover:rounded-r-md hover:bg-green-500 transition duration-300 shadow-md">
           + User
         </a>
-        <a href="/admin/users/manual-bulk" class="trapezoid2 ms-[-15px] text-center w-32 h-10 px-5 py-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-500 transition duration-300 shadow-md">
+        <a href="/admin/users/manual-bulk" class="trapezoid2 w-32 h-10 py-2 bg-sky-600 text-white rounded-r-md hover:rounded-l-md hover:bg-sky-500 transition duration-300 shadow-md">
           + Users
         </a>
       </div>
@@ -88,15 +88,57 @@
 }) %>
 
 <style>
+  #examplefile {
+    opacity: 0;
+    transition: opacity 5s ease;
+  }
+
   #example:hover + #examplefile {
+    opacity: 1;
     display: block;
   }
 
+  .newsbtn{
+    position: relative;
+    width: 156px;
+  }
+  
   .trapezoid1 {
-    clip-path: polygon(0% 100%, 0% 0%, 100% 0%, 85% 100%);
+    position: absolute;
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    clip-path: polygon(0% 100%, 0% 0%, 55% 0%, 45% 100%);
+    transition: all 0.5s;
   }
 
   .trapezoid2 {
-    clip-path: polygon(0% 100%, 15% 0%, 100% 0%, 100% 100%);
+    position: absolute;
+    width: 100%;
+    padding-left: 10%;
+    padding-right: 10%;
+    clip-path: polygon(45% 100%, 55% 0%, 100% 0%, 100% 100%);
+    text-align: end;
+    transition: all 0.5s;
+  }
+
+  .trapezoid1:hover {
+    text-align: center;
+    clip-path: polygon(0% 100%, 0% 0%, 100% 0%, 100% 100%);
+  }
+
+  .trapezoid1:hover + .trapezoid2 {
+    text-align: center;
+    clip-path: polygon(100% 100%, 100% 0%, 100% 0%, 100% 100%);
+  }
+
+  .trapezoid2:hover {
+    text-align: center;
+    clip-path: polygon(0% 100%, 0% 0%, 100% 0%, 100% 100%);
+  }
+
+  .trapezoid1:has(.trapezoid2:hover) {
+    text-align: center;
+    clip-path: polygon(0% 100%, 0% 0%, 0% 0%, 0% 100%);
   }
 </style>
