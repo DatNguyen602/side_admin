@@ -26,7 +26,7 @@
                     <% permissions.forEach(permission => { %>
                     <td class="border px-4 py-2 text-center">
                         <label class="block">
-                            <%= (role.permissions.includes(`${model.toLowerCase()}s:${permission}`)) ? '✔️' : '❌' %>
+                            <%= (role.permissions.includes(`${model.toLowerCase()}:${permission}`)) ? '✔️' : '❌' %>
                         </label>
                     </td>
                     <% }) %>
@@ -36,9 +36,9 @@
         </table>
     </div>
     <div class="flex items-center justify-end mt-8">
-        <a href= "<%= '/admin/roles/' + role._id.toString() + '/edit' %>" class="inline-block me-8 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Sửa</a>
+        <a href= "<%= '/admin/roles/' + role._id.toString() + '/edit' %>" class="inline-block me-8 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition duration-300">Sửa</a>
         <a href="/admin/roles"
-        class="inline-block px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition duration-300">
+        class="inline-block px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-500 transition duration-300">
         Quay lại
         </a>
     </div>

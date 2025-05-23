@@ -26,8 +26,8 @@
                         <td class="border px-4 py-2 text-center">
                             <label class="block">
                                 <input type="checkbox" name="permissions" 
-                                       value="<%= `${model}s:${permission}` %>"
-                                       <%= role.permissions.includes(`${model}s:${permission}`) ? 'checked' : '' %> >
+                                       value="<%= `${model}:${permission}` %>"
+                                       <%= role.permissions.includes(`${model}:${permission}`) ? 'checked' : '' %> >
                             </label>
                         </td>
                         <% }) %>
@@ -38,7 +38,7 @@
         </div>
 
         <div class="flex items-center justify-between">
-            <button type="submit" class="mt-4 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 shadow-md">
+            <button type="submit" class="mt-4 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition duration-300 shadow-md">
                 💾 Cập Nhật Role
             </button>
             <a href="/admin/roles"

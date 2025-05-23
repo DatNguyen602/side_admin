@@ -10,16 +10,16 @@
 <%- include('../partials/table', {
   title: title,
   action_new: `
-    ${(perms.includes('users:create')) ? 
+    ${(perms.includes('user:create')) ?
     `<div class="flex px-6 mb-6 justify-between">
-      <a href="/admin/users/new" class="h-10 px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 shadow-md">
+      <a href="/admin/users/new" class="h-10 px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 transition duration-300 shadow-md">
         + Tạo User mới
       </a>
 
       <div class="flex flex-col items-center">
         <form action="/admin/users/import" method="POST" enctype="multipart/form-data">
           <input type="file" name="excelFile" accept=".xlsx,.xls,.csv" required>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Import Excel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition">Import Excel</button>
         </form>
 
         <div class="mt-4 border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
@@ -52,13 +52,14 @@
       </div>
     </div>` : ``}
   `,
+  action_search: '/admin/users',
   headers: [
     { label: 'ID', key: '_id' },
     { label: 'Username', key: 'username' },
     { label: 'Email', key: 'email' },
     { label: 'Role', key: 'role' },
     { label: 'Agency', key: 'agency' },
-    { label: 'Actions', key: 'actions', center: true, minWidth: 'min-w-[9rem]', canAction: !(perms.includes('users:update') || perms.includes('users:delete')) }
+    { label: 'Actions', key: 'actions', center: true, minWidth: 'min-w-[9rem]', canAction: !(perms.includes('user:update') || perms.includes('user:delete')) }
   ],
   rows: users.map(u => ({
     _id: u._id,
@@ -67,13 +68,13 @@
     role: u.role ? u.role.name : '-',
     agency: u.agency ? u.agency.name : '-',
     actions: `
-      ${(perms.includes('users:update')) ? 
-        `<a href="/admin/users/${u._id}/edit" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Sửa</a>` 
+      ${(perms.includes('user:update')) ? 
+        `<a href="/admin/users/${u._id}/edit" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition duration-300">Sửa</a>` 
         : ''}
 
-      ${(perms.includes('users:delete')) ? 
+      ${(perms.includes('user:delete')) ? 
         `<form action="/admin/users/${u._id}/delete" method="POST" class="inline" onsubmit="return confirm('Xóa user này?');">
-          <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300" type="submit">Xóa</button>
+          <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500 transition duration-300" type="submit">Xóa</button>
         </form>` 
         : ''}
     `

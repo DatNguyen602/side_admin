@@ -16,7 +16,7 @@ const Branch = require("../models/Branch");
 const Key = require("../models/Key");
 
 // --- DASHBOARD ---
-router.get("/dashboard", auth, rbac("dashboards:view"), async (req, res) => {
+router.get("/dashboard", auth, rbac("dashboard:view"), async (req, res) => {
     const [userCount, agencyCount, branchCount, keyCount, sessions] =
         await Promise.all([
             User.countDocuments(),
@@ -40,17 +40,39 @@ router.get("/dashboard", auth, rbac("dashboards:view"), async (req, res) => {
 
 // --- USERS CRUD UI ---
 // List users
-router.get("/users", auth, rbac("users:read"), async (req, res) => {
+router.get("/users", auth, rbac("user:read"), async (req, res) => {
     const users = await User.find().populate("role agency");
     res.render("users/list", {
         title: "Users",
         users,
         user: req.user,
+        searchQuery: '',
     });
 });
 
+router.post("/users", auth, rbac("user:read"), async (req, res) => {
+    try {
+        const searchQuery = req.body.q; // Lấy từ khóa tìm kiếm từ query string
+        console.log(req.body);
+        const filter = searchQuery
+            ? { username: { $regex: searchQuery, $options: "i" } } // Nếu có từ khóa, lọc theo name
+            : {}; // Nếu không có từ khóa, lấy tất cả users
+
+        const users = await User.find(filter).populate("role agency");
+
+        res.render("users/list", {
+            title: "Users",
+            users,
+            user: req.user,
+            searchQuery: searchQuery || "", // Giữ giá trị tìm kiếm trên UI
+        });
+    } catch (error) {
+        res.status(500).send("Lỗi khi truy vấn dữ liệu");
+    }
+});
+
 // Show create form
-router.get("/users/new", auth, rbac("users:create"), async (req, res) => {
+router.get("/users/new", auth, rbac("user:create"), async (req, res) => {
     const roles = await Role.find();
     const agencies = await Agency.find();
     res.render("users/form", {
@@ -64,7 +86,7 @@ router.get("/users/new", auth, rbac("users:create"), async (req, res) => {
 });
 
 // Handle create
-router.post("/users/new", auth, rbac("users:create"), async (req, res) => {
+router.post("/users/new", auth, rbac("user:create"), async (req, res) => {
     try {
         const fakeRes = {
             json(obj) {
@@ -153,7 +175,7 @@ router.post("/users/import", auth, upload.single("excelFile"), async (req, res) 
 });
 
 // Show edit form
-router.get("/users/:id/edit", auth, rbac("users:update"), async (req, res) => {
+router.get("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
     const u = await User.findById(req.params.id);
     const roles = await Role.find();
     const agencies = await Agency.find();
@@ -168,7 +190,7 @@ router.get("/users/:id/edit", auth, rbac("users:update"), async (req, res) => {
 });
 
 // Handle update
-router.post("/users/:id/edit", auth, rbac("users:update"), async (req, res) => {
+router.post("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
     try {
         await User.findByIdAndUpdate(req.params.id, req.body);
         res.redirect("/admin/users");
@@ -190,7 +212,7 @@ router.post("/users/:id/edit", auth, rbac("users:update"), async (req, res) => {
 router.post(
     "/users/:id/delete",
     auth,
-    rbac("users:delete"),
+    rbac("user:delete"),
     async (req, res) => {
         await User.findByIdAndDelete(req.params.id);
         res.redirect("/admin/users");
@@ -199,7 +221,7 @@ router.post(
 
 // --- AGENCIES CRUD UI ---
 // List
-router.get("/agencies", auth, rbac("agencies:read"), async (req, res) => {
+router.get("/agencies", auth, rbac("agency:read"), async (req, res) => {
     const agencies = await Agency.find();
     res.render("agencies/list", {
         title: "Agencies",
@@ -209,7 +231,7 @@ router.get("/agencies", auth, rbac("agencies:read"), async (req, res) => {
 });
 
 // Create form
-router.get("/agencies/new", auth, rbac("agencies:create"), (req, res) => {
+router.get("/agencies/new", auth, rbac("agency:create"), (req, res) => {
     res.render("agencies/form", {
         title: "Tạo Agency",
         agency: {},
@@ -222,7 +244,7 @@ router.get("/agencies/new", auth, rbac("agencies:create"), (req, res) => {
 router.post(
     "/agencies/new",
     auth,
-    rbac("agencies:create"),
+    rbac("agency:create"),
     async (req, res) => {
         try {
             await Agency.create(req.body);
@@ -242,7 +264,7 @@ router.post(
 router.get(
     "/agencies/:id/edit",
     auth,
-    rbac("agencies:update"),
+    rbac("agency:update"),
     async (req, res) => {
         const a = await Agency.findById(req.params.id);
         res.render("agencies/form", {
@@ -258,7 +280,7 @@ router.get(
 router.post(
     "/agencies/:id/edit",
     auth,
-    rbac("agencies:update"),
+    rbac("agency:update"),
     async (req, res) => {
         try {
             await Agency.findByIdAndUpdate(req.params.id, req.body);
@@ -278,7 +300,7 @@ router.post(
 router.post(
     "/agencies/:id/delete",
     auth,
-    rbac("agencies:delete"),
+    rbac("agency:delete"),
     async (req, res) => {
         await Agency.findByIdAndDelete(req.params.id);
         res.redirect("/admin/agencies");
@@ -287,7 +309,7 @@ router.post(
 
 // --- BRANCHES CRUD UI ---
 // List
-router.get("/branches", auth, rbac("branches:read"), async (req, res) => {
+router.get("/branches", auth, rbac("branch:read"), async (req, res) => {
     const branches = await Branch.find().populate("agency");
     res.render("branches/list", {
         title: "Branches",
@@ -297,7 +319,7 @@ router.get("/branches", auth, rbac("branches:read"), async (req, res) => {
 });
 
 // Create form
-router.get("/branches/new", auth, rbac("branches:create"), async (req, res) => {
+router.get("/branches/new", auth, rbac("branch:create"), async (req, res) => {
     const agencies = await Agency.find();
     res.render("branches/form", {
         title: "Tạo Branch",
@@ -312,7 +334,7 @@ router.get("/branches/new", auth, rbac("branches:create"), async (req, res) => {
 router.post(
     "/branches/new",
     auth,
-    rbac("branches:create"),
+    rbac("branch:create"),
     async (req, res) => {
         try {
             await Branch.create(req.body);
@@ -334,7 +356,7 @@ router.post(
 router.get(
     "/branches/:id/edit",
     auth,
-    rbac("branches:update"),
+    rbac("branch:update"),
     async (req, res) => {
         const b = await Branch.findById(req.params.id);
         const agencies = await Agency.find();
@@ -352,7 +374,7 @@ router.get(
 router.post(
     "/branches/:id/edit",
     auth,
-    rbac("branches:update"),
+    rbac("branch:update"),
     async (req, res) => {
         try {
             await Branch.findByIdAndUpdate(req.params.id, req.body);
@@ -374,7 +396,7 @@ router.post(
 router.post(
     "/branches/:id/delete",
     auth,
-    rbac("branches:delete"),
+    rbac("branch:delete"),
     async (req, res) => {
         await Branch.findByIdAndDelete(req.params.id);
         res.redirect("/admin/branches");
@@ -383,7 +405,7 @@ router.post(
 
 // --- KEYS CRUD UI ---
 // List
-router.get("/keys", auth, rbac("keys:read"), async (req, res) => {
+router.get("/keys", auth, rbac("key:read"), async (req, res) => {
     const keys = await Key.find().populate({
         path: "branch",
         populate: "agency",
@@ -392,7 +414,7 @@ router.get("/keys", auth, rbac("keys:read"), async (req, res) => {
 });
 
 // Create form
-router.get("/keys/new", auth, rbac("keys:create"), async (req, res) => {
+router.get("/keys/new", auth, rbac("key:create"), async (req, res) => {
     const branches = await Branch.find().populate("agency");
     const users = await User.find();
     res.render("keys/form", {
@@ -406,7 +428,7 @@ router.get("/keys/new", auth, rbac("keys:create"), async (req, res) => {
 });
 
 // Handle create
-router.post("/keys/new", auth, rbac("keys:create"), async (req, res) => {
+router.post("/keys/new", auth, rbac("key:create"), async (req, res) => {
     try {
         const { branchId, userIds, dateStartUse, dateEndUse } = req.body;
         // Chuyển đổi ngày để kiểm tra
@@ -453,7 +475,7 @@ router.post("/keys/new", auth, rbac("keys:create"), async (req, res) => {
 });
 
 // GET edit page
-router.get("/keys/:id/edit", auth, rbac("keys:update"), async (req, res) => {
+router.get("/keys/:id/edit", auth, rbac("key:update"), async (req, res) => {
     const key = await Key.findById(req.params.id).populate("branch").lean();
     const branches = await Branch.find().populate("agency").lean();
     const users = await User.find().populate("agency").lean();
@@ -467,7 +489,7 @@ router.get("/keys/:id/edit", auth, rbac("keys:update"), async (req, res) => {
 });
 
 // POST update
-router.post("/keys/:id/edit", auth, rbac("keys:update"), async (req, res) => {
+router.post("/keys/:id/edit", auth, rbac("key:update"), async (req, res) => {
     const { branchId, dateStartUse, dateEndUse, userIds, status } = req.body;
 
     try {
@@ -491,7 +513,7 @@ router.post("/keys/:id/edit", auth, rbac("keys:update"), async (req, res) => {
 });
 
 // Delete
-router.post("/keys/:id/delete", auth, rbac("keys:delete"), async (req, res) => {
+router.post("/keys/:id/delete", auth, rbac("key:delete"), async (req, res) => {
     await Key.findByIdAndDelete(req.params.id);
     res.redirect("/admin/keys");
 });

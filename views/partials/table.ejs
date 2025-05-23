@@ -2,8 +2,17 @@
 
 <%- action_new %>
 
+<% if (action_search) { %>
+  <form action="<%= action_search %>" method="POST" class="flex justify-end gap-2 mb-4">
+      <input type="text" name="q" value="<%= searchQuery %>" placeholder="Tìm kiếm user..."
+          class="px-4 py-1 me-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button type="submit"
+          class="px-4 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition">Tìm kiếm</button>
+  </form>
+<% } %>
+
 <div class="overflow-x-auto w-full mx-auto">
-  <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+  <table class="min-w-full border border-gray-300 rounded-lg overflow-x-scroll shadow-sm">
     <thead class="bg-gray-100">
       <tr>
         <% headers.forEach(h => { %>

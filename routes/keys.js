@@ -12,6 +12,6 @@ router.post("/session/login", c.loginAndCreateSession);
 router.post("/session/cancel", c.cancelSession);
 router.post("/session/logout", c.loginAndCancelSession);
 // Chỉ admin hoặc người có quyền đọc session mới xem được
-router.get("/sessions", rbac("sessions:read"), c.listSessions);
+router.get("/sessions", rbac("session:read"), c.listSessions);
 
 module.exports = router;

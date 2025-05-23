@@ -1,28 +1,49 @@
 <% layout('layouts/main') %>
 
+<% 
+  // Nếu res.locals.user chưa được set (undefined), gán về object rỗng
+  const perms = (typeof user !== 'undefined' && user && user.permissions) 
+                ? user.permissions 
+                : []; 
+%>
+
 <h2 class="font-bold">Admin Dashboard</h2>
+<hr>
 <div class="container flex justify-center flex-wrap gap-1 p-4 mb-6">
-  <div class="card w-[90%] rounded-xl bg-gray-200 p-4">
+  <a href= "<%= (perms.includes('user:read')) ? '/admin/users' : '' %>" 
+    class="card w-[90%] rounded-xl bg-gray-200 
+    <%= (perms.includes('user:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    p-4 transition">
     <h2 class="">Users</h2>
     <p class="px-4"><%= stats.userCount %></p>
-  </div>
-  <div class="card w-[90%] rounded-xl bg-gray-200 p-4">
+  </a>
+  <a href= "<%= (perms.includes('agency:read')) ? '/admin/agencies' : '' %>" 
+    class="card w-[90%] rounded-xl bg-gray-200 
+    <%= (perms.includes('agency:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    p-4 transition">
     <h2 class="">Agencies</h2>
     <p class="px-4"><%= stats.agencyCount %></p>
-  </div>
-  <div class="card w-[90%] rounded-xl bg-gray-200 p-4">
+  </a>
+  <a href= "<%= (perms.includes('branch:read')) ? '/admin/branches' : '' %>" 
+    class="card w-[90%] rounded-xl bg-gray-200 
+    <%= (perms.includes('branch:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    p-4 transition">
     <h2 class="">Branches</h2>
     <p class="px-4"><%= stats.branchCount %></p>
-  </div>
-  <div class="card w-[90%] rounded-xl bg-gray-200 p-4">
-    <h2 class="">Active Keys</h2>
+  </a>
+  <a href= "<%= (perms.includes('key:read')) ? '/admin/keys' : '' %>" 
+    class="card w-[90%] rounded-xl bg-gray-200 
+    <%= (perms.includes('key:read')) ? 'hover:bg-gray-300' : 'text-gray-500' %> 
+    p-4 transition">
+    <h2 class="">Keys</h2>
     <p class="px-4"><%= stats.keyCount %></p>
-  </div>
+  </a>
 </div>
 
 <h2 class="font-bold">Phiên làm việc gần đây</h2>
-<div class="overflow-x-auto mx-auto max-w-6xl px-4"></div>
-  <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+<hr>
+<div class="overflow-x-auto mx-auto mt-4 max-w-6xl px-4"></div>
+  <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden overflow-x-scroll shadow-sm">
     <thead class="bg-gray-100">
       <tr>
         <th class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300">User</th>

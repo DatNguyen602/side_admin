@@ -151,7 +151,7 @@ Trả về danh sách tất cả key (có populate branch & agency).
 
 **GET** `/api/v1/keys/sessions`
 
-> Yêu cầu quyền `sessions:read`.
+> Yêu cầu quyền `session:read`.
 
 Trả về danh sách các phiên làm việc đang hoạt động hoặc đã kết thúc.
 
