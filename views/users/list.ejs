@@ -12,9 +12,14 @@
   action_new: `
     ${(perms.includes('user:create')) ?
     `<div class="flex px-6 mb-6 justify-between relative">
-      <a href="/admin/users/new" class="h-10 px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 transition duration-300 shadow-md">
-        + Tạo User mới
-      </a>
+      <div class="flex">
+        <a href="/admin/users/new" class="trapezoid1 w-32 h-10 mb-4 px-5 py-2 bg-green-600 text-white rounded-l-md hover:bg-green-500 transition duration-300 shadow-md">
+          + User
+        </a>
+        <a href="/admin/users/manual-bulk" class="trapezoid2 ms-[-15px] text-center w-32 h-10 px-5 py-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-500 transition duration-300 shadow-md">
+          + Users
+        </a>
+      </div>
 
       <div class="flex flex-col">
         <form action="/admin/users/import" method="POST" enctype="multipart/form-data">
@@ -85,5 +90,13 @@
 <style>
   #example:hover + #examplefile {
     display: block;
+  }
+
+  .trapezoid1 {
+    clip-path: polygon(0% 100%, 0% 0%, 100% 0%, 85% 100%);
+  }
+
+  .trapezoid2 {
+    clip-path: polygon(0% 100%, 15% 0%, 100% 0%, 100% 100%);
   }
 </style>

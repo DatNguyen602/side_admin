@@ -175,6 +175,59 @@ router.post("/users/import", auth, upload.single("excelFile"), async (req, res) 
     }
 });
 
+router.get('/users/manual-bulk', auth, async (req, res) => {
+  const roles = await Role.find();
+  const agencies = await Agency.find();
+  res.render('users/bulk', { 
+    title: 'Tạo nhiều user thủ công', 
+    user: req.user,
+    roles, 
+    agencies, 
+    errors: null, 
+    success: null 
+});
+});
+
+router.post('/users/manual-bulk', auth, async (req, res) => {
+  const roles = await Role.find();
+  const agencies = await Agency.find();
+  const users = req.body.users || [];
+
+  let successCount = 0;
+  const errors = [];
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    try {
+      const exists = await User.findOne({ $or: [{ username: user.username }, { email: user.email }] });
+      if (exists) {
+        errors.push(`Dòng ${i + 1}: Username hoặc Email đã tồn tại`);
+        continue;
+      }
+
+      const newUser = new User({
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        role: user.role,
+        agency: user.agency
+      });
+
+      await newUser.save();
+      successCount++;
+    } catch (err) {
+      errors.push(`Dòng ${i + 1}: Lỗi không xác định`);
+    }
+  }
+
+    res.render("users/list", {
+        title: "Users",
+        users: await User.find().populate("role agency"),
+        user: req.user,
+        searchQuery: '',
+    });
+});
+
 // Show edit form
 router.get("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
     const u = await User.findById(req.params.id);
@@ -192,6 +245,8 @@ router.get("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
 
 // Handle update
 router.post("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
+    console.log(req.params)
+    console.log(req.body)
     try {
         await User.findByIdAndUpdate(req.params.id, req.body);
         res.redirect("/admin/users");

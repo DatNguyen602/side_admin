@@ -1,0 +1,65 @@
+<% layout('layouts/main') %>
+
+<div class="h-full py-10 px-4">
+  <div class="bg-white w-full max-w-6xl mx-auto p-8 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center"><%= title %></h1>
+
+    <% if (errors) { %>
+      <div class="text-red-500 font-semibold mb-4 text-left"><%- errors %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="text-green-500 font-semibold mb-4 text-center"><%= success %></div>
+    <% } %>
+
+    <form method="POST" action="/admin/users/manual-bulk" id="bulkForm">
+      <table class="w-full table-auto border-collapse mb-6" id="userTable">
+        <thead>
+          <tr class="bg-gray-100 text-left">
+            <th class="p-2">Username</th>
+            <th class="p-2">Email</th>
+            <th class="p-2">Password</th>
+            <th class="p-2">Role</th>
+            <th class="p-2">Agency</th>
+            <th class="p-2">Xoá</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input name="users[0][username]" required class="border p-2 w-full" /></td>
+            <td><input name="users[0][email]" required class="border p-2 w-full" /></td>
+            <td><input name="users[0][password]" required type="password" class="border p-2 w-full" /></td>
+            <td>
+              <select name="users[0][role]" required class="border p-2 w-full">
+                <option value="">--Role--</option>
+                <% roles.forEach(r => { %>
+                  <option value="<%= r._id %>"><%= r.name %></option>
+                <% }) %>
+              </select>
+            </td>
+            <td>
+              <select name="users[0][agency]" required class="border p-2 w-full">
+                <option value="">--Agency--</option>
+                <% agencies.forEach(a => { %>
+                  <option value="<%= a._id %>"><%= a.name %></option>
+                <% }) %>
+              </select>
+            </td>
+            <td><button type="button" class="deleteRowBtn w-full text-center text-red-500">🗑️</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="flex justify-between">
+        <button type="button" id="addRowBtn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md font-medium">+ Thêm dòng</button>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-semibold">Tạo User</button>
+      </div>
+      <div class="flex justify-end">
+        <a href="/admin/users"
+            class="p-4 text-gray-600 hover:text-red-600 font-medium transition duration-150">Hủy</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/manual-bulk.js"></script>
+
