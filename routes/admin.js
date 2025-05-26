@@ -6,7 +6,7 @@ const rbac = require("../middleware/rbac");
 const { register } = require("../controllers/authController");
 const Session = require("../models/Session");
 const mongoose = require("mongoose");
-const path = require('path');
+const path = require("path");
 require("dotenv").config(); // Import dotenv
 
 // Models
@@ -47,7 +47,7 @@ router.get("/users", auth, rbac("user:read"), async (req, res) => {
         title: "Users",
         users,
         user: req.user,
-        searchQuery: '',
+        searchQuery: "",
     });
 });
 
@@ -136,95 +136,114 @@ const multer = require("multer");
 const xlsx = require("xlsx");
 const upload = multer({ dest: "uploads/" });
 
-router.post("/users/import", auth, upload.single("excelFile"), async (req, res) => {
-    try {
-        const allowedTypes = [".xlsx", ".xls", ".csv"];
-        console.log(req.file.originalname)
-        const ext = path.extname(req.file.originalname).toLowerCase();
-        if (!allowedTypes.includes(ext)) {
-            return res
-                .status(400)
-                .send("Chỉ chấp nhận file Excel (.xlsx, .xls, .csv)");
+router.post(
+    "/users/import",
+    auth,
+    upload.single("excelFile"),
+    async (req, res) => {
+        try {
+            const allowedTypes = [".xlsx", ".xls", ".csv"];
+            console.log(req.file.originalname);
+            const ext = path.extname(req.file.originalname).toLowerCase();
+            if (!allowedTypes.includes(ext)) {
+                return res
+                    .status(400)
+                    .send("Chỉ chấp nhận file Excel (.xlsx, .xls, .csv)");
+            }
+
+            const workbook = xlsx.readFile(req.file.path);
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const data = xlsx.utils.sheet_to_json(sheet);
+
+            const usersToInsert = await Promise.all(
+                data.map(async (row) => {
+                    const role = await Role.findOne({ name: row.role });
+                    const agency = await Agency.findOne({ name: row.agency });
+
+                    return {
+                        username: row.username,
+                        email: row.email,
+                        password: row.password, // sẽ hash trong model
+                        role: role?._id,
+                        agency: agency?._id,
+                    };
+                })
+            );
+
+            await User.insertMany(usersToInsert);
+
+            res.redirect("/admin/users");
+        } catch (err) {
+            console.error("Import error:", err);
+            res.status(500).send("Đã xảy ra lỗi khi import users");
         }
-
-        const workbook = xlsx.readFile(req.file.path);
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const data = xlsx.utils.sheet_to_json(sheet);
-
-        const usersToInsert = await Promise.all(
-            data.map(async (row) => {
-                const role = await Role.findOne({ name: row.role });
-                const agency = await Agency.findOne({ name: row.agency });
-
-                return {
-                    username: row.username,
-                    email: row.email,
-                    password: row.password, // sẽ hash trong model
-                    role: role?._id,
-                    agency: agency?._id,
-                };
-            })
-        );
-
-        await User.insertMany(usersToInsert);
-
-        res.redirect("/admin/users");
-    } catch (err) {
-        console.error("Import error:", err);
-        res.status(500).send("Đã xảy ra lỗi khi import users");
     }
-});
+);
 
-router.get('/users/manual-bulk', auth, async (req, res) => {
-  const roles = await Role.find();
-  const agencies = await Agency.find();
-  res.render('users/bulk', { 
-    title: 'Tạo nhiều user thủ công', 
-    user: req.user,
-    roles, 
-    agencies, 
-    errors: null, 
-    success: null 
-});
-});
-
-router.post('/users/manual-bulk', auth, async (req, res) => {
-  const roles = await Role.find();
-  const agencies = await Agency.find();
-  const users = req.body.users || [];
-
-  let successCount = 0;
-  const errors = [];
-
-  for (let i = 0; i < users.length; i++) {
-    const user = users[i];
-    try {
-      const exists = await User.findOne({ $or: [{ username: user.username }, { email: user.email }] });
-      if (exists) {
-        errors.push(`Dòng ${i + 1}: Username hoặc Email đã tồn tại`);
-        continue;
-      }
-
-      const newUser = new User({
-        username: user.username,
-        email: user.email,
-        password: user.password,
-        role: user.role,
-        agency: user.agency
-      });
-
-      await newUser.save();
-      successCount++;
-    } catch (err) {
-      errors.push(`Dòng ${i + 1}: Lỗi không xác định`);
-    }
-  }
-
-    res.render("users/list", {
-        title: "Users",
-        users: await User.find().populate("role agency"),
+router.get("/users/manual-bulk", auth, async (req, res) => {
+    const roles = await Role.find();
+    const agencies = await Agency.find();
+    res.render("users/bulk", {
+        title: "Tạo nhiều user",
         user: req.user,
-        searchQuery: '',
+        roles,
+        agencies,
+        errors: null,
+        success: null,
+    });
+});
+
+router.post("/users/manual-bulk", auth, async (req, res) => {
+    const roles = await Role.find();
+    const agencies = await Agency.find();
+    const users = {
+        username: req.body.username || [],
+        email: req.body.email || [],
+        password: req.body.password || [],
+        role: req.body.role || [],
+        agency: req.body.agency || [],
+    };
+    const username = req.body.username || [];
+    const email = req.body.email || [];
+    const password = req.body.password || [];
+    const role = req.body.role || [];
+    const agency = req.body.agency || [];
+
+    const success = [];
+    const errors = [];
+
+    for (let i = 0; i < username.length; i++) {
+        try {
+            const exists = await User.findOne({
+                $or: [{ username: username[i] }, { email: email[i] }],
+            });
+            if (exists) {
+                errors.push(`Dòng ${i + 1}: Username hoặc Email đã tồn tại`);
+                continue;
+            }
+
+            const newUser = new User({
+                username: username[i],
+                email: email[i],
+                password: password[i],
+                role: role[i],
+                agency: agency[i],
+            });
+
+            await newUser.save();
+            success.push(`Đã đăng ký thành công: ${username[i]}`);
+        } catch (err) {
+            errors.push(`Dòng ${i + 1}: Lỗi không xác định`);
+        }
+    }
+
+    res.render("users/bulk", {
+        title: "Tạo nhiều user",
+        user: req.user,
+        roles,
+        agencies,
+        errors: errors,
+        success: success,
     });
 });
 
@@ -245,8 +264,8 @@ router.get("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
 
 // Handle update
 router.post("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
-    console.log(req.params)
-    console.log(req.body)
+    console.log(req.params);
+    console.log(req.body);
     try {
         await User.findByIdAndUpdate(req.params.id, req.body);
         res.redirect("/admin/users");
@@ -297,24 +316,19 @@ router.get("/agencies/new", auth, rbac("agency:create"), (req, res) => {
 });
 
 // Handle create
-router.post(
-    "/agencies/new",
-    auth,
-    rbac("agency:create"),
-    async (req, res) => {
-        try {
-            await Agency.create(req.body);
-            res.redirect("/admin/agencies");
-        } catch (err) {
-            res.render("agencies/form", {
-                title: "Tạo Agency",
-                agency: req.body,
-                user: req.user,
-                errors: err.message,
-            });
-        }
+router.post("/agencies/new", auth, rbac("agency:create"), async (req, res) => {
+    try {
+        await Agency.create(req.body);
+        res.redirect("/admin/agencies");
+    } catch (err) {
+        res.render("agencies/form", {
+            title: "Tạo Agency",
+            agency: req.body,
+            user: req.user,
+            errors: err.message,
+        });
     }
-);
+});
 
 // Edit form
 router.get(
@@ -387,26 +401,21 @@ router.get("/branches/new", auth, rbac("branch:create"), async (req, res) => {
 });
 
 // Handle create
-router.post(
-    "/branches/new",
-    auth,
-    rbac("branch:create"),
-    async (req, res) => {
-        try {
-            await Branch.create(req.body);
-            res.redirect("/admin/branches");
-        } catch (err) {
-            const agencies = await Agency.find();
-            res.render("branches/form", {
-                title: "Tạo Branch",
-                branch: req.body,
-                agencies,
-                user: req.user,
-                errors: err.message,
-            });
-        }
+router.post("/branches/new", auth, rbac("branch:create"), async (req, res) => {
+    try {
+        await Branch.create(req.body);
+        res.redirect("/admin/branches");
+    } catch (err) {
+        const agencies = await Agency.find();
+        res.render("branches/form", {
+            title: "Tạo Branch",
+            branch: req.body,
+            agencies,
+            user: req.user,
+            errors: err.message,
+        });
     }
-);
+});
 
 // Edit form
 router.get(
@@ -588,11 +597,15 @@ router.get("/roles", auth, async (req, res) => {
 const getModels = () => {
     return [
         "dashboard",
-        ...Object.keys(mongoose.models).filter((model) => model !== "Role").map(x => x.toLowerCase())
+        ...Object.keys(mongoose.models)
+            .filter((model) => model !== "Role")
+            .map((x) => x.toLowerCase()),
     ];
 };
 
-const permissions = process.env.PERMISSIONS ? process.env.PERMISSIONS.split(",") : [];
+const permissions = process.env.PERMISSIONS
+    ? process.env.PERMISSIONS.split(",")
+    : [];
 
 // Route hiển thị danh sách quyền theo Role
 router.get("/roles/:id/view", auth, async (req, res) => {
@@ -619,8 +632,6 @@ router.get("/roles/new", async (req, res) => {
 // Tạo mới Role
 router.post("/roles/create", auth, async (req, res) => {
     const { name, permissions } = req.body;
-    console.log(name);
-    console.log(permissions);
     const newRole = new Role({ name, permissions: permissions });
     await newRole.save();
     res.redirect("/admin/roles");
@@ -631,15 +642,23 @@ router.get("/roles/:id/edit", auth, async (req, res) => {
     if (!role) return res.status(404).send("Role không tồn tại");
 
     const models = getModels();
-    
-    res.render("roles/edit", { title: `Chỉnh Sửa Role ${role.name}`, role, models, permissions });
+
+    res.render("roles/edit", {
+        title: `Chỉnh Sửa Role ${role.name}`,
+        role,
+        models,
+        permissions,
+    });
 });
 
 // Chỉnh sửa Role
 router.post("/roles/:id/edit", auth, async (req, res) => {
     const { name, permissions } = req.body;
 
-    await Role.findByIdAndUpdate(req.params.id, { name, permissions: permissions });
+    await Role.findByIdAndUpdate(req.params.id, {
+        name,
+        permissions: permissions,
+    });
     res.redirect(`/admin/roles/${req.params.id}/view`);
 });
 

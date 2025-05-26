@@ -73,36 +73,36 @@ router.get('/register', async (req, res) => {
 
 // POST register
 router.post('/register', async (req, res) => {
-  try {
-    const fakeRes = {
-      json(obj) { this.data = obj; },
-      status(code) { this.statusCode = code; return this; }
-    };
-    console.log(fakeRes);
-    await register({ body: req.body }, fakeRes);
+  //try {
+  //  const fakeRes = {
+  //    json(obj) { this.data = obj; },
+  //    status(code) { this.statusCode = code; return this; }
+  //  };
+  //  console.log(fakeRes);
+  //  await register({ body: req.body }, fakeRes);
 
-    if (fakeRes.statusCode >= 400) {
-      // nếu lỗi cần render lại form cùng agencies
-      const agencies = await Agency.find().sort('name');
-      return res.render('register', {
-        title: 'Tạo tài khoản',
-        error: fakeRes.data.error,
-        query: req.query,
-        agencies
-      });
-    }
+  //  if (fakeRes.statusCode >= 400) {
+  //    // nếu lỗi cần render lại form cùng agencies
+  //    const agencies = await Agency.find().sort('name');
+  //    return res.render('register', {
+  //      title: 'Tạo tài khoản',
+  //      error: fakeRes.data.error,
+  //      query: req.query,
+  //      agencies
+  //    });
+  //  }
 
-    res.redirect('/login?registered=1');
-  } catch (err) {
-    console.log(err)
-    const agencies = await Agency.find().sort('name');
+  //  res.redirect('/login?registered=1');
+  //} catch (err) {
+  //  console.log(err)
+    const agencies = await Agency.find(); //. .sort('name');
     res.render('register', {
       title: 'Tạo tài khoản',
       error: 'Server error',
       query: req.query,
       agencies
     });
-  }
+  //}
 });
 
 // GET logout

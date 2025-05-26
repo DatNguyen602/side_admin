@@ -20,7 +20,7 @@ function updateTime() {
       const timeFormatted = `${hours}:${minutes}:${seconds}`;
 
       // Nối chuỗi hiển thị: thời gian và thông tin vị trí
-      const outputString = `${locationInfo} ${dayOfWeek} | Ngày: ${dateFormatted} | ${timeFormatted}`;
+      const outputString = `${dayOfWeek} | Ngày: ${dateFormatted} | ${timeFormatted}`;
 
       document.getElementById('clock').innerText = outputString;
     }

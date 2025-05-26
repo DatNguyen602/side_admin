@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/User"); // Import model User
-const { sendLoginNotification } = require("../utils/mailer"); // Hàm gửi email
+const { sendLoginNotification, sendEmail } = require("../utils/mailer"); // Hàm gửi email
 const auth = require("../middleware/auth");
 
 const router = express.Router();
@@ -34,7 +34,7 @@ router.post("/send-email", auth, async (req, res) => {
         const email = req.body.email || req.body.customEmail; // Lấy email từ select hoặc input
         if (!email) return res.status(400).send("Email không hợp lệ!");
 
-        await sendLoginNotification(email, "User", "Nội dung email...");
+        await sendEmail(email, req.body.emailSubject, req.body.emailContent);
         res.render("utils/send-email", {
             users: users,
             title: "Email",

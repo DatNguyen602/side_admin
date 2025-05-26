@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newRow = userTable.rows[0].cloneNode(true);
 
     [...newRow.querySelectorAll('input, select')].forEach(el => {
-      el.name = el.name.replace(/\[\d+\]/, `[${rowIndex}]`);
+      //el.name = el.name.replace(/\[\d+\]/, `[${rowIndex}]`);
       el.value = '';
     });
 
