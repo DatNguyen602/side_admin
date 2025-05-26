@@ -13,7 +13,23 @@ exports.list = (req, res) =>
 exports.verify = async (req, res) => {
     const key = await Key.findOne({ token: req.params.token });
     if (!key) return res.json({ exists: false });
-    res.json({ exists: true, status: key.status });
+    const branch = await Branch.findById(key.branch);
+    const agency = await Agency.findById(branch.agency);
+    res.json({ 
+        exists: true, 
+        key: {
+            token: key.token,
+            dateStartUse: key.dateStartUse,
+            dateEndUse: key.dateEndUse,
+            status: key.status, 
+            branch: {
+                agency: agency.name,
+                branch: branch.name,
+                location: branch.location,
+                description: agency.description
+            }
+        } 
+    });
 };
 
 exports.loginAndCreateSession = async (req, res) => {
@@ -68,8 +84,18 @@ exports.loginAndCreateSession = async (req, res) => {
         message: "Đăng nhập và tạo phiên thành công",
         session,
         user: { username: user.username, email: user.email },
-        branch,
-        agency,
+        infor: {
+            token: key.token,
+            dateStartUse: key.dateStartUse,
+            dateEndUse: key.dateEndUse,
+            status: key.status, 
+            branch: {
+                agency: agency.name,
+                branch: branch.name,
+                location: branch.location,
+                description: agency.description
+            }
+        }
     });
 };
 
@@ -107,13 +133,23 @@ exports.createSession = async (req, res) => {
 
     const branch = await Branch.findById(key.branch);
     const agency = await Agency.findById(branch.agency);
-    const session = await Session.create({ user: userId, key: key });
+    const session = await Session.create({ user: userId, key: key._id });
 
     res.json({
         message: "Phiên làm việc đã được tạo",
         session,
-        branch,
-        agency,
+        infor: {
+            token: key.token,
+            dateStartUse: key.dateStartUse,
+            dateEndUse: key.dateEndUse,
+            status: key.status, 
+            branch: {
+                agency: agency.name,
+                branch: branch.name,
+                location: branch.location,
+                description: agency.description
+            }
+        }
     });
 };
 

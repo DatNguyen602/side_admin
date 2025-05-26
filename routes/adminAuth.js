@@ -5,6 +5,9 @@ const jwt = require("jsonwebtoken");
 const { register, login } = require("../controllers/authController");
 const { sendLoginNotification } = require('../utils/mailer');
 const User = require('../models/User'); // để tìm email user
+const SMRouter = require('../routes/socialmediaRouter');
+
+router.use('/', SMRouter);
 
 // GET login form
 router.get("/login", (req, res) => {

@@ -81,7 +81,7 @@ http://localhost:5000/
 
 #### b. Dùng `username/password` và `token`
 
-**POST** `/api/keys/session/login`
+**POST** `/api/v1/keys/session/login`
 
 **Request body:**
 ```json
@@ -110,7 +110,7 @@ http://localhost:5000/
 
 #### b. Dùng `username/password` và `token`
 
-**POST** `/api/keys/session/logout`
+**POST** `/api/v1/keys/session/logout`
 
 **Request body:**
 ```json

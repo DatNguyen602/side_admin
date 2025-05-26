@@ -563,7 +563,7 @@ router.post("/keys/:id/edit", auth, rbac("key:update"), async (req, res) => {
             dateStartUse,
             dateEndUse,
             status,
-            userIds: Array.isArray(userIds) ? userIds : [userIds],
+            userIds: Array.isArray(userIds) ? userIds : userIds ? [userIds] : [],
         });
         res.redirect("/admin/keys");
     } catch (err) {
@@ -657,7 +657,7 @@ router.post("/roles/:id/edit", auth, async (req, res) => {
 
     await Role.findByIdAndUpdate(req.params.id, {
         name,
-        permissions: permissions,
+        permissions: permissions ?? [],
     });
     res.redirect(`/admin/roles/${req.params.id}/view`);
 });

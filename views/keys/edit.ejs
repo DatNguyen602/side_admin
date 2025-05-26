@@ -27,7 +27,7 @@
         <div class="w-[50%] max-w-64">
           <label class="block font-medium mb-1">Ngày bắt đầu</label>
           <input type="date" name="dateStartUse" required 
-            min="<%= new Date().toISOString().split('T')[0] %>"
+            min="<%= key.dateStartUse ? key.dateStartUse.toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
             value="<%= key.dateStartUse ? key.dateStartUse.toISOString().split('T')[0] : '' %>"
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"/>
         </div>
@@ -35,7 +35,7 @@
         <div class="w-[50%] max-w-64">
           <label class="block font-medium mb-1">Ngày kết thúc</label>
           <input type="date" name="dateEndUse" required 
-            min="<%= new Date().toISOString().split('T')[0] %>"
+            min="<%= key.dateEndUse ? key.dateEndUse.toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
             value="<%= key.dateEndUse ? key.dateEndUse.toISOString().split('T')[0] : '' %>"
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"/>
         </div>
@@ -45,12 +45,12 @@
         <label class="block font-medium mb-1">Người dùng</label>
         <select name="userIds" multiple
           class="w-full h-40 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <% users.forEach(user => { %>
+          <% users.forEach(user => { if (user !== null) { %>
             <option value="<%= user._id %>" <%= key.userIds && key.userIds.some(uid => uid.toString() === user._id.toString()) ? 'selected' : '' %>>
               <%= user.username %> (<%= user.email %>)
               <% if (user.agency) { %> - <%= user.agency.name %> <% } %>
             </option>
-          <% }) %>
+          <% } }) %>
         </select>
         <p class="text-sm text-gray-500 mt-1">Giữ Ctrl (hoặc Cmd trên Mac) để chọn nhiều người</p>
       </div>

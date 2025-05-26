@@ -28,7 +28,7 @@
         </form>
 
         <p id="example" class="w-max text-start text-sky-600 hover:text-sky-500 cursor-help">Example file?</p>
-        <div id="examplefile" class="hidden mt-4 border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm absolute right-0 top-full">
+        <div id="examplefile" class="mt-4 border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm absolute right-0 top-full">
           <h3 class="text-lg font-semibold mb-2">📄 Mẫu file Excel:</h3>
           <div class="overflow-x-auto">
             <table class="min-w-full table-auto border border-gray-300 text-sm text-left text-gray-700">
@@ -90,12 +90,13 @@
 <style>
   #examplefile {
     opacity: 0;
-    transition: opacity 5s ease;
+    transition: opacity 0.5s, clip-path 0.5s;
+    clip-path: polygon(0% 0%, 0% 0%, 100% 0%, 100% 0%);
   }
 
   #example:hover + #examplefile {
     opacity: 1;
-    display: block;
+    clip-path: polygon(0% 100%, 0% 0%, 100% 0%, 100% 100%);
   }
 
   .newsbtn{

@@ -1,42 +1,85 @@
 <% layout('layouts/main') %>
 
 <div class="h-full flex items-center justify-center">
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-    <h1 class="text-2xl font-bold text-center mb-6">Tạo tài khoản</h1>
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6">Tạo tài khoản</h1>
 
-    <% if (error) { %>
-      <p class="text-red-500 text-sm text-center mb-4"><%= error %></p>
-    <% } %>
+        <% if (error) { %>
+        <p class="text-red-500 text-sm text-center mb-4"><%= error %></p>
+        <% } %>
 
-    <form class="md:max-w-2xl mx-auto flex flex-col items-center" action="/register" method="post">
+        <form
+            class="md:max-w-2xl mx-auto flex flex-col items-center"
+            action="/register"
+            method="post"
+        >
+            <div class="w-full my-4">
+                <label for="username" class="block font-medium mb-1"
+                    >👤 Username</label
+                >
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Nhập username..."
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+            </div>
 
-      <div class="w-full my-4">
-        <label for="username" class="block font-medium mb-1">👤 Username</label>
-        <input type="text" id="username" name="username" placeholder="Nhập username..." required
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-      </div>
+            <div class="w-full my-4">
+                <label for="email" class="block font-medium mb-1"
+                    >📧 Email</label
+                >
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Nhập email..."
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+            </div>
 
-      <div class="w-full my-4">
-        <label for="email" class="block font-medium mb-1">📧 Email</label>
-        <input type="email" id="email" name="email" placeholder="Nhập email..." required
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-      </div>
+            <div class="w-full my-4 relative">
+                <label for="password" class="block font-medium mb-1"
+                    >🔒 Password</label
+                >
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Nhập mật khẩu..."
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
 
-      <div class="w-full my-4">
-        <label for="password" class="block font-medium mb-1">🔒 Password</label>
-        <input type="password" id="password" name="password" placeholder="Nhập mật khẩu..." required
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-      </div>
+                <button
+                    type="button"
+                    id="togglePassword"
+                    class="absolute right-3 top-9 text-gray-500 focus:outline-none"
+                >
+                  <i class="fa-regular text-xl fa-eye"></i>
+                </button>
+            </div>
 
-      <button type="submit"
-        class="px-8 py-2 my-3 bg-blue-500 rounded-xl text-gray-200">
-        🚀 Đăng ký ngay
-      </button>
-    </form>
+            <button
+                type="submit"
+                class="px-8 py-2 my-3 bg-blue-500 rounded-xl text-gray-200"
+            >
+                🚀 Đăng ký ngay
+            </button>
+        </form>
 
-    <p class="text-center text-sm mt-4">
-      Đã có tài khoản?
-      <a href="/login" class="text-indigo-500 hover:underline font-semibold">Đăng nhập</a>
-    </p>
-  </div>
+        <p class="text-center text-sm mt-4">
+            Đã có tài khoản?
+            <a
+                href="/login"
+                class="text-indigo-500 hover:underline font-semibold"
+                >Đăng nhập</a
+            >
+        </p>
+    </div>
 </div>
+
+<script src="/js/togglePass.js"></script>

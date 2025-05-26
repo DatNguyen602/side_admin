@@ -8,9 +8,18 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const ejsMate = require("ejs-mate");
 const path = require('path');
+const passport = require('passport');
+const session = require('express-session');
 
 const app = express();
 connectDB();
+
+
+app.use(session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: true
+}));
 
 // Cấu hình view engine (ví dụ dùng EJS)
 app.engine("ejs", ejsMate);
@@ -23,6 +32,9 @@ app.use((req, res, next) => {
   res.locals.user = req.user || null;
   next();
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(helmet());
 app.use(cors({ origin: process.env.APP_ORIGIN.split(",") }));
