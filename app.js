@@ -45,7 +45,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(helmet());
-app.use(cors({ origin: process.env.APP_ORIGIN.split(",") }));
+app.use(cors({
+  origin: process.env.APP_ORIGIN.split(","),
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Authorization", "Content-Type"],
+}));
 app.use(express.json());
 // app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.urlencoded({ extended: false })); // để parse form-encoded
@@ -61,6 +66,7 @@ app.use("/admin", require("./routes/admin"));
 app.use("/viewer", require("./routes/viewer"));
 app.use("/", require("./routes/adminAuth"));
 app.use("/mail", require("./routes/emailRouter"));
+app.use("/file", require("./routes/upload"));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'public/js'))); // nếu cần
 app.get('*', (req, res, next) => {

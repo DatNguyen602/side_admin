@@ -29,7 +29,7 @@ const initializeSignaling = (server) => {
     });
 
     io.use(async (socket, next) => {
-        const token = socket.handshake.headers?.token;
+        const token = socket.handshake.headers?.token ?? socket.handshake.auth?.token;
         console.log(socket.handshake)
         if (!token) {
             console.log("❌ No token provided");
@@ -137,10 +137,13 @@ const handleEvent = {
 
     "message": async (socket, { room, content }, io) => {
         const sender = socket.userId;
+        console.log(sender);
+        console.log(room);
+        console.log(content);
         if (!room || !content || !sender) return;
 
         const r = await Room.findById(room);
-        if (!r || !r.members.includes(sender)) {
+        if (!r || !r.members.some(m => m.user.toString() === sender.toString())) {
             io.to(room).emit("message", {
                 socketId: socket.id,
                 message: { error: "Room not found or access denied" }

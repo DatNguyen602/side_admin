@@ -55,18 +55,27 @@ router.get('/temp', auth, (req, res) => {
 router.post("/friends/add", auth, async (req, res) => {
     const userId1 = req.user.id;
     const { userId2 } = req.body;
-    console.log(userId1 + '\n' + userId2);
+
     try {
         let existingRoom = await Room.findOne({
             isGroup: false,
-            members: { $all: [userId1, userId2], $size: 2 }
+            members: {
+                $all: [
+                    { $elemMatch: { user: userId1 } },
+                    { $elemMatch: { user: userId2 } }
+                ],
+                $size: 2
+            }
         });
 
         if (existingRoom) return res.json(existingRoom);
 
         const newRoom = new Room({
             isGroup: false,
-            members: [userId1, userId2]
+            members: [
+                { user: userId1, role: "member" },
+                { user: userId2, role: "member" }
+            ]
         });
 
         await newRoom.save();
@@ -79,7 +88,7 @@ router.post("/friends/add", auth, async (req, res) => {
 router.get("/rooms", auth, async (req, res) => {
     const userId = req.user.id;
     try {
-        const rooms = await Room.find({ members: userId })
+        const rooms = await Room.find({ "members.user": userId })
             .populate("members", "username avatar state")
             .sort({ createdAt: -1 });
         res.json(rooms);
@@ -88,10 +97,15 @@ router.get("/rooms", auth, async (req, res) => {
     }
 });
 
-router.get("/messages/:roomId", async (req, res) => {
+router.get("/messages/:roomId", auth, async (req, res) => {
     const { roomId } = req.params;
+    const userId = req.user.id;
     try {
-        const messages = await Message.find({ room: roomId })
+        const r = await Room.findOne({ $and: [ { _id: roomId }, { "members.user": userId }]});
+        if(!r) {
+            return res.status(404).json({ error: "Room notsfount!" });
+        }
+        const messages = await Message.find({ room: r.id })
             .populate("sender", "username avatar")
             .sort({ createdAt: 1 });
         res.json(messages);
@@ -107,21 +121,26 @@ router.get("/list", async (req, res) => {
 
 router.post("/rooms/create", auth, async (req, res) => {
     const { name, memberIds } = req.body;
+    const creatorId = req.user.id;
 
     try {
-        const allMemberIds = [...new Set([...memberIds, req.user.id])]; // loại bỏ trùng lặp
-        const existingUsers = await User.find({ _id: { $in: allMemberIds } }).select('_id');
+        const allMemberIds = [...new Set([...memberIds, creatorId])];
+        const users = await User.find({ _id: { $in: allMemberIds } }).select("_id");
 
-        const validUserIds = existingUsers.map(user => user._id.toString());
-
+        const validUserIds = users.map(user => user._id.toString());
         if (validUserIds.length < 3) {
             return res.status(400).json({ error: "At least 3 valid users required to create a group" });
         }
 
+        const members = validUserIds.map(id => ({
+            user: id,
+            role: id === creatorId ? 'creator' : 'member'
+        }));
+
         const room = new Room({
             name,
             isGroup: true,
-            members: validUserIds
+            members
         });
 
         await room.save();
@@ -132,18 +151,38 @@ router.post("/rooms/create", auth, async (req, res) => {
     }
 });
 
-router.post("/rooms/join", auth, async (req, res) => {
-    const { roomId } = req.body;
+router.post("/rooms/role", auth, async (req, res) => {
+    const { roomId, targetUserId, newRole } = req.body;
     const userId = req.user.id;
+
+    const validRoles = ['admin', 'member', 'creator'];
+    if (!validRoles.includes(newRole)) {
+        return res.status(400).json({ error: "Invalid role" });
+    }
+
     try {
         const room = await Room.findById(roomId);
         if (!room) return res.status(404).json({ error: "Room not found" });
 
-        if (!room.members.includes(userId)) {
-            room.members.push(userId);
-            await room.save();
+        // Kiểm tra người gọi là creator hiện tại
+        const currentCreator = room.members.find(m => m.role === 'creator');
+        if (!currentCreator || currentCreator.user.toString() !== userId) {
+            return res.status(403).json({ error: "Only the creator can change roles" });
         }
 
+        const targetMember = room.members.find(m => m.user.toString() === targetUserId);
+        if (!targetMember) return res.status(404).json({ error: "Target user not in room" });
+
+        if (newRole === 'creator') {
+            // Trao quyền creator cho người khác
+            currentCreator.role = 'admin';
+            targetMember.role = 'creator';
+        } else {
+            // Chỉ đổi sang admin hoặc member
+            targetMember.role = newRole;
+        }
+
+        await room.save();
         res.json(room);
     } catch (err) {
         res.status(500).json({ error: "Server error" });
