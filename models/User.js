@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
     role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
     agency: { type: mongoose.Schema.Types.ObjectId, ref: "Agency" },
     state: { type: String, enum: ['online', 'offline'], require, default: 'online'},
+    lastSeen: { type: Date, default: Date.now },
+    avatar: { type: String, default: '' },
     devices: [
         {
             deviceId: { type: String, required: true, default: '' },
