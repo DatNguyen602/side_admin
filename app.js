@@ -67,8 +67,15 @@ app.use("/viewer", require("./routes/viewer"));
 app.use("/", require("./routes/adminAuth"));
 app.use("/mail", require("./routes/emailRouter"));
 app.use("/file", require("./routes/upload"));
+
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'public/js'))); // nếu cần
+app.use("/uploads", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  next();
+});
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.get('*', (req, res, next) => {
   res.locals.request = req;
   next();
