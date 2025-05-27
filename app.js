@@ -10,16 +10,24 @@ const ejsMate = require("ejs-mate");
 const path = require('path');
 const passport = require('passport');
 const session = require('express-session');
+const http = require("http");
+const { signalingRouter, initializeSignaling } = require("./controllers/signalingController");
+
+require('./config/passport-config');
 
 const app = express();
 connectDB();
-
 
 app.use(session({
     secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: true
 }));
+
+const server = http.createServer(app);
+// Kết hợp signaling vào server chính
+const io = initializeSignaling(server);
+
 
 // Cấu hình view engine (ví dụ dùng EJS)
 app.engine("ejs", ejsMate);
@@ -44,11 +52,13 @@ app.use(express.urlencoded({ extended: false })); // để parse form-encoded
 app.use(cookieParser());
 
 // Routes
+// app.use("/signaling", signalingRouter);
 app.use("/api/v1/users", require("./routes/users"));
 app.use("/api/v1/agencies", require("./routes/agencies"));
 app.use("/api/v1/branches", require("./routes/branches"));
 app.use("/api/v1/keys", require("./routes/keys"));
 app.use("/admin", require("./routes/admin"));
+app.use("/viewer", require("./routes/viewer"));
 app.use("/", require("./routes/adminAuth"));
 app.use("/mail", require("./routes/emailRouter"));
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -66,7 +76,7 @@ app.use((req, res, next) => {
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, 
+server.listen(PORT, 
   () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`http://localhost:${PORT}/login`)

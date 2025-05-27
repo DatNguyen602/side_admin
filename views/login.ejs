@@ -1,7 +1,7 @@
 <% layout('layouts/main') %>
 
 <div class="h-full w-full flex items-center justify-center">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
         <h1 class="text-2xl font-bold text-center mb-6">Đăng nhập</h1>
 
         <% if (error) { %>
@@ -60,14 +60,29 @@
             </button>
         </form>
 
-        <p class="text-center text-sm mt-4">
-            Chưa có tài khoản?
-            <a
+        <div class="flex items-center text-center text-sm mt-4">
+            <hr class="flex-1 border-gray-500">
+            <span class="px-3 text-gray-500">Hoặc chưa có tài khoản?</span>
+            <hr class="flex-1 border-gray-500">
+            <!-- <a
                 href="/register"
                 class="text-indigo-500 hover:underline font-semibold"
                 >Đăng ký</a
-            >
-        </p>
+            > -->
+        </div>
+
+        <!-- Đăng nhập bằng mạng xã hội -->
+        <div class="flex justify-center space-x-3 mt-6">
+            <a href="/auth/google" class="transition duration-500 w-[48px] hover:w-[64px] h-[48px] flex items-center justify-center text-xl px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-full text-center">
+                <i class="fa-brands fa-google"></i>
+            </a>
+            <a href="/auth/facebook" class="transition duration-500 w-[48px] hover:w-[64px] h-[48px] flex items-center justify-center text-xl px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-full text-center">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            <a href="/auth/twitter" class="transition duration-500 w-[48px] hover:w-[64px] h-[48px] flex items-center justify-center text-xl px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full text-center">
+                <i class="fa-brands fa-x-twitter"></i>
+            </a>
+        </div>
     </div>
 </div>
 

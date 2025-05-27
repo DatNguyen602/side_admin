@@ -585,7 +585,7 @@ router.post("/keys/:id/delete", auth, rbac("key:delete"), async (req, res) => {
 
 // List role
 router.get("/roles", auth, async (req, res) => {
-    const roles = await Role.find({ name: { $ne: "admin" } });
+    const roles = await Role.find({ $and: [{ name: { $ne: "admin" } }, { name: { $ne: "viewer" } }] });
     res.render("roles/list", {
         title: "Roles",
         roles,
@@ -632,8 +632,11 @@ router.get("/roles/new", async (req, res) => {
 // Tạo mới Role
 router.post("/roles/create", auth, async (req, res) => {
     const { name, permissions } = req.body;
-    const newRole = new Role({ name, permissions: permissions });
-    await newRole.save();
+    const role = await Role.findOne({name: name});
+    if(!role) {
+        const newRole = new Role({ name, permissions: permissions });
+        await newRole.save();
+    }
     res.redirect("/admin/roles");
 });
 

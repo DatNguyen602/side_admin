@@ -63,7 +63,10 @@
           <a href="/login" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Logout</a></li>
       <% } %>
     </ul>
-    <div class="absolute mt-2 me-6 right-0 top-[100%] text-gray-200 text-end" id="clock"></div>
+    <% if (user) { %>
+      <p class="absolute mt-8 md:mt-2 mx-8 md:left-0 right-0 top-[100%] text-gray-200">User: <%= user?.username ?? '' %></p>
+    <% } %>
+    <p class="absolute mt-2 me-8 right-0 top-[100%] text-gray-200 text-end" id="clock"></p>
   </nav>
 </header>
 

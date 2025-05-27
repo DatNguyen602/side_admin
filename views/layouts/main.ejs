@@ -28,7 +28,6 @@
     .content-wrapper {
         background: rgba(255, 255, 255, 0.95);
         background-size: 32px 32px;
-        padding: 25px;
         box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.95);
     }
   </style>
@@ -40,7 +39,7 @@ class="flex flex-col items-center min-h-screen bg-gradient-to-r from-indigo-500 
   </header>
   
   <main class="main-content p-4 h-full">
-    <div class="content-wrapper w-[95%] md:w-[80%] absolute top-12 bottom-12 overflow-x-hidden overflow-y-auto">
+    <div class="content-wrapper px-4 md:px-8 py-8 w-[95%] md:w-[80%] absolute top-20 bottom-6 md:top-12 md:bottom-12 overflow-x-hidden overflow-y-auto">
       <%- body %>
     </div>
   </main>

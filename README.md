@@ -56,6 +56,11 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 npm run dev
 ```
 
+### built tailwind css
+```bash
+npx tailwindcss -i ./index.css -o ./public/css/tailwind.css --minify
+```
+
 Server sẽ chạy tại:  
 ```
 http://localhost:5000/

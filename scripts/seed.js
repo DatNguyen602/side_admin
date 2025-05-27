@@ -85,6 +85,10 @@ async function seed() {
             name: "agent",
             permissions: ["key:verify"],
         },
+        {
+            name: "viewer",
+            permissions: [],
+        }
     ];
     const roles = await Role.insertMany(rolesData);
     console.log("✔ Roles seeded");
