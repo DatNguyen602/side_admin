@@ -8,7 +8,7 @@
       <div class="text-red-500 font-semibold mb-4 text-center"><%= errors %></div>
     <% } %>
 
-    <form method="POST" action="<%= userData._id ? '/admin/users/' + userData._id + '/edit' : '/admin/users/new' %>" class="space-y-5">
+    <form method="POST" enctype="multipart/form-data" action="<%= userData._id ? '/admin/users/' + userData._id + '/edit' : '/admin/users/new' %>" class="space-y-5">
 
       <div>
         <label class="block font-medium mb-1">Username</label>
@@ -34,6 +34,22 @@
         >
           <i class="fa-regular text-xl fa-eye"></i>
         </button>
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1">Avatar</label>
+        <input 
+          type="file" 
+          name="avatar" 
+          accept="image/*"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <% if (userData.avatarUrl) { %>
+          <div class="mt-2">
+            <p class="text-sm text-gray-600">Ảnh hiện tại:</p>
+            <img src="<%= userData.avatarUrl %>" alt="Avatar" class="w-20 h-20 object-cover rounded-full border mt-1" />
+          </div>
+        <% } %>
       </div>
 
       <div>

@@ -7,6 +7,7 @@ const { register } = require("../controllers/authController");
 const Session = require("../models/Session");
 const mongoose = require("mongoose");
 const path = require("path");
+const storedata = require("../middleware/storedata");
 require("dotenv").config(); // Import dotenv
 
 // Models
@@ -87,50 +88,70 @@ router.get("/users/new", auth, rbac("user:create"), async (req, res) => {
 });
 
 // Handle create
-router.post("/users/new", auth, rbac("user:create"), async (req, res) => {
-    try {
-        const fakeRes = {
-            json(obj) {
-                this.data = obj;
-            },
-            status(code) {
-                this.statusCode = code;
-                return this;
-            },
-        };
-        console.log(fakeRes);
-        await register({ body: req.body }, fakeRes);
+router.post(
+    "/users/new",
+    auth,
+    rbac("user:create"),
+    storedata.single("avatar"), // xử lý ảnh trước
+    async (req, res) => {
+        try {
+            const avatarPath = req.file ? 
+            `http://localhost:5000/uploads/avatars/${req.file.filename}`
+            : 
+            null;
 
-        if (fakeRes.statusCode >= 400) {
-            // nếu lỗi cần render lại form cùng agencies
-            const agencies = await Agency.find().sort("name");
-            return res.render("register", {
-                title: "Tạo tài khoản",
-                error: fakeRes.data.error,
-                query: req.query,
+            const fakeRes = {
+                statusCode: 200,
+                json(obj) {
+                    this.data = obj;
+                },
+                status(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+            };
+
+            // Gửi kèm avatar vào register
+            await register(
+                {
+                    body: {
+                        ...req.body,
+                        avatar: avatarPath,
+                    },
+                },
+                fakeRes
+            );
+
+            if (fakeRes.statusCode >= 400) {
+                const agencies = await Agency.find().sort("name");
+                return res.render("register", {
+                    title: "Tạo tài khoản",
+                    error: fakeRes.data.error,
+                    query: req.query,
+                    agencies,
+                });
+            }
+
+            res.redirect("/admin/users");
+        } catch (err) {
+            console.log(err);
+            const roles = await Role.find();
+            const agencies = await Agency.find();
+            res.render("users/form", {
+                title: "Tạo User mới",
+                user: req.user,
+                userData: req.body,
+                roles,
                 agencies,
+                errors: err.errors
+                    ? Object.values(err.errors)
+                          .map((e) => e.message)
+                          .join(", ")
+                    : err.message,
             });
         }
-
-        res.redirect("/admin/users");
-    } catch (err) {
-        console.log(err);
-        const roles = await Role.find();
-        const agencies = await Agency.find();
-        res.render("users/form", {
-            title: "Tạo User mới",
-            user: req.user,
-            userData: req.body,
-            roles,
-            agencies,
-            errors: err.errors
-                ? Object.values(err.errors)
-                      .map((e) => e.message)
-                      .join(", ")
-                : err.message,
-        });
     }
-});
+);
 
 const multer = require("multer");
 const xlsx = require("xlsx");
@@ -263,11 +284,18 @@ router.get("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
 });
 
 // Handle update
-router.post("/users/:id/edit", auth, rbac("user:update"), async (req, res) => {
-    console.log(req.params);
-    console.log(req.body);
+router.post("/users/:id/edit", auth, rbac("user:update"), 
+    storedata.single("avatar"), async (req, res) => {
     try {
-        await User.findByIdAndUpdate(req.params.id, req.body);
+        const avatarPath = req.file ? 
+            `http://localhost:5000/uploads/avatars/${req.file.filename}`
+            : 
+            null;
+        console.log(avatarPath);
+        await User.findByIdAndUpdate(req.params.id, {
+            ...req.body,
+            avatar: avatarPath
+        });
         res.redirect("/admin/users");
     } catch (err) {
         const roles = await Role.find();

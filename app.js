@@ -70,6 +70,7 @@ app.use("/file", require("./routes/upload"));
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'public/js'))); // nếu cần
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 app.get('*', (req, res, next) => {
   res.locals.request = req;
