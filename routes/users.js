@@ -7,6 +7,8 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const Room = require('../models/Room');
 const Message = require('../models/Message');
+const path = require("path");
+const fs = require("fs");
 
 router.post("/login", async (req, res) => {
   try {
@@ -97,21 +99,51 @@ router.get("/rooms", auth, async (req, res) => {
     }
 });
 
+const ENC_DIR = path.join(__dirname, "..", "uploads/uploads_encrypted");
+
 router.get("/messages/:roomId", auth, async (req, res) => {
-    const { roomId } = req.params;
-    const userId = req.user.id;
-    try {
-        const r = await Room.findOne({ $and: [ { _id: roomId }, { "members.user": userId }]});
-        if(!r) {
-            return res.status(404).json({ error: "Room notsfount!" });
-        }
-        const messages = await Message.find({ room: r.id })
-            .populate("sender", "username avatar")
-            .sort({ createdAt: 1 });
-        res.json(messages);
-    } catch (err) {
-        res.status(500).json({ error: "Server error" });
+  const { roomId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const room = await Room.findOne({
+      _id: roomId,
+      "members.user": userId
+    });
+
+    if (!room) {
+      return res.status(404).json({ error: "Room not found!" });
     }
+
+    let messages = await Message.find({ room: room.id })
+      .populate("sender", "username avatar")
+      .sort({ createdAt: 1 })
+      .lean(); // Dùng lean để cho phép thêm trường tùy ý
+
+    // Bổ sung originalName nếu có file
+    for (let msg of messages) {
+        if (msg.contents) {
+            msg.contents = msg.contents.map(i => {
+                if (i.type !== "text") {
+                    const metaPath = path.join(ENC_DIR, i.data + ".meta.json");
+                    if (fs.existsSync(metaPath)) {
+                        const meta = JSON.parse(fs.readFileSync(metaPath, "utf8"));
+                        return {
+                            ...i,
+                            originalName: meta.originalName
+                        };
+                    }
+                }
+                return i;
+            });
+        }
+    }
+    
+    res.json(messages);
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 router.get("/list", async (req, res) => {

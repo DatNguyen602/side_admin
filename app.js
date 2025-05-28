@@ -70,11 +70,6 @@ app.use("/file", require("./routes/upload"));
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'public/js'))); // nếu cần
-app.use("/uploads", (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  next();
-});
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get('*', (req, res, next) => {
   res.locals.request = req;

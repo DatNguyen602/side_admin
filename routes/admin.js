@@ -134,7 +134,7 @@ router.post("/users/new", auth, rbac("user:create"), async (req, res) => {
 
 const multer = require("multer");
 const xlsx = require("xlsx");
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "uploads/excel" });
 
 router.post(
     "/users/import",
