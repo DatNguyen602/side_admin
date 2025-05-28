@@ -83,7 +83,7 @@ const handleEvent = {
         const { deviceId, deviceName } = data;
 
         if (userId && deviceId) {
-            console.log("Setup:", { userId, deviceId, deviceName });
+            // console.log("Setup:", { userId, deviceId, deviceName });
             userSocketMap.set(userId, socket.id);
 
             await User.findByIdAndUpdate(userId, {
@@ -137,9 +137,6 @@ const handleEvent = {
 
     "message": async (socket, { room, content }, io) => {
         const sender = socket.userId;
-        console.log(sender);
-        console.log(room);
-        console.log(content);
         if (!room || !content || !sender) return;
 
         const r = await Room.findById(room);
@@ -150,6 +147,19 @@ const handleEvent = {
             });
             return;
         }
+        console.log(userSocketMap)
+
+        r.members.forEach((v, i) => {
+            if(v.user.toString() !== sender.toString()){
+                const socketId = userSocketMap.get(v.user.toString());
+                console.log(v.user + " socket " + socketId)
+                if (socketId) {
+                    io.to(socketId).emit("fetchmessage", {
+                        message: { send: "Room not found or access denied" }
+                    });
+                }
+            }
+        });
 
         const saved = await Message.create({
             sender,

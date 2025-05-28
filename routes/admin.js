@@ -291,11 +291,12 @@ router.post("/users/:id/edit", auth, rbac("user:update"),
             `http://localhost:5000/uploads/avatars/${req.file.filename}`
             : 
             null;
-        console.log(avatarPath);
-        await User.findByIdAndUpdate(req.params.id, {
+        console.log(req.body);
+        req.body = {
             ...req.body,
             avatar: avatarPath
-        });
+        }
+        await User.findByIdAndUpdate(req.params.id, req.body);
         res.redirect("/admin/users");
     } catch (err) {
         const roles = await Role.find();

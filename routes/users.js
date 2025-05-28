@@ -26,11 +26,13 @@ router.post("/login", async (req, res) => {
         fakeRes.status(400).json({ error: 'Invalid credentials' });
         return res.json(fakeRes);
     }
+    console.log(username + " " + password)
     const match = await require('bcrypt').compare(password, user.password);
     if(!match) {
         fakeRes.status(400).json({ error: 'Invalid credentials' });
         return res.json(fakeRes);
     }
+    console.log(username + " " + password)
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     fakeRes.json({ token });
 
@@ -135,12 +137,18 @@ router.get("/messages/:roomId", auth, async (req, res) => {
     if (!room) return res.status(404).json({ error: "Room not found!" });
 
     // Lấy tin nhắn theo phân trang offset + limit
-    let messages = await Message.find({ room: roomId })
+    let messages = await Message.find({$and: [{ room: roomId }, {deletedBy: { $ne: userId }}]})
       .sort({ createdAt: -1 })
       .skip(offset)
       .limit(limit)
       .populate("sender", "username avatar")
       .lean();
+
+    const messageIds = messages.map(msg => msg._id);
+        await Message.updateMany(
+        { _id: { $in: messageIds } },
+        { $addToSet: { readBy: userId } }
+    );
 
     // Thêm originalName cho file (nếu có)
     messages = messages.map(msg => {
