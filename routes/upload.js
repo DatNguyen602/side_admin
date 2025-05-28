@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const auth = require("../middleware/auth");
 const { TEMP_DIR, ENC_DIR, encryptFile, decryptFile } = require("../middleware/fileEncryption");
+const fsPromises = require("fs").promises;
 
 const router = express.Router();
 const upload = multer({ dest: TEMP_DIR });
@@ -34,7 +35,12 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
   try {
     await encryptFile(file.path, encryptedPath);
-    fs.unlinkSync(file.path);
+    try {
+      await fsPromises.unlink(file.path); // xóa file gốc
+    } catch (unlinkErr) {
+      console.error("Failed to delete original file:", unlinkErr);
+      // Không cần return lỗi, có thể tiếp tục
+    }
 
     const meta = {
       fileId: file.filename,
@@ -43,11 +49,22 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       size: file.size,
       type,
     };
-    fs.writeFileSync(metaPath, JSON.stringify(meta));
+
+    try {
+      await fsPromises.writeFile(metaPath, JSON.stringify(meta));
+    } catch (writeErr) {
+      console.error("Failed to write metadata file:", writeErr);
+      // Có thể trả lỗi, hoặc bỏ qua tùy ý
+      return res.status(500).json({ error: "Failed to save metadata" });
+    }
 
     res.json({ fileId: file.filename, type });
   } catch (err) {
     console.error("Upload failed:", err);
+    // Nếu có file tạm tồn tại, xóa luôn để tránh rác
+    try {
+      await fsPromises.unlink(file.path);
+    } catch {}
     res.status(500).json({ error: "Encryption failed" });
   }
 });

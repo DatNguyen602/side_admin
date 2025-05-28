@@ -42,5 +42,8 @@
     "eslint": "^8.56.0",
     "nodemon": "^2.0.22",
     "tailwindcss": "^3.4.17"
+  },
+  "nodemonConfig": {
+    "ignore": ["uploads/*", "encrypted/*", "logs/*", "public/*"]
   }
 }
