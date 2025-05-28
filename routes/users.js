@@ -88,15 +88,33 @@ router.post("/friends/add", auth, async (req, res) => {
 });
 
 router.get("/rooms", auth, async (req, res) => {
-    const userId = req.user.id;
-    try {
-        const rooms = await Room.find({ "members.user": userId })
-            .populate("members", "username avatar state")
-            .sort({ createdAt: -1 });
-        res.json(rooms);
-    } catch (err) {
-        res.status(500).json({ error: "Server error" });
-    }
+  const userId = req.user.id;
+  try {
+    // Lấy rooms mà user tham gia, populate thông tin member.user
+    const rooms = await Room.find({ "members.user": userId })
+      .populate("members.user", "username avatar state")
+      .sort({ createdAt: -1 });
+
+    // Tạo response với name theo yêu cầu
+    const roomsWithName = rooms.map(room => {
+      // Chuyển từ Mongoose doc sang object để dễ thao tác
+      const roomObj = room.toObject();
+
+      if (!roomObj.isGroup && roomObj.members.length === 2) {
+        // Tìm member không phải user hiện tại
+        const otherMember = roomObj.members.find(m => m.user._id.toString() !== userId);
+        // Gán name = username của người đó (nếu có)
+        roomObj.name = otherMember?.user?.username || "Unknown";
+      }
+      // Ngược lại giữ nguyên hoặc có thể giữ name hiện tại nếu có
+      return roomObj;
+    });
+
+    res.json(roomsWithName);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 const ENC_DIR = path.join(__dirname, "..", "uploads/uploads_encrypted");
@@ -104,42 +122,62 @@ const ENC_DIR = path.join(__dirname, "..", "uploads/uploads_encrypted");
 router.get("/messages/:roomId", auth, async (req, res) => {
   const { roomId } = req.params;
   const userId = req.user.id;
+  // Lấy offset và limit từ query params
+  const limit = Math.min(parseInt(req.query.limit) || 30, 100); // max 100
+  const offset = parseInt(req.query.offset) || 0;
 
   try {
+    // Kiểm tra user có trong room không
     const room = await Room.findOne({
       _id: roomId,
       "members.user": userId
     });
+    if (!room) return res.status(404).json({ error: "Room not found!" });
 
-    if (!room) {
-      return res.status(404).json({ error: "Room not found!" });
-    }
-
-    let messages = await Message.find({ room: room.id })
+    // Lấy tin nhắn theo phân trang offset + limit
+    let messages = await Message.find({ room: roomId })
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
       .populate("sender", "username avatar")
-      .sort({ createdAt: 1 })
-      .lean(); // Dùng lean để cho phép thêm trường tùy ý
+      .lean();
 
-    // Bổ sung originalName nếu có file
-    for (let msg of messages) {
-        if (msg.contents) {
-            msg.contents = msg.contents.map(i => {
-                if (i.type !== "text") {
-                    const metaPath = path.join(ENC_DIR, i.data + ".meta.json");
-                    if (fs.existsSync(metaPath)) {
-                        const meta = JSON.parse(fs.readFileSync(metaPath, "utf8"));
-                        return {
-                            ...i,
-                            originalName: meta.originalName
-                        };
-                    }
-                }
-                return i;
-            });
+    // Thêm originalName cho file (nếu có)
+    messages = messages.map(msg => {
+      if (msg.contents) {
+        msg.contents = msg.contents.map(i => {
+          if (i.type !== "text") {
+            const metaPath = path.join(ENC_DIR, i.data + ".meta.json");
+            if (fs.existsSync(metaPath)) {
+              const meta = JSON.parse(fs.readFileSync(metaPath, "utf8"));
+              return {
+                ...i,
+                originalName: meta.originalName
+              };
+            }
+          }
+          return i;
+        });
+      }
+      return {
+        ...msg,
+        sendBy: msg.sender._id.toString() === userId.toString() ? "you" : "other"
+      };
+    });
+
+    for(let i = 0; i < messages.length ; i++){
+      const senderAvatar = await User.findById(messages[i].sender._id);
+      if(senderAvatar) {
+        messages[i] = {
+            ...messages[i],
+            senderAvatar: senderAvatar.avatar
         }
+      }
     }
-    
-    res.json(messages);
+
+    messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    res.json({ messages, offset, limit });
   } catch (err) {
     console.error("Error fetching messages:", err);
     res.status(500).json({ error: "Server error" });

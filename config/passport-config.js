@@ -31,6 +31,7 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         // Tìm user theo googleId hoặc email (profile.emails[0].value)
+        console.log(profile)
         let u = await User.findOne({ username: profile.displayName });
         if (!u) {
             // Nếu chưa có, tạo mới
@@ -39,7 +40,8 @@ passport.use(new GoogleStrategy({
                 username: profile.displayName,
                 email: profile.emails[0].value,
                 password: profile.id,
-                role: roleId
+                role: roleId,
+                avatar: profile.photos?.[0]?.value
             });
             await u.save();
         }
