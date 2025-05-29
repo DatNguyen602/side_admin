@@ -1,75 +1,93 @@
 const fs = require("fs");
+const fsPromises = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
+const zlib = require("zlib");
+const { pipeline, Transform } = require("stream");
+const { promisify } = require("util");
+
 require("dotenv").config();
 
+const pipe = promisify(pipeline);
 const IV_LENGTH = 16;
-let AES_KEY;
 
+// Load AES key
+let AES_KEY;
 if (process.env.AES_SECRET_KEY) {
   AES_KEY = Buffer.from(process.env.AES_SECRET_KEY, "hex");
-  if (AES_KEY.length !== 32) {
-    throw new Error("AES_SECRET_KEY must be 64 hex characters (32 bytes)");
-  }
+  if (AES_KEY.length !== 32) throw new Error("AES_SECRET_KEY must be 64 hex characters (32 bytes)");
 } else {
   AES_KEY = crypto.randomBytes(32);
-  console.warn("⚠️ No AES_SECRET_KEY found. A random key was generated.");
+  console.warn("⚠️ AES_SECRET_KEY not set. Using random key.");
 }
 
-const TEMP_DIR = path.join(__dirname, "..", "uploads/temp_uploads");
-const ENC_DIR = path.join(__dirname, "..", "uploads/uploads_encrypted");
+// Folders
+const TEMP_DIR = path.join(__dirname, "..", "uploads", "temp_uploads");
+const ENC_DIR = path.join(__dirname, "..", "uploads", "uploads_encrypted");
+[ TEMP_DIR, ENC_DIR ].forEach(dir => fs.mkdirSync(dir, { recursive: true }));
 
-[ TEMP_DIR, ENC_DIR ].forEach(dir => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-});
+// Encrypt a file (gzip + AES256)
+async function encryptFile(inputPath, outputPath) {
+  const iv = crypto.randomBytes(IV_LENGTH);
+  const cipher = crypto.createCipheriv("aes-256-cbc", AES_KEY, iv);
 
-const encryptFile = (inputPath, outputPath) => {
-  return new Promise((resolve, reject) => {
-    const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv("aes-256-cbc", AES_KEY, iv);
-
-    const input = fs.createReadStream(inputPath);
-    const output = fs.createWriteStream(outputPath);
-
-    output.write(iv);
-    input.pipe(cipher).pipe(output);
-
-    output.on("finish", resolve);
-    output.on("error", reject);
-    input.on("error", reject);
-  });
-};
-
-const decryptFile = (inputPath, outputStream) => {
-  const input = fs.createReadStream(inputPath, { highWaterMark: 1024 });
-  let iv = Buffer.alloc(0);
-  let decipher;
-
-  input.on("data", chunk => {
-    if (!decipher) {
-      iv = Buffer.concat([iv, chunk]);
-      if (iv.length >= IV_LENGTH) {
-        const ivReal = iv.slice(0, IV_LENGTH);
-        const rest = iv.slice(IV_LENGTH);
-        decipher = crypto.createDecipheriv("aes-256-cbc", AES_KEY, ivReal);
-        outputStream.write(decipher.update(rest));
+  const prependIV = new Transform({
+    transform(chunk, encoding, callback) {
+      if (!this.ivPrepended) {
+        this.push(iv);
+        this.ivPrepended = true;
       }
-    } else {
-      outputStream.write(decipher.update(chunk));
+      this.push(chunk);
+      callback();
     }
   });
 
-  input.on("end", () => {
-    if (decipher) outputStream.end(decipher.final());
-    else outputStream.end();
+  await pipe(
+    fs.createReadStream(inputPath),
+    zlib.createGzip(),
+    cipher,
+    prependIV,
+    fs.createWriteStream(outputPath)
+  );
+}
+
+// Decrypt (AES256) + gunzip into outputStream
+async function decryptFile(inputPath, outputStream) {
+  console.log(outputStream)
+  const input = fs.createReadStream(inputPath);
+  let decipher, gunzip;
+
+  const transformStream = new Transform({
+    transform(chunk, encoding, callback) {
+      if (!this.iv) {
+        this.buffer = this.buffer ? Buffer.concat([this.buffer, chunk]) : chunk;
+        if (this.buffer.length >= IV_LENGTH) {
+          this.iv = this.buffer.slice(0, IV_LENGTH);
+          const rest = this.buffer.slice(IV_LENGTH);
+          decipher = crypto.createDecipheriv("aes-256-cbc", AES_KEY, this.iv);
+          gunzip = zlib.createGunzip();
+          this.pipe(decipher).pipe(gunzip).pipe(outputStream);
+          if (rest.length > 0) this.push(rest);
+        }
+        callback();
+      } else {
+        this.push(chunk);
+        callback();
+      }
+    }
   });
 
-  input.on("error", err => outputStream.destroy(err));
-};
+  try {
+    await pipe(input, transformStream);
+  } catch (err) {
+    console.error("Decryption failed:", err);
+    outputStream.destroy(err);
+  }
+}
 
 module.exports = {
   TEMP_DIR,
   ENC_DIR,
   encryptFile,
-  decryptFile,
+  decryptFile
 };
