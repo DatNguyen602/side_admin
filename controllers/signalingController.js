@@ -59,12 +59,12 @@ const initializeSignaling = (server) => {
         });
 
         socket.on("disconnect", async () => {
-            console.log("User disconnected:", socket.id);
+            console.log("User disconnected:", socket.userId);
 
             for (const [uid, sid] of userSocketMap.entries()) {
                 if (sid === socket.id) {
                     userSocketMap.delete(uid);
-                    await User.findByIdAndUpdate(uid, { state: "offline" });
+                    await User.findByIdAndUpdate({_id: uid} , { state: "offline" });
                     io.emit("user-state-change", { userId: uid, state: "offline" });
                     break;
                 }

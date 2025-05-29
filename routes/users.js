@@ -2,6 +2,7 @@
 const router = require('express').Router();
 const auth = require('../middleware/auth');
 const rbac = require('../middleware/rbac');
+const { login } = require("../controllers/authController")
 const { list, get } = require('../controllers/userController');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
@@ -148,7 +149,7 @@ router.get("/messages/:roomId", auth, async (req, res) => {
       if (msg.contents) {
         msg.contents = msg.contents.map(i => {
           if (i.type !== "text") {
-            const metaPath = path.join(ENC_DIR, i.data + ".meta.json");
+            const metaPath = path.join(ENC_DIR, i.data + ".meta");
             if (fs.existsSync(metaPath)) {
               const meta = JSON.parse(fs.readFileSync(metaPath, "utf8"));
               return {

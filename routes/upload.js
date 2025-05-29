@@ -71,10 +71,10 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
 router.get("/download/:fileId", auth, (req, res) => {
   const fileId = req.params.fileId;
-  const encPath = path.join(ENC_DIR, fileId + ".enc");
-  const metaPath = path.join(ENC_DIR, fileId + ".meta.json");
+  const encryptedPath = path.join(ENC_DIR, fileId + ".enc");
+  const metaPath = path.join(ENC_DIR, fileId + ".meta");
 
-  if (!fs.existsSync(encPath) || !fs.existsSync(metaPath)) {
+  if (!fs.existsSync(encryptedPath) || !fs.existsSync(metaPath)) {
     return res.status(404).send("File not found");
   }
 
@@ -82,15 +82,15 @@ router.get("/download/:fileId", auth, (req, res) => {
   res.setHeader("Content-Type", meta.mimeType);
   res.setHeader("Content-Disposition", `attachment; filename="${meta.originalName}"`);
 
-  decryptFile(encPath, res);
+  decryptFile(encryptedPath, res);
 });
 
 router.get("/view/:fileId", auth, (req, res) => {
   const fileId = req.params.fileId;
-  const encPath = path.join(ENC_DIR, fileId + ".enc");
-  const metaPath = path.join(ENC_DIR, fileId + ".meta.json");
+  const encryptedPath = path.join(ENC_DIR, fileId + ".enc");
+  const metaPath = path.join(ENC_DIR, fileId + ".meta");
 
-  if (!fs.existsSync(encPath) || !fs.existsSync(metaPath)) {
+  if (!fs.existsSync(encryptedPath) || !fs.existsSync(metaPath)) {
     return res.status(404).send("File not found");
   }
 
@@ -102,7 +102,7 @@ router.get("/view/:fileId", auth, (req, res) => {
   }
 
   res.setHeader("Content-Type", meta.mimeType);
-  decryptFile(encPath, res);
+  decryptFile(encryptedPath, res);
 });
 
 module.exports = router;
