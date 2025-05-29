@@ -4,7 +4,6 @@ const Role = require('../models/Role');
 const jwt = require('jsonwebtoken');
 exports.register = async (req,res) => {
   const { username, email, password, roleName, role, agencyId , avatar } = req.body;
-  console.log(role);
   const r = await Role.findOne({ name: roleName }) || await Role.findById( role );
   const user = new User({ username, email, password, role: r._id, agency: agencyId, avatar });
   await user.save();

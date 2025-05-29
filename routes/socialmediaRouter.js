@@ -12,11 +12,9 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {
 }));
 
 // Đăng nhập bằng Google
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/auth/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: '/' }),
-  async (req, res) => {
-
+async function handleGoogleLogin(req, res, isApi = false) {
+    // Giả sử đây là logic xử lý đăng nhập của controller,
+    // sử dụng fakeRes để bắt kết quả của hàm login
     const { username, password } = req.user;
     
     const fakeRes = {
@@ -30,9 +28,9 @@ router.get('/auth/google/callback',
 
     if (fakeRes.statusCode >= 400 || !fakeRes.data?.token) {
         return res.render("login", {
-        title: "Đăng nhập",
-        error: fakeRes.data?.error || "Đăng nhập thất bại",
-        query: req.query,
+            title: "Đăng nhập",
+            error: fakeRes.data?.error || "Đăng nhập thất bại",
+            query: req.query,
         });
     }
 
@@ -41,7 +39,28 @@ router.get('/auth/google/callback',
         sameSite: "lax",
     });
 
-    return res.redirect("/viewer/dashboard");
+    if (isApi) {
+        return res.json(fakeRes);
+    } else {
+        return res.redirect("/viewer/dashboard");
+    }
+}
+
+// Đăng nhập bằng Google cho giao diện web
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/auth/google/callback', 
+  passport.authenticate('google', { session: false, failureRedirect: '/' }),
+  async (req, res) => {
+    await handleGoogleLogin(req, res, false);
+  }
+);
+
+// Đăng nhập bằng Google cho API
+router.get('/auth/api/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/auth/api/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: '/' }),
+  async (req, res) => {
+    await handleGoogleLogin(req, res, true);
   }
 );
 

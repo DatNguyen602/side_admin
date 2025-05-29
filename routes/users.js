@@ -15,33 +15,26 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body;
     
     const fakeRes = {
-        statusCode: 200,
-        data: null,
-        json(obj) { this.data = obj; },
-        status(code) { this.statusCode = code; return this; },
+      statusCode: 200,
+      data: null,
+      json(obj) { this.data = obj; },
+      status(code) { this.statusCode = code; return this; },
     };
 
-    const user = await User.findOne({ username });
-    if(!user) {
-        fakeRes.status(400).json({ error: 'Invalid credentials' });
-        return res.json(fakeRes);
-    }
-    console.log(username + " " + password)
-    const match = await require('bcrypt').compare(password, user.password);
-    if(!match) {
-        fakeRes.status(400).json({ error: 'Invalid credentials' });
-        return res.json(fakeRes);
-    }
-    console.log(username + " " + password)
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    fakeRes.json({ token });
+    await login({ body: { username, password } }, fakeRes);
 
-    if (fakeRes.statusCode < 400 && fakeRes.data?.token) {
-        res.cookie("token", fakeRes.data.token, {
-            httpOnly: true,
-            sameSite: "lax",
-        });
+    if (fakeRes.statusCode >= 400 || !fakeRes.data?.token) {
+      return res.render("login", {
+        title: "Đăng nhập",
+        error: fakeRes.data?.error || "Đăng nhập thất bại",
+        query: req.query,
+      });
     }
+
+    res.cookie("token", fakeRes.data.token, {
+      httpOnly: true,
+      sameSite: "lax",
+    });
 
     res.json(fakeRes);
   } catch (error) {
@@ -185,7 +178,21 @@ router.get("/messages/:roomId", auth, async (req, res) => {
 
     messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-    res.json({ messages, offset, limit });
+    const members = await Promise.all(
+      room.members.map(async (m) => {
+        const u = await User.findById(m.user).select("_id username avatar email");
+        return u;
+      })
+    );
+
+    const roomObj = room.toObject();
+    roomObj.members = members;
+
+    if (!roomObj.isGroup && roomObj.members.length === 2) {
+      roomObj.name = members.find(m => m._id.toString() !== userId.toString()).username;
+    }
+
+    res.json({ messages, room: roomObj, offset, limit });
   } catch (err) {
     console.error("Error fetching messages:", err);
     res.status(500).json({ error: "Server error" });

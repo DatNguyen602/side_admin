@@ -14,7 +14,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   if (!file) return res.status(400).json({ error: "No file uploaded" });
 
   const encryptedPath = path.join(ENC_DIR, file.filename + ".enc");
-  const metaPath = path.join(ENC_DIR, file.filename + ".meta.json");
+  const metaPath = path.join(ENC_DIR, file.filename + ".meta");
 
   let type = "file";
   if (file.mimetype.startsWith("image/")) {

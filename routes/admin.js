@@ -55,7 +55,6 @@ router.get("/users", auth, rbac("user:read"), async (req, res) => {
 router.post("/users", auth, rbac("user:read"), async (req, res) => {
     try {
         const searchQuery = req.body.q; // Lấy từ khóa tìm kiếm từ query string
-        console.log(req.body);
         const filter = searchQuery
             ? { username: { $regex: searchQuery, $options: "i" } } // Nếu có từ khóa, lọc theo name
             : {}; // Nếu không có từ khóa, lấy tất cả users
@@ -164,7 +163,6 @@ router.post(
     async (req, res) => {
         try {
             const allowedTypes = [".xlsx", ".xls", ".csv"];
-            console.log(req.file.originalname);
             const ext = path.extname(req.file.originalname).toLowerCase();
             if (!allowedTypes.includes(ext)) {
                 return res
@@ -291,7 +289,6 @@ router.post("/users/:id/edit", auth, rbac("user:update"),
             `http://localhost:5000/uploads/avatars/${req.file.filename}`
             : 
             null;
-        console.log(req.body);
         req.body = {
             ...req.body,
             avatar: avatarPath

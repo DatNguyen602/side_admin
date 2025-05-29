@@ -30,7 +30,6 @@ const initializeSignaling = (server) => {
 
     io.use(async (socket, next) => {
         const token = socket.handshake.headers?.token ?? socket.handshake.auth?.token;
-        //console.log(socket.handshake)
         if (!token) {
             console.log("❌ No token provided");
             return next(new Error("Unauthorized"));
@@ -39,7 +38,6 @@ const initializeSignaling = (server) => {
         try {
             const payload = jwt.verify(token, process.env.JWT_SECRET);
             socket.userId = payload.id;
-            //console.log("✅ Socket authenticated:", payload);
             next();
         } catch (err) {
             console.log("❌ Token verify failed:", err.message);
@@ -83,7 +81,6 @@ const handleEvent = {
         const { deviceId, deviceName } = data;
 
         if (userId && deviceId) {
-            // console.log("Setup:", { userId, deviceId, deviceName });
             userSocketMap.set(userId, socket.id);
 
             await User.findByIdAndUpdate(userId, {
@@ -147,12 +144,10 @@ const handleEvent = {
             });
             return;
         }
-        console.log(userSocketMap)
 
         r.members.forEach((v, i) => {
             if(v.user.toString() !== sender.toString()){
                 const socketId = userSocketMap.get(v.user.toString());
-                console.log(v.user + " socket " + socketId)
                 if (socketId) {
                     io.to(socketId).emit("fetchmessage", {
                         message: { send: "Room not found or access denied" }

@@ -53,7 +53,6 @@ async function encryptFile(inputPath, outputPath) {
 
 // Decrypt (AES256) + gunzip into outputStream
 async function decryptFile(inputPath, outputStream) {
-  console.log(outputStream)
   const input = fs.createReadStream(inputPath);
   let decipher, gunzip;
 
