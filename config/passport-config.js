@@ -3,6 +3,9 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 require('dotenv').config();
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
 
 const User = require('../models/User');
 const Role = require('../models/Role');
@@ -20,6 +23,36 @@ passport.deserializeUser(async (id, done) => {
     done(err, null);
   }
 });
+
+// Hàm tải ảnh và lưu vào thư mục
+async function downloadAvatar(url, userId) {
+  const avatarPath = path.join(__dirname, "../public/uploads/avatars", `${userId}.jpg`);
+
+  // Kiểm tra nếu avatar đã tồn tại
+  if (fs.existsSync(avatarPath)) {
+    return `/uploads/avatars/${userId}.jpg`;
+  }
+
+  try {
+    const response = await axios({
+      url,
+      responseType: "stream",
+    });
+
+    // Lưu ảnh vào thư mục
+    const writer = fs.createWriteStream(avatarPath);
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on("finish", () => resolve(`/uploads/avatars/${userId}.jpg`));
+      writer.on("error", reject);
+    });
+
+  } catch (error) {
+    console.error("Error downloading avatar:", error);
+    return null;
+  }
+}
 
 /**
  * Hàm xử lý đăng nhập mạng xã hội:
@@ -41,6 +74,9 @@ async function handleSocialLogin(provider, profile) {
     user = await User.findOne({ email: profile.emails[0].value });
   }
 
+  const avatarUrl = profile.photos?.[0]?.value;
+  const avatarPath = avatarUrl ? process.env.DOMAIN + await downloadAvatar(avatarUrl, profile.id) : null;
+
   if (user) {
     // Nếu user tồn tại, cập nhật hoặc thêm mới thông tin social account
     let socialAcc = user.socialAccounts.find(acc => acc.provider === provider);
@@ -60,8 +96,8 @@ async function handleSocialLogin(provider, profile) {
       });
     }
     // Nếu avatar chưa được thiết lập, có thể cập nhật theo thông tin từ profile
-    if (!user.avatar && profile.photos && profile.photos[0]?.value) {
-      user.avatar = profile.photos[0].value;
+    if ( avatarPath) {
+      user.avatar = avatarPath;
     }
     await user.save();
   } else {
@@ -78,7 +114,7 @@ async function handleSocialLogin(provider, profile) {
         providerId: profile.id,
         displayName: profile.displayName,
         email: profile.emails?.[0]?.value,
-        photo: profile.photos?.[0]?.value
+        photo: avatarPath
       }]
     });
     await user.save();
@@ -91,10 +127,25 @@ async function handleSocialLogin(provider, profile) {
 // ========================
 // GOOGLE STRATEGY
 // ========================
-passport.use(new GoogleStrategy({
+// Strategy dùng cho giao diện web
+passport.use('google-web', new GoogleStrategy({
   clientID: process.env.OAUTH_CLIENT_ID,
   clientSecret: process.env.OAUTH_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL, // URL đã đăng ký cho giao diện
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    const user = await handleSocialLogin("google", profile);
+    return done(null, user);
+  } catch (error) {
+    return done(error, null);
+  }
+}));
+
+// Strategy dùng cho API (trả về JSON)
+passport.use('google-api', new GoogleStrategy({
+  clientID: process.env.OAUTH_CLIENT_ID,
+  clientSecret: process.env.OAUTH_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL + '/api', // URL đã đăng ký cho API
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     const user = await handleSocialLogin("google", profile);

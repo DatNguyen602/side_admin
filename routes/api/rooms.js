@@ -3,6 +3,7 @@ const router = require("express").Router();
 const auth = require("../../middleware/auth");
 const User = require("../../models/User");
 const Room = require("../../models/Room");
+const Message = require("../../models/Message");
 const mongoose = require("mongoose");
 
 router.get("/", auth, async (req, res) => {
@@ -14,21 +15,28 @@ router.get("/", auth, async (req, res) => {
             .sort({ createdAt: -1 });
 
         // Tạo response với name theo yêu cầu
-        const roomsWithName = rooms.map((room) => {
+        const roomsWithName = await Promise.all( rooms.map(async (room) => {
             // Chuyển từ Mongoose doc sang object để dễ thao tác
             const roomObj = room.toObject();
+            const mesNew = await Message.findOne({ room: roomObj._id, readBy: { $nin: [userId] } })
+              .sort({ createdAt: -1 });
 
             if (!roomObj.isGroup && roomObj.members.length === 2) {
                 // Tìm member không phải user hiện tại
                 const otherMember = roomObj.members.find(
-                    (m) => m.user._id.toString() !== userId
+                    (m) => m.user._id.toString() !== userId.toString()
                 );
                 // Gán name = username của người đó (nếu có)
                 roomObj.name = otherMember?.user?.username || "Unknown";
+                roomObj.icon = otherMember?.user?.avatar || "";
+            }
+
+            if(mesNew) {
+              roomObj.newMessage = mesNew.contents[0].data;
             }
             // Ngược lại giữ nguyên hoặc có thể giữ name hiện tại nếu có
             return roomObj;
-        });
+        }))
 
         res.json(roomsWithName);
     } catch (err) {

@@ -95,7 +95,7 @@ router.post(
     async (req, res) => {
         try {
             const avatarPath = req.file ? 
-            `http://localhost:5000/uploads/avatars/${req.file.filename}`
+            `${process.env.DOMAIN}/uploads/avatars/${req.file.filename}`
             : 
             null;
 
@@ -286,7 +286,7 @@ router.post("/users/:id/edit", auth, rbac("user:update"),
     storedata.single("avatar"), async (req, res) => {
     try {
         const avatarPath = req.file ? 
-            `http://localhost:5000/uploads/avatars/${req.file.filename}`
+            `${process.env.DOMAIN}/uploads/avatars/${req.file.filename}`
             : 
             null;
         req.body = {

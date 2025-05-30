@@ -8,6 +8,7 @@ const User = require("../models/User");
 const Room = require("../models/Room");
 const FriendRequest = require("../models/FriendRequest");
 const escapeStringRegexp = require("escape-string-regexp");
+const mongoose = require("mongoose");
 
 router.post("/login", async (req, res) => {
     try {
@@ -173,7 +174,7 @@ router.post("/friends/accept", auth, async (req, res) => {
   try {
     const fr = await FriendRequest.findById(friendRequestId);
     if (!fr) return res.status(404).json({ error: "Friend request not found." });
-    if (fr.target.toString() !== userId) {
+    if (fr.target.toString() !== userId.toString()) {
       return res.status(403).json({ error: "Not authorized to accept this request." });
     }
     if (fr.status !== "pending") {
@@ -253,31 +254,39 @@ router.post("/friends/decline", auth, async (req, res) => {
 router.get("/friends/list", auth, async (req, res) => {
   const userId = req.user.id;
   try {
-    // Tìm các phòng không nhóm mà user hiện tại tham gia
     const rooms = await Room.find({
       isGroup: false,
       members: { $elemMatch: { user: userId } }
-    }).populate("members.user", "username avatar email");
+    }).populate("members.user", "username avatar email").lean();
 
-    // Lấy thành viên đối diện từ mỗi phòng (không phải chính user)
     const friends = rooms.map((room) => {
-      const other = room.members.find(
-        (m) => m.user._id.toString() !== userId
-      );
-      return other ? other.user : null;
+      const other = room.members.find(m => m.user._id.toString() !== userId.toString());
+      return other ? { ...other.user, idChat: room._id, isGroup: room.isGroup } : null;
     }).filter(Boolean);
 
-    // Loại bỏ trùng lặp
-    const uniqueFriends = [];
     const friendIds = new Set();
-    friends.forEach((f) => {
-      if (!friendIds.has(f._id.toString())) {
-        friendIds.add(f._id.toString());
-        uniqueFriends.push(f);
-      }
-    });
+    const uniqueFriends = await Promise.all(
+      friends.map(async (f) => {
+        try {
+          const tfb = await FriendRequest.findOne({ 
+            $or: [
+              { requester: userId, target: f._id, status: "accepted" },
+              { requester: f._id, target: userId, status: "accepted" }
+            ] 
+          }).lean();
 
-    res.json(uniqueFriends);
+          if (tfb) {
+            friendIds.add(f._id.toString());
+            return f;
+          }
+        } catch (error) {
+          console.error(`Error checking friend request for ${f.username}:`, error);
+        }
+        return null;
+      })
+    );
+
+    res.json(uniqueFriends.filter(Boolean)); 
   } catch (err) {
     console.error("Error fetching friend list:", err);
     res.status(500).json({ error: "Server error" });
@@ -288,9 +297,10 @@ router.get("/list", async (req, res) => {
     const users = await User.find().select("_id username avatar email");
     res.json(users);
 });
-router.post("/find", auth, rbac("user:read"), async (req, res) => {
+router.post("/find", auth, async (req, res) => {
+    const userId = req.user.id;
     try {
-        const searchQuery = req.body.q;
+        let searchQuery = req.body.q;
         if (typeof searchQuery !== "string") {
             return res
                 .status(400)
@@ -312,9 +322,30 @@ router.post("/find", auth, rbac("user:read"), async (req, res) => {
             username: { $regex: safeSearchQuery, $options: "i" },
         })
             .select("_id username avatar email")
-            .limit(20);
+            .limit(20).lean();
 
-        res.json(users);
+        const usersObj = await Promise.all(
+          users.map(async (u) => {
+            try {
+              const tfb = await FriendRequest.findOne({ 
+                $or: [
+                  { requester: userId, target: u._id },
+                  { requester: u._id, target: userId }
+                ] 
+              }).lean();
+
+              return {
+                ...u,
+                reqFriend: tfb
+              }
+            } catch (error) {
+              console.error(`Error checking friend request for ${f.username}:`, error);
+            }
+            return null;
+          })
+        );
+
+        res.json(usersObj);
     } catch (error) {
         console.error("Lỗi khi truy vấn dữ liệu:", error);
         res.status(500).send("Lỗi khi truy vấn dữ liệu");
