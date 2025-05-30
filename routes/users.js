@@ -94,6 +94,7 @@ router.post("/friends/add", auth, async (req, res) => {
 router.post("/friends/request", auth, async (req, res) => {
   const requester = req.user.id;
   const { targetUserId } = req.body;
+  console.log(requester + "\n" + targetUserId)
   
   // Kiểm tra targetUserId hợp lệ và không tự gửi
   if (!mongoose.Types.ObjectId.isValid(targetUserId) || targetUserId === requester) {
@@ -102,28 +103,14 @@ router.post("/friends/request", auth, async (req, res) => {
   
   try {
     // Kiểm tra nếu đã có yêu cầu pending
-    const existingRequest = await FriendRequest.findOne({
-      requester,
-      target: targetUserId,
-      status: "pending"
-    });
+    const existingRequest = await FriendRequest.findOne({ 
+      $or: [
+        { requester: requester, target: targetUserId },
+        { requester: targetUserId, target: requester }
+      ] 
+    }).lean();
     if (existingRequest) {
       return res.status(400).json({ error: "Friend request already sent." });
-    }
-
-    // Kiểm tra nếu đã kết bạn qua phòng trò chuyện không nhóm (1-1)
-    const existingRoom = await Room.findOne({
-      isGroup: false,
-      members: {
-        $all: [
-          { $elemMatch: { user: requester } },
-          { $elemMatch: { user: targetUserId } }
-        ],
-        $size: 2
-      }
-    });
-    if (existingRoom) {
-      return res.status(400).json({ error: "You are already friends." });
     }
 
     // Tạo yêu cầu kết bạn mới
@@ -261,7 +248,11 @@ router.get("/friends/list", auth, async (req, res) => {
 
     const friends = rooms.map((room) => {
       const other = room.members.find(m => m.user._id.toString() !== userId.toString());
-      return other ? { ...other.user, idChat: room._id, isGroup: room.isGroup } : null;
+      return other ? { 
+        ...other.user, 
+        idChat: room._id, 
+        isGroup: room.isGroup 
+      } : null;
     }).filter(Boolean);
 
     const friendIds = new Set();
@@ -277,7 +268,10 @@ router.get("/friends/list", auth, async (req, res) => {
 
           if (tfb) {
             friendIds.add(f._id.toString());
-            return f;
+            return {
+              ...f,
+              idFr: tfb._id
+            };
           }
         } catch (error) {
           console.error(`Error checking friend request for ${f.username}:`, error);
@@ -336,10 +330,14 @@ router.post("/find", auth, async (req, res) => {
 
               return {
                 ...u,
-                reqFriend: tfb
+                reqFriend: tfb ? {
+                  ...tfb,
+                  isYouRequest: tfb?.requester.toString() === userId.toString()
+                } : null,
+                isYou: u._id.toString() === userId.toString()
               }
             } catch (error) {
-              console.error(`Error checking friend request for ${f.username}:`, error);
+              console.error(`Error checking friend request for :`, error);
             }
             return null;
           })
@@ -350,6 +348,30 @@ router.post("/find", auth, async (req, res) => {
         console.error("Lỗi khi truy vấn dữ liệu:", error);
         res.status(500).send("Lỗi khi truy vấn dữ liệu");
     }
+});
+
+router.post("/friends/unrequests", auth, async (req, res) => {
+  try {
+      const id = req.body.targetId;
+      console.log(id);
+      const rq = await FriendRequest.findOne(
+        {
+          $or: [{ _id: id, requester: req.user.id },
+          { _id: id, target: req.user.id }]
+        });
+      if(!rq) {
+        return res.status(404).json({ message: "Không tìm thấy !" });
+      }
+      const deletedUser = await FriendRequest.findByIdAndDelete(id);
+
+      if (!deletedUser) {
+          return res.status(404).json({ message: "Không tìm thấy !" });
+      }
+
+      res.json({ message: "Xóa thành công!", deletedUser });
+  } catch (error) {
+      res.status(500).json({ message: "Lỗi server", error });
+  }
 });
 
 router.use("/rooms", require("./api/rooms"));

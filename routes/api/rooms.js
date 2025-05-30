@@ -18,7 +18,7 @@ router.get("/", auth, async (req, res) => {
         const roomsWithName = await Promise.all( rooms.map(async (room) => {
             // Chuyển từ Mongoose doc sang object để dễ thao tác
             const roomObj = room.toObject();
-            const mesNew = await Message.findOne({ room: roomObj._id, readBy: { $nin: [userId] } })
+            const mesNew = await Message.findOne({ room: roomObj._id })
               .sort({ createdAt: -1 });
 
             if (!roomObj.isGroup && roomObj.members.length === 2) {
@@ -32,11 +32,23 @@ router.get("/", auth, async (req, res) => {
             }
 
             if(mesNew) {
-              roomObj.newMessage = mesNew.contents[0].data;
+              if(!mesNew.readBy.includes(userId)) roomObj.newMessage = mesNew.contents[0].data;
+              roomObj.newDate = mesNew.createdAt
             }
             // Ngược lại giữ nguyên hoặc có thể giữ name hiện tại nếu có
             return roomObj;
         }))
+        roomsWithName.sort((a, b) => {
+            if (a.newDate && b.newDate) {
+                return b.newDate - a.newDate;
+            } else if (a.newDate) {
+                return -1;
+            } else if (b.newDate) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
 
         res.json(roomsWithName);
     } catch (err) {
