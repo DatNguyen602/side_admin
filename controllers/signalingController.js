@@ -84,13 +84,6 @@ const handleEvent = {
             userSocketMap.set(userId, socket.id);
 
             await User.findByIdAndUpdate(userId, {
-                $addToSet: {
-                    devices: {
-                        deviceId,
-                        deviceName,
-                        lastActive: new Date(),
-                    }
-                },
                 state: "online"
             });
 

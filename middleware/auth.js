@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
     // 3) Load user & role.permissions
-    const user = await User.findById(payload.id).populate('role');
+    const user = await User.findById(payload.id).populate('role').lean();
     if (!user) {
       res.clearCookie('token');
       return res.redirect('/login');
@@ -21,11 +21,7 @@ module.exports = async (req, res, next) => {
 
     // 4) Gán req.user và res.locals.user để templates có thể dùng
     req.user = {
-      id: user._id,
-      email: user.email,
-      username: user.username,
-      role: user.role.name,
-      permissions: user.role.permissions,  // array of strings
+      ...user
     };
     res.locals.user = req.user;
 

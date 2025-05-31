@@ -7,7 +7,7 @@ const Message = require("../../models/Message");
 const mongoose = require("mongoose");
 
 router.get("/", auth, async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     try {
         // Lấy rooms mà user tham gia, populate thông tin member.user
         const rooms = await Room.find({ "members.user": userId })
@@ -59,7 +59,7 @@ router.get("/", auth, async (req, res) => {
 
 router.post("/approve-join", auth, async (req, res) => {
   const { roomId, userIdToApprove } = req.body;
-  const currentUser = req.user.id;
+  const currentUser = req.user._id;
   
   try {
     // Kiểm tra định dạng roomId
@@ -102,7 +102,7 @@ router.post("/approve-join", auth, async (req, res) => {
 router.post("/create", auth, async (req, res) => {
   try {
     const { name, memberIds, joinPolicy } = req.body;
-    const creatorId = req.user.id;
+    const creatorId = req.user._id;
 
     // Xác thực đầu vào:
     if (typeof name !== "string" || name.trim() === "") {
@@ -150,7 +150,7 @@ router.post("/create", auth, async (req, res) => {
 
 router.post("/add", auth, async (req, res) => {
     const { roomId, memberIds } = req.body;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         // Kiểm tra định dạng roomId
@@ -205,7 +205,7 @@ router.post("/add", auth, async (req, res) => {
 
 router.post("/join", auth, async (req, res) => {
   const { roomId } = req.body;
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   try {
     // Kiểm tra định dạng roomId
@@ -247,7 +247,7 @@ router.post("/join", auth, async (req, res) => {
 
 router.post("/role", auth, async (req, res) => {
     const { roomId, targetUserId, newRole } = req.body;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     const validRoles = ["admin", "member", "creator"];
     if (!validRoles.includes(newRole)) {

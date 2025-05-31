@@ -12,7 +12,7 @@ const ENC_DIR = path.join(__dirname, "../..", "uploads/uploads_encrypted");
 
 router.post("/new", auth, async (req, res) => {
     try{
-        const userId = req.user.id;
+        const userId = req.user._id;
         const mesNew = await Message.findOne({ room: req.body.roomId, readBy: { $nin: [userId] } })
         .sort({ createdAt: -1 });
         res.status(200).json(mesNew?.toObject());
@@ -29,7 +29,7 @@ router.post("/new", auth, async (req, res) => {
  * Nếu chưa là bạn bè: tạo một room với approvalStatus 'pending'
  */
 router.post("/start", auth, async (req, res) => {
-    const senderId = req.user.id;
+    const senderId = req.user._id;
     const { targetUserId } = req.body;
 
     // Kiểm tra targetUserId hợp lệ
@@ -80,7 +80,7 @@ router.post("/start", auth, async (req, res) => {
  * Khi duyệt, cập nhật room.approvalStatus thành 'approved'
  */
 router.post("/approve", auth, async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { roomId } = req.body;
     
     if (!mongoose.Types.ObjectId.isValid(roomId)) {
@@ -117,7 +117,7 @@ router.post("/approve", auth, async (req, res) => {
  */
 router.get("/:roomId", auth, async (req, res) => {
     const { roomId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
     
     if (!mongoose.Types.ObjectId.isValid(roomId)) {
         return res.status(400).json({ error: "Room ID không hợp lệ!" });

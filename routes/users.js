@@ -54,8 +54,16 @@ router.get("/temp", auth, (req, res) => {
     res.status(200).json({ alert: "Test server" });
 });
 
+router.get("/profile", auth, async (req, res) => {
+  const { _id, password, ...user} = req.user;
+  return res.json({
+    ...user,
+    avatar: user.avatar ?? process.env.DOMAIN + "/uploads/avatars/default-avatar.png"
+  });
+})
+
 router.post("/friends/add", auth, async (req, res) => {
-    const userId1 = req.user.id;
+    const userId1 = req.user._id;
     const { userId2 } = req.body;
 
     try {
@@ -92,7 +100,7 @@ router.post("/friends/add", auth, async (req, res) => {
  * Gửi yêu cầu kết bạn cho targetUserId.
  */
 router.post("/friends/request", auth, async (req, res) => {
-  const requester = req.user.id;
+  const requester = req.user._id;
   const { targetUserId } = req.body;
   console.log(requester + "\n" + targetUserId)
   
@@ -131,7 +139,7 @@ router.post("/friends/request", auth, async (req, res) => {
  * Lấy danh sách yêu cầu kết bạn nhận được (đang ở trạng thái pending).
  */
 router.get("/friends/requests", auth, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   try {
     const requests = await FriendRequest.find({
       target: userId,
@@ -151,7 +159,7 @@ router.get("/friends/requests", auth, async (req, res) => {
  * Sau khi chấp nhận, nếu chưa có phòng trò chuyện 1-1, tự động tạo.
  */
 router.post("/friends/accept", auth, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   const { friendRequestId } = req.body;
   
   if (!mongoose.Types.ObjectId.isValid(friendRequestId)) {
@@ -207,7 +215,7 @@ router.post("/friends/accept", auth, async (req, res) => {
  * Payload: { friendRequestId }
  */
 router.post("/friends/decline", auth, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   const { friendRequestId } = req.body;
   
   if (!mongoose.Types.ObjectId.isValid(friendRequestId)) {
@@ -239,7 +247,7 @@ router.post("/friends/decline", auth, async (req, res) => {
  * còn lại trong room.
  */
 router.get("/friends/list", auth, async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   try {
     const rooms = await Room.find({
       isGroup: false,
@@ -292,7 +300,7 @@ router.get("/list", async (req, res) => {
     res.json(users);
 });
 router.post("/find", auth, async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     try {
         let searchQuery = req.body.q;
         if (typeof searchQuery !== "string") {
@@ -356,8 +364,8 @@ router.post("/friends/unrequests", auth, async (req, res) => {
       console.log(id);
       const rq = await FriendRequest.findOne(
         {
-          $or: [{ _id: id, requester: req.user.id },
-          { _id: id, target: req.user.id }]
+          $or: [{ _id: id, requester: req.user._id },
+          { _id: id, target: req.user._id }]
         });
       if(!rq) {
         return res.status(404).json({ message: "Không tìm thấy !" });
