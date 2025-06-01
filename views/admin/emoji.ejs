@@ -1,0 +1,24 @@
+<% layout('layouts/main') %>
+
+<h1>Emoji Manager</h1>
+<form method="POST" action="/admin/emoji">
+<input name="shortcode" placeholder="Shortcode (e.g. :smile:)" required />
+<input name="unicode" placeholder="Unicode (e.g. 😄)" required />
+<input name="category" placeholder="Category" />
+<input name="keywords" placeholder="Keywords (comma-separated)" />
+<input name="order" type="number" placeholder="Order" />
+<button type="submit">Add Emoji</button>
+</form>
+
+<h2>List of Emojis</h2>
+<ul>
+  <% emojis.forEach(emoji => { %>
+    <li>
+      <%= emoji.unicode %> - <%= emoji.shortcode %>
+      <form method="POST" action="/admin/emoji/<%= emoji._id %>?_method=DELETE" style="display:inline">
+        <button type="submit">🗑 Delete</button>
+      </form>
+      <a href="/admin/emoji/edit/<%= emoji._id %>">✏ Edit</a>
+    </li>
+  <% }) %>
+</ul>

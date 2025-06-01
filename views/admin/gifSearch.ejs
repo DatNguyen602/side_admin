@@ -1,0 +1,24 @@
+<% layout('layouts/main') %>
+
+<div>
+    <h2>Search GIFs from Giphy</h2>
+
+    <form method="GET" action="/admin/gif/search">
+    <input name="q" placeholder="Search term" />
+    <button type="submit">Search</button>
+    </form>
+
+    <% if (gifs) { %>
+    <ul>
+        <% gifs.forEach(gif => { %>
+        <li>
+            <img crossorigin="anonymous" src="<%= gif.images.fixed_height.url %>" width="100" />
+            <form method="POST" action="/admin/gif/save">
+            <input type="hidden" name="url" value="<%= gif.images.original.url %>" />
+            <button type="submit">➕ Add to Library</button>
+            </form>
+        </li>
+        <% }) %>
+    </ul>
+    <% } %>
+</div>

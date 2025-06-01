@@ -1,0 +1,11 @@
+<% layout('layouts/main') %>
+
+<form method="POST" action="/admin/emoji/<%= emoji._id %>?_method=PUT">
+  <input name="shortcode" value="<%= emoji.shortcode %>" required />
+  <input name="unicode" value="<%= emoji.unicode %>" required />
+  <input name="category" value="<%= emoji.category %>" />
+  <input name="keywords" value="<%= emoji.keywords.join(',') %>" />
+  <input name="order" type="number" value="<%= emoji.order || 0 %>" />
+  <button type="submit">Update</button>
+</form>
+<a href="/admin/emoji">Back</a>

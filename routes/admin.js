@@ -8,6 +8,7 @@ const Session = require("../models/Session");
 const mongoose = require("mongoose");
 const path = require("path");
 const storedata = require("../middleware/storedata");
+const fs = require('fs');
 require("dotenv").config(); // Import dotenv
 
 // Models
@@ -154,6 +155,10 @@ router.post(
 
 const multer = require("multer");
 const xlsx = require("xlsx");
+const Emoji = require("../models/Emoji");
+const StickerPack = require("../models/StickerPack");
+const Gif = require("../models/Gif");
+const { default: axios } = require("axios");
 const upload = multer({ dest: "uploads/excel" });
 
 router.post(
@@ -695,6 +700,151 @@ router.post("/roles/:id/edit", auth, async (req, res) => {
 router.post("/roles/:id/delete", auth, async (req, res) => {
     await Role.findByIdAndDelete(req.params.id);
     res.redirect("/admin/roles");
+});
+
+// Trang quản lý emoji
+router.get("/emoji", auth, async (req, res) => {
+  const emojis = await Emoji.find().sort("order");
+  res.render("admin/emoji", { 
+    title: "emoji",
+    user: req.user,
+    emojis 
+    });
+});
+
+// Thêm emoji
+router.post("/emoji", auth, async (req, res) => {
+  const { shortcode, unicode, category, keywords, order } = req.body;
+  await Emoji.create({ shortcode, unicode, category, keywords: keywords.split(","), order });
+  res.redirect("/admin/emoji");
+});
+
+// Xóa emoji
+router.delete("/emoji/:id", auth, async (req, res) => {
+  await Emoji.findByIdAndDelete(req.params.id);
+  res.redirect("/admin/emoji");
+});
+
+// Trang sửa emoji
+router.get("/emoji/edit/:id", auth, async (req, res) => {
+  const emoji = await Emoji.findById(req.params.id);
+  res.render("admin/editEmoji", { 
+    title: "emoji",
+    user: req.user,
+    emojis 
+    });
+});
+
+// Submit sửa
+router.put("/emoji/:id", auth, async (req, res) => {
+  const { shortcode, unicode, category, keywords, order } = req.body;
+  await Emoji.findByIdAndUpdate(req.params.id, {
+    shortcode, unicode, category, order,
+    keywords: keywords.split(",")
+  });
+  res.redirect("/admin/emoji");
+});
+
+// Trang quản lý sticker
+router.get("/stickers", auth, async (req, res) => {
+  const packs = await StickerPack.find();
+  res.render("admin/stickers", { 
+    title: "stickers",
+    user: req.user,
+    packs });
+});
+
+// Xoá sticker pack
+router.delete("/stickers/:id", auth, async (req, res) => {
+  await StickerPack.findByIdAndDelete(req.params.id);
+  res.redirect("/admin/stickers");
+});
+
+// Form chỉnh sửa
+router.get("/stickers/edit/:id", auth, async (req, res) => {
+  const pack = await StickerPack.findById(req.params.id);
+  res.render("admin/editStickerPack", { 
+    title: "stickers",
+    user: req.user,
+    packs });
+});
+
+// Submit chỉnh sửa
+router.put("/stickers/:id", auth, async (req, res) => {
+  const { name, description } = req.body;
+  await StickerPack.findByIdAndUpdate(req.params.id, { name, description });
+  res.redirect("/admin/stickers");
+});
+
+const GIPHY_API_KEY = process.env.API_GIPHY; // thay bằng key thật
+
+router.get("/gif/search", auth, async (req, res) => {
+  const q = req.query.q;
+  let gifs = [];
+
+  if (q) {
+    const response = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
+      params: {
+        api_key: GIPHY_API_KEY,
+        q,
+        limit: 10
+      }
+    });
+    gifs = response.data.data;
+    console.dir(gifs, {depth : null})
+  }
+
+  res.render("admin/gifSearch", { 
+    title: "gif/gifSearch",
+    user: req.user,
+    gifs });
+});
+
+// Lưu vào DB
+router.post("/gif/save", auth, async (req, res) => {
+  const { id, url, title } = req.body;
+
+  try {
+    const fileName = `${id}.gif`;
+    const savePath = path.join(__dirname, '../public/uploads/gifs', fileName);
+
+    // Tải file về
+    const writer = fs.createWriteStream(savePath);
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream',
+    });
+    response.data.pipe(writer);
+
+    await new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+
+    // Lưu vào database (ví dụ dùng Mongoose)
+    await Gif.create({
+      id,
+      title,
+      url,
+      path: process.env.DOMAIN + `/uploads/gifs/${fileName}`,
+      uploadedBy: req.user._id
+    });
+
+    res.redirect("/admin/gif/library");
+  } catch (err) {
+    console.error("Error saving GIF:", err);
+    res.status(500).send("Failed to save GIF");
+  }
+});
+
+// Xem thư viện gif
+router.get("/gif/library", auth, async (req, res) => {
+  const gifs = await Gif.find();
+  res.render("admin/gifLibrary", { 
+    title: "gif/library",
+    user: req.user,
+    gifs });
 });
 
 module.exports = router;

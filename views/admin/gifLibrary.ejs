@@ -1,0 +1,12 @@
+<% layout('layouts/main') %>
+
+<div>
+    <h2>Saved GIFs</h2>
+    <ul>
+    <% gifs.forEach(g => { %>
+        <li>
+        <img src="<%= g.path %>" width="100" />
+        </li>
+    <% }) %>
+    </ul>
+</div>

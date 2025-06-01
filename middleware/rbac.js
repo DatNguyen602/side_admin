@@ -1,6 +1,6 @@
 module.exports = (requiredPerm) => async (req, res, next) => {
   const Role = require('../models/Role');
-  const role = await Role.findOne({ name: req.user.role }); // 🔍 dùng name thay vì _id
+  const role = await Role.findOne({ _id: req.user.role._id }); // 🔍 dùng name thay vì _id
   if (!role) return res.status(404).json({ error: 'Role not found' });
 
   if (role.permissions.includes(requiredPerm)) return next();

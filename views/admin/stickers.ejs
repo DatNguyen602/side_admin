@@ -1,0 +1,26 @@
+<% layout('layouts/main') %>
+
+<h1>Sticker Pack Manager</h1>
+
+<h2>Sticker Packs</h2>
+<% packs.forEach(pack => { %>
+<div>
+    <h3><%= pack.name %></h3>
+    <img src="<%= pack.coverImage %>" width="120" />
+    <p><%= pack.description %></p>
+    <ul>
+    <% packs.forEach(pack => { %>
+        <li>
+        <h3><%= pack.name %></h3>
+        <img src="<%= pack.coverImage %>" style="width:100px" />
+        <br />
+        <a href="/admin/stickers/edit/<%= pack._id %>">✏ Edit</a>
+        <form method="POST" action="/admin/stickers/<%= pack._id %>?_method=DELETE" style="display:inline">
+            <button type="submit">🗑 Delete</button>
+        </form>
+        </li>
+    <% }) %>
+    </ul>
+
+</div>
+<% }) %>

@@ -58,6 +58,7 @@ app.use(cookieParser());
 
 // Routes
 // app.use("/signaling", signalingRouter);
+app.use("/api/media", require("./routes/media"));
 app.use("/api/v1/users", require("./routes/users"));
 app.use("/api/v1/agencies", require("./routes/agencies"));
 app.use("/api/v1/branches", require("./routes/branches"));

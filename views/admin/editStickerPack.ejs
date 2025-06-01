@@ -1,0 +1,16 @@
+<% layout('layouts/main') %>
+
+<div>
+    <h1>Edit Sticker Pack</h1>
+
+    <form method="POST" action="/admin/stickers/<%= pack._id %>?_method=PUT">
+    <input name="name" value="<%= pack.name %>" required />
+    <textarea name="description"><%= pack.description %></textarea>
+    <br />
+    <img src="<%= pack.coverImage %>" style="width:150px" />
+    <br />
+    <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="/admin/stickers">Back to list</a>
+</div>
