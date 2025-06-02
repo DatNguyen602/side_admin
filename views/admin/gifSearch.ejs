@@ -1,24 +1,27 @@
-<% layout('layouts/main') %>
+<% layout('layouts/util-wchat') %>
 
-<div>
-    <h2>Search GIFs from Giphy</h2>
+<div class="container mt-4">
+  <h2>Tìm kiếm GIF từ Giphy</h2>
 
-    <form method="GET" action="/admin/gif/search">
-    <input name="q" placeholder="Search term" />
+  <form method="get" class="mb-4">
+    <input type="text" name="q" class="form-control" placeholder="Nhập từ khóa tìm GIF..." value="<%= query %>">
     <button type="submit">Search</button>
-    </form>
+  </form>
 
-    <% if (gifs) { %>
-    <ul>
-        <% gifs.forEach(gif => { %>
-        <li>
-            <img crossorigin="anonymous" src="<%= gif.images.fixed_height.url %>" width="100" />
-            <form method="POST" action="/admin/gif/save">
-            <input type="hidden" name="url" value="<%= gif.images.original.url %>" />
-            <button type="submit">➕ Add to Library</button>
+  <div class="row">
+    <% gifs.forEach(gif => { %>
+      <div class="col-md-3 mb-4">
+        <div class="card">
+          <img src="<%= gif.images.preview_gif?.url || gif.images.fixed_height_small?.url %>" class="card-img-top">
+          <div class="card-body">
+            <p class="card-title"><%= gif.title || 'Không có tiêu đề' %></p>
+            <form method="POST" action="/admin/gif/save" target="_blank">
+              <input type="hidden" name="gifJson" value='<%- JSON.stringify(gif) %>' />
+              <button class="btn btn-success btn-sm w-100">Lưu về hệ thống</button>
             </form>
-        </li>
-        <% }) %>
-    </ul>
-    <% } %>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
 </div>

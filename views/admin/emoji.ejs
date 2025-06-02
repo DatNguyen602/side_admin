@@ -1,24 +1,63 @@
-<% layout('layouts/main') %>
+<% layout('layouts/util-wchat') %>
 
-<h1>Emoji Manager</h1>
-<form method="POST" action="/admin/emoji">
-<input name="shortcode" placeholder="Shortcode (e.g. :smile:)" required />
-<input name="unicode" placeholder="Unicode (e.g. 😄)" required />
-<input name="category" placeholder="Category" />
-<input name="keywords" placeholder="Keywords (comma-separated)" />
-<input name="order" type="number" placeholder="Order" />
-<button type="submit">Add Emoji</button>
+<% 
+  function toUnicodeCode(str) {
+    let codeStr = '';
+    for (let char of str) {
+      codeStr += 'U_' + char.codePointAt(0).toString(16).toUpperCase() + ' ';
+    }
+    return codeStr.trim();
+  }
+%>
+
+<h1 class="text-2xl font-bold mb-4">Emoji Manager</h1>
+
+<!-- Form thêm emoji: Bạn có thể tùy chọn đưa form này ra trang riêng nếu muốn -->
+<form method="POST" action="/admin/emoji" class="mb-6">
+  <div class="grid grid-cols-6 gap-3 items-center">
+    <input name="shortcode" placeholder="Shortcode (e.g. :smile:)" required class="px-3 py-1 border rounded" />
+    <input name="unicode" placeholder="Unicode (e.g. 😄)" required class="px-3 py-1 border rounded" />
+    <input name="category" placeholder="Category" class="px-3 py-1 border rounded" />
+    <input name="keywords" placeholder="Keywords (comma-separated)" class="px-3 py-1 border rounded" />
+    <input name="order" type="number" placeholder="Order" class="px-3 py-1 border rounded" />
+    <button type="submit" class="mt-4 px-5 py-1 bg-green-600 text-white rounded hover:bg-green-500 transition duration-300 shadow-md">
+      Add Emoji
+    </button>
+  </div>
 </form>
 
-<h2>List of Emojis</h2>
-<ul>
-  <% emojis.forEach(emoji => { %>
-    <li>
-      <%= emoji.unicode %> - <%= emoji.shortcode %>
-      <form method="POST" action="/admin/emoji/<%= emoji._id %>?_method=DELETE" style="display:inline">
-        <button type="submit">🗑 Delete</button>
-      </form>
-      <a href="/admin/emoji/edit/<%= emoji._id %>">✏ Edit</a>
-    </li>
-  <% }) %>
-</ul>
+<div class="relative h-ful flex-1">
+  <div class="absolute top-0 bottom-0 max-w-full overflow-x-auto overflow-y-scroll">
+    <h2 class="text-2xl font-bold mb-4">List of Emojis</h2>
+
+    <table class="table-auto w-full max-w-full border-collapse">
+      <thead>
+        <tr>
+          <th class="px-4 py-2 border w-[20%]">Icon</th>
+          <th class="px-4 py-2 border w-[20%]">Unicode</th>
+          <th class="px-4 py-2 border w-[40%]">Shortcode</th>
+          <th class="px-4 py-2 border w-[20%]">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% emojis.forEach(emoji => { %>
+          <tr>
+            <td class="border px-4 py-2 text-center"><%= emoji.unicode %></td>
+            <td class="border px-4 py-2 text-center"><%= toUnicodeCode(emoji.unicode) %></td>
+            <td class="border px-4 py-2 text-center"><%= emoji.shortcode %></td>
+            <td class="border px-4 py-2 text-center">
+              <form method="POST" action="/admin/emoji/<%= emoji._id %>?_method=DELETE" class="inline-block">
+                <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-500 transition duration-300">
+                  🗑
+                </button>
+              </form>
+              <a href="/admin/emoji/edit/<%= emoji._id %>" class="inline-block bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-500 transition duration-300 ml-2">
+                ✏
+              </a>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>

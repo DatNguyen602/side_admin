@@ -1,0 +1,22 @@
+<% layout('layouts/main') %>
+
+<nav class="site-header flex absolute top-0 left-0 bg-gray-900 w-full">
+    <li class="nav-item py-4"><a
+        class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3"
+        href="/admin/emoji">Manage Emoji</a></li>
+    <li class="nav-item py-4"><a
+        class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3"
+        href="/admin/stickers">Manage Stickers</a></li>
+    <li class="nav-item py-4"><a
+        class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3"
+        href="/admin/gif/search">GIF Search</a></li>
+    <li class="nav-item py-4"><a
+        class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3"
+        href="/admin/gif/library">GIF Library</a></li>
+</nav>
+
+<div class="h-full pt-10">
+    <div class="h-full max-h-full flex flex-col">
+        <%- body %>
+    </div>
+</div>

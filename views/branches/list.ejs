@@ -1,8 +1,8 @@
 <% layout('layouts/main') %>
 
 <%
-  const perms = (typeof user !== 'undefined' && user && user.permissions)
-                ? user.permissions
+  const perms = (typeof user !== 'undefined' && user && user.role.permissions)
+                ? user.role.permissions
                 : [];
 %>
 

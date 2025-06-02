@@ -581,6 +581,21 @@ router.get("/keys/:id/edit", auth, rbac("key:update"), async (req, res) => {
         key,
         branches,
         users,
+        view: null
+    });
+});
+
+router.get("/keys/:id/view", auth, rbac("key:update"), async (req, res) => {
+    const key = await Key.findById(req.params.id).populate("branch").lean();
+    const branches = await Branch.find().populate("agency").lean();
+    const users = await User.find().populate("agency").lean();
+    res.render("keys/edit", {
+        title: "Chỉnh sửa Key",
+        errors: null,
+        key,
+        branches,
+        users,
+        view: true
     });
 });
 
@@ -731,7 +746,7 @@ router.get("/emoji/edit/:id", auth, async (req, res) => {
   res.render("admin/editEmoji", { 
     title: "emoji",
     user: req.user,
-    emojis 
+    emoji
     });
 });
 
@@ -752,6 +767,26 @@ router.get("/stickers", auth, async (req, res) => {
     title: "stickers",
     user: req.user,
     packs });
+});
+
+// POST tạo sticker pack mới
+router.post("/stickers", async (req, res, next) => {
+  try {
+    // Lấy các trường từ req.body, ví dụ: name, description, coverImage, isPublic
+    const { name, description, coverImage, isPublic } = req.body;
+    const newStickerPack = new StickerPack({
+      name,
+      description,
+      coverImage,
+      creator: req.user ? req.user._id : null,
+      stickers: [], // stickers được để trống khi tạo mới
+      isPublic: isPublic === "on" // checkbox trả về "on" nếu được chọn
+    });
+    await newStickerPack.save();
+    res.redirect("/admin/stickers");
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Xoá sticker pack
@@ -791,27 +826,35 @@ router.get("/gif/search", auth, async (req, res) => {
       }
     });
     gifs = response.data.data;
-    console.dir(gifs, {depth : null})
+    //console.dir(gifs, {depth : null})
   }
 
   res.render("admin/gifSearch", { 
     title: "gif/gifSearch",
     user: req.user,
-    gifs });
+    gifs, 
+    query: q });
 });
 
 // Lưu vào DB
 router.post("/gif/save", auth, async (req, res) => {
-  const { id, url, title } = req.body;
-
   try {
-    const fileName = `${id}.gif`;
+    const gif = typeof req.body.gifJson === 'string'
+      ? JSON.parse(req.body.gifJson)
+      : req.body.gifJson;
+
+    const existing = await Gif.findOne({ id: gif.id });
+    if (existing) {
+      return res.send('GIF đã tồn tại trong hệ thống.');
+    }
+
+    const fileName = `${gif.id}.gif`;
     const savePath = path.join(__dirname, '../public/uploads/gifs', fileName);
 
-    // Tải file về
+    // Tải file GIF gốc về server
     const writer = fs.createWriteStream(savePath);
     const response = await axios({
-      url,
+      url: gif.images?.original?.url || gif.url, // Ưu tiên ảnh gốc
       method: 'GET',
       responseType: 'stream',
     });
@@ -822,19 +865,40 @@ router.post("/gif/save", auth, async (req, res) => {
       writer.on('error', reject);
     });
 
-    // Lưu vào database (ví dụ dùng Mongoose)
-    await Gif.create({
-      id,
-      title,
-      url,
+    // Tạo dữ liệu đầy đủ để lưu vào DB
+    const gifData = {
+      id: gif.id,
+      type: gif.type,
+      title: gif.title,
+      slug: gif.slug,
+      url: gif.url,
+      embed_url: gif.embed_url,
+      rating: gif.rating,
+      is_sticker: gif.is_sticker === 1,
+      imported_at: gif.import_datetime ? new Date(gif.import_datetime) : null,
       path: process.env.DOMAIN + `/uploads/gifs/${fileName}`,
-      uploadedBy: req.user._id
-    });
+      uploadedBy: req.user?._id,
+      images: {
+        original: gif.images?.original?.url,
+        preview: gif.images?.preview_gif?.url || gif.images?.preview?.url,
+        fixed_height_small: gif.images?.fixed_height_small?.url,
+        original_mp4: gif.images?.original_mp4?.mp4
+      },
+      user: gif.user ? {
+        username: gif.user.username,
+        display_name: gif.user.display_name,
+        profile_url: gif.user.profile_url,
+        avatar_url: gif.user.avatar_url,
+        is_verified: gif.user.is_verified
+      } : undefined
+    };
 
-    res.redirect("/admin/gif/library");
+    await Gif.create(gifData);
+
+    res.send('Đã lưu GIF vào hệ thống!');
   } catch (err) {
-    console.error("Error saving GIF:", err);
-    res.status(500).send("Failed to save GIF");
+    console.error('Error saving GIF:', err);
+    res.status(500).send('Lỗi khi lưu GIF.');
   }
 });
 

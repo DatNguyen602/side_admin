@@ -12,7 +12,7 @@
 
       <div>
         <label class="block font-medium mb-1">Branch</label>
-        <select name="branchId" required
+        <select name="branchId" required <%= (view) ? "disabled" : "" %>
           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
           <option value="">-- Chọn Branch --</option>
           <% branches.forEach(branch => { %>
@@ -26,7 +26,7 @@
       <div class="flex justify-between">
         <div class="w-[50%] max-w-64">
           <label class="block font-medium mb-1">Ngày bắt đầu</label>
-          <input type="date" name="dateStartUse" required 
+          <input type="date" name="dateStartUse" required  <%= (view) ? "readonly" : "" %>
             min="<%= key.dateStartUse ? key.dateStartUse.toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
             value="<%= key.dateStartUse ? key.dateStartUse.toISOString().split('T')[0] : '' %>"
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"/>
@@ -34,7 +34,7 @@
 
         <div class="w-[50%] max-w-64">
           <label class="block font-medium mb-1">Ngày kết thúc</label>
-          <input type="date" name="dateEndUse" required 
+          <input type="date" name="dateEndUse" required  <%= (view) ? "readonly" : "" %>
             min="<%= key.dateEndUse ? key.dateEndUse.toISOString().split('T')[0] : new Date().toISOString().split('T')[0] %>"
             value="<%= key.dateEndUse ? key.dateEndUse.toISOString().split('T')[0] : '' %>"
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"/>
@@ -43,7 +43,7 @@
 
       <div>
         <label class="block font-medium mb-1">Người dùng</label>
-        <select name="userIds" multiple
+        <select name="userIds" multiple <%= (view) ? "disabled" : "" %>
           class="w-full h-40 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
           <% users.forEach(user => { if (user !== null) { %>
             <option value="<%= user._id %>" <%= key.userIds && key.userIds.some(uid => uid.toString() === user._id.toString()) ? 'selected' : '' %>>
@@ -55,11 +55,13 @@
         <p class="text-sm text-gray-500 mt-1">Giữ Ctrl (hoặc Cmd trên Mac) để chọn nhiều người</p>
       </div>
 
-      <div class="flex items-center justify-between">
-        <button type="submit"
-          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
-          Cập nhật Key
-        </button>
+      <div class="flex items-center <%= (view) ? 'justify-end' : 'justify-between' %>">
+        <% if (!view) { %>
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
+            Cập nhật Key
+          </button>
+        <% } %>
         <a href="/admin/keys"
           class="text-gray-600 hover:text-red-600 font-medium transition duration-150">
           Hủy

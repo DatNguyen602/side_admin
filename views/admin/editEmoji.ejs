@@ -1,11 +1,58 @@
-<% layout('layouts/main') %>
+<% layout('layouts/util-wchat') %>
 
-<form method="POST" action="/admin/emoji/<%= emoji._id %>?_method=PUT">
-  <input name="shortcode" value="<%= emoji.shortcode %>" required />
-  <input name="unicode" value="<%= emoji.unicode %>" required />
-  <input name="category" value="<%= emoji.category %>" />
-  <input name="keywords" value="<%= emoji.keywords.join(',') %>" />
-  <input name="order" type="number" value="<%= emoji.order || 0 %>" />
-  <button type="submit">Update</button>
-</form>
-<a href="/admin/emoji">Back</a>
+<div class="max-w-lg mx-auto mt-8">
+  <h1 class="text-2xl font-bold mb-6 text-center">Edit Emoji</h1>
+  <form method="POST" action="/admin/emoji/<%= emoji._id %>?_method=PUT" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <!-- Shortcode -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="shortcode">
+        Shortcode
+      </label>
+      <input id="shortcode" name="shortcode" value="<%= emoji.shortcode %>" required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+    </div>
+    <!-- Unicode -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="unicode">
+        Unicode
+      </label>
+      <input id="unicode" name="unicode" value="<%= emoji.unicode %>" required
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+    </div>
+    <!-- Category -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="category">
+        Category
+      </label>
+      <input id="category" name="category" value="<%= emoji.category %>" 
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+    </div>
+    <!-- Keywords -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="keywords">
+        Keywords (comma-separated)
+      </label>
+      <input id="keywords" name="keywords" value="<%= emoji.keywords.join(',') %>" 
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+    </div>
+    <!-- Order -->
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="order">
+        Order
+      </label>
+      <input id="order" name="order" type="number" value="<%= emoji.order || 0 %>" 
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+    </div>
+    <!-- Buttons -->
+    <div class="flex items-center justify-between">
+      <button type="submit"
+        class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Update
+      </button>
+      <a href="/admin/emoji" 
+        class="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800">
+        Back
+      </a>
+    </div>
+  </form>
+</div>
