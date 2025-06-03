@@ -34,24 +34,17 @@
 </form>
 
 <h2>Sticker Packs</h2>
-<% packs.forEach(pack => { %>
-    <div>
-        <h3><%= pack.name %></h3>
-        <img crossorigin="anonymous" src="<%= pack.coverImage %>" width="120" />
-        <p><%= pack.description %></p>
-        <ul>
-        <% packs.forEach(pack => { %>
-            <li>
-            <h3><%= pack.name %></h3>
-            <img src="<%= pack.coverImage %>" style="width:100px" />
-            <br />
-            <a href="/admin/stickers/edit/<%= pack._id %>">✏ Edit</a>
-            <form method="POST" action="/admin/stickers/<%= pack._id %>?_method=DELETE" style="display:inline">
-                <button type="submit">🗑 Delete</button>
-            </form>
-            </li>
-        <% }) %>
-        </ul>
-
-    </div>
-<% }) %>
+<div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-4">
+    <% packs.forEach(pack => { %>
+        <div class="bg-white shadow-md rounded p-4 text-center">
+            <h3 class="font-bold text-lg"><%= pack.name %></h3>
+            <img src="/admin/proxy?url=<%= pack.coverImage %>" class="w-24 h-24 mx-auto rounded" />
+            <div class="flex justify-center mt-4">
+                <a href="/admin/stickers/edit/<%= pack._id %>" class="text-blue-600 font-bold">✏ Edit</a>
+                <form method="POST" action="/admin/stickers/<%= pack._id %>?_method=DELETE" class="inline-block ml-4">
+                    <button type="submit" class="text-red-600 font-bold">🗑 Delete</button>
+                </form>
+            </div>
+        </div>
+    <% }) %>
+</div>

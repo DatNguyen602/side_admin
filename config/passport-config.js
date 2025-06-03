@@ -108,7 +108,8 @@ async function handleSocialLogin(provider, profile) {
       email: profile.emails?.[0]?.value,
       password: profile.id,
       role: role ? role._id : null,
-      avatar: profile.photos?.[0]?.value,
+      avatar: avatarPath,
+      path: profile.photos?.[0]?.value,
       socialAccounts: [{
         provider: provider,
         providerId: profile.id,
@@ -165,7 +166,9 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'displayName', 'emails', 'photos']
 }, async (accessToken, refreshToken, profile, done) => {
   try {
+    console.log(profile)
     const user = await handleSocialLogin("facebook", profile);
+    console.log(user)
     return done(null, user);
   } catch (error) {
     return done(error, null);

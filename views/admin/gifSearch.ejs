@@ -1,27 +1,74 @@
 <% layout('layouts/util-wchat') %>
 
-<div class="container mt-4">
-  <h2>Tìm kiếm GIF từ Giphy</h2>
+<div class="w-full mx-auto p-6">
+  <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">Tìm kiếm GIF từ Giphy</h2>
 
-  <form method="get" class="mb-4">
-    <input type="text" name="q" class="form-control" placeholder="Nhập từ khóa tìm GIF..." value="<%= query %>">
-    <button type="submit">Search</button>
+  <!-- Form tìm kiếm -->
+  <form method="get" class="flex justify-end gap-3 mb-6">
+    <input 
+      type="text" 
+      name="q" 
+      class="max-w-[32rem] flex-1 p-2 border rounded-lg focus:ring focus:ring-blue-300" 
+      placeholder="Nhập từ khóa tìm GIF..." 
+      value="<%= query %>">
+    <button 
+      type="submit" 
+      class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
+    >
+      🍳
+    </button>
   </form>
 
-  <div class="row">
+  <!-- Container chính chứa GIF:
+       Gán offset, hasMore, query thành data-attributes để file JS ngoài đọc -->
+  <div 
+    id="gif-container" 
+    class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-4"
+    data-offset="<%= offset %>"
+    data-hasmore="<%= hasMore %>"
+    data-query="<%- query %>"
+  >
     <% gifs.forEach(gif => { %>
-      <div class="col-md-3 mb-4">
-        <div class="card">
-          <img src="<%= gif.images.preview_gif?.url || gif.images.fixed_height_small?.url %>" class="card-img-top">
-          <div class="card-body">
-            <p class="card-title"><%= gif.title || 'Không có tiêu đề' %></p>
-            <form method="POST" action="/admin/gif/save" target="_blank">
-              <input type="hidden" name="gifJson" value='<%- JSON.stringify(gif) %>' />
-              <button class="btn btn-success btn-sm w-100">Lưu về hệ thống</button>
-            </form>
-          </div>
+      <div class="gif-card bg-white shadow-md rounded-lg overflow-hidden">
+        <img 
+          src="<%= gif.proxyUrl %>" 
+          alt="<%= gif.title %>" 
+          class="w-full h-48 object-cover">
+        <div class="p-3">
+          <p class="text-sm text-gray-700 font-semibold truncate"><%= gif.title || 'Không có tiêu đề' %></p>
+          <form method="POST" action="/admin/gif/save" class="mt-2">
+            <input type="hidden" name="gifJson" value='<%- JSON.stringify(gif) %>' />
+            <input type="hidden" name="q" value="<%= query %>" />
+            <% if (gif.isSaved) { %>
+              <p class="w-full bg-blue-500 text-white px-3 py-2 rounded-lg text-center">Stored</p>
+            <% } else { %>
+              <button 
+                class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition"
+              >
+                Save
+              </button>
+            <% } %>
+          </form>
         </div>
       </div>
     <% }) %>
   </div>
+
+  <!-- Loading indicator -->
+    <div id="loading" class="mt-6 text-center text-gray-500 hidden">
+      <div class="flex items-center justify-center space-x-2">
+          <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 00-6 6H4z"></path>
+          </svg>
+          <span>Đang tải thêm GIF...</span>
+      </div>
+    </div>
+
+  <% if (gifs.length === 0 && query) { %>
+    <p class="text-center text-gray-600">Không tìm thấy GIF nào.</p>
+  <% } %>
 </div>
+
+<!-- Include file JS từ cùng domain (không có inline script) -->
+<script src="/js/gifSearch.js"></script>

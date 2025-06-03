@@ -32,7 +32,7 @@ router.get("/", auth, async (req, res) => {
             }
 
             if(mesNew) {
-              if(!mesNew.readBy.includes(userId)) roomObj.newMessage = mesNew.contents[0].data;
+              if(!mesNew.readBy.includes(userId)) roomObj.newMessage = mesNew.contents[0];
               roomObj.newDate = mesNew.createdAt
             }
             // Ngược lại giữ nguyên hoặc có thể giữ name hiện tại nếu có
@@ -55,6 +55,148 @@ router.get("/", auth, async (req, res) => {
         console.error(err);
         res.status(500).json({ error: "Server error" });
     }
+});
+
+router.get("/:id", auth, async (req, res) => {
+  const roomId = req.params.id;
+  const userId = req.user._id;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(400).json({ error: "Invalid room ID." });
+    }
+
+    const room = await Room.findById(roomId)
+      .populate("members.user", "username avatar state")
+      .populate("joinRequests.user", "username avatar state");
+
+    if (!room) {
+      return res.status(404).json({ error: "Room not found." });
+    }
+
+    // Kiểm tra người dùng có trong phòng không
+    const isMember = room.members.some(member => 
+      member.user._id.equals(userId)
+    );
+    
+    if (!isMember) {
+      return res.status(403).json({ error: "Not authorized to view this room." });
+    }
+
+    res.json(room);
+  } catch (err) {
+    console.error("Error fetching room details:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+});
+
+router.put("/:id", auth, async (req, res) => {
+  const roomId = req.params.id;
+  const userId = req.user._id;
+  const { name, joinPolicy } = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(400).json({ error: "Invalid room ID." });
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) return res.status(404).json({ error: "Room not found." });
+
+    // Chỉ creator mới có quyền cập nhật
+    const creator = room.members.find(
+      member => member.role === "creator" && member.user.toString() === userId.toString()
+    );
+    if (!creator) {
+      return res.status(403).json({ error: "Only the room creator can update this room." });
+    }
+
+    if (name && typeof name === "string" && name.trim() !== "") {
+      room.name = name.trim();
+    }
+
+    if (joinPolicy && ["free", "approval"].includes(joinPolicy)) {
+      room.joinPolicy = joinPolicy;
+    }
+
+    await room.save();
+    res.status(200).json(room);
+  } catch (err) {
+    console.error("Error updating room:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+});
+
+router.delete("/:id", auth, async (req, res) => {
+  const roomId = req.params.id;
+  const userId = req.user._id;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(400).json({ error: "Invalid room ID." });
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) return res.status(404).json({ error: "Room not found." });
+
+    // Kiểm tra quyền: chỉ creator mới có quyền xóa phòng
+    const creator = room.members.find(
+      member => member.role === "creator" && member.user.toString() === userId.toString()
+    );
+
+    if (!creator) {
+      return res.status(403).json({ error: "Only the room creator can delete this room." });
+    }
+
+    // Xóa tất cả tin nhắn trong phòng
+    await Message.deleteMany({ room: roomId });
+
+    // Xóa phòng
+    await Room.findByIdAndDelete(roomId);
+
+    res.status(200).json({ message: "Room deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting room:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+});
+
+router.post("/reject-join", auth, async (req, res) => {
+  const { roomId, userIdToReject } = req.body;
+  const currentUser = req.user._id;
+  
+  try {
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(400).json({ error: "Invalid room ID." });
+    }
+    
+    const room = await Room.findById(roomId);
+    if (!room) return res.status(404).json({ error: "Room not found." });
+    
+    // Kiểm tra quyền
+    const currentMember = room.members.find(
+      member => member.user.toString() === currentUser.toString()
+    );
+    if (!currentMember || (currentMember.role !== "creator" && currentMember.role !== "admin")) {
+      return res.status(403).json({ error: "Not authorized to reject join requests." });
+    }
+    
+    // Tìm và xóa yêu cầu
+    const requestIndex = room.joinRequests.findIndex(
+      req => req.user.toString() === userIdToReject.toString()
+    );
+    if (requestIndex === -1) {
+      return res.status(400).json({ error: "Join request not found." });
+    }
+    
+    room.joinRequests.splice(requestIndex, 1);
+    await room.save();
+    
+    res.status(200).json({ message: "Join request rejected." });
+  } catch (err) {
+    console.error("Error rejecting join request:", err);
+    res.status(500).json({ error: "Server error." });
+  }
 });
 
 router.post("/approve-join", auth, async (req, res) => {
@@ -99,6 +241,92 @@ router.post("/approve-join", auth, async (req, res) => {
   }
 });
 
+router.post("/remove-member", auth, async (req, res) => {
+  const { roomId, userIdToRemove } = req.body;
+  const userId = req.user._id;
+
+  try {
+    // Kiểm tra định dạng roomId
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(400).json({ error: "Invalid room ID." });
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) return res.status(404).json({ error: "Room not found." });
+
+    // Kiểm tra quyền: chỉ admin hoặc creator mới có quyền xóa thành viên
+    const currentMember = room.members.find(
+      member => member.user.toString() === userId.toString()
+    );
+    
+    if (!currentMember || 
+        (currentMember.role !== "admin" && currentMember.role !== "creator")) {
+      return res.status(403).json({ error: "Not authorized to remove members." });
+    }
+
+    // Tìm thành viên cần xóa
+    const targetMemberIndex = room.members.findIndex(
+      member => member.user.toString() === userIdToRemove.toString()
+    );
+
+    if (targetMemberIndex === -1) {
+      return res.status(404).json({ error: "Member not found in room." });
+    }
+
+    // Không cho xóa creator
+    if (room.members[targetMemberIndex].role === "creator") {
+      return res.status(403).json({ error: "Cannot remove the room creator." });
+    }
+
+    // Xóa thành viên
+    room.members.splice(targetMemberIndex, 1);
+    await room.save();
+
+    res.status(200).json({ message: "Member removed successfully." });
+  } catch (err) {
+    console.error("Error removing member:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+});
+
+router.post("/leave", auth, async (req, res) => {
+  const { roomId } = req.body;
+  const userId = req.user._id;
+
+  try {
+    // Kiểm tra định dạng roomId
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return res.status(400).json({ error: "Invalid room ID." });
+    }
+
+    const room = await Room.findById(roomId);
+    if (!room) return res.status(404).json({ error: "Room not found." });
+
+    // Tìm index của thành viên
+    const memberIndex = room.members.findIndex(
+      member => member.user.toString() === userId.toString()
+    );
+
+    if (memberIndex === -1) {
+      return res.status(400).json({ error: "You are not a member of this room." });
+    }
+
+    // Người tạo phòng không thể rời đi
+    if (room.members[memberIndex].role === "creator") {
+      return res.status(403).json({ error: "Creator cannot leave the room. Delete the room instead." });
+    }
+
+    // Xóa thành viên
+    room.members.splice(memberIndex, 1);
+    await room.save();
+
+    res.status(200).json({ message: "Successfully left the room." });
+  } catch (err) {
+    console.error("Error leaving room:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+});
+
 router.post("/create", auth, async (req, res) => {
   try {
     const { name, memberIds, joinPolicy } = req.body;
@@ -129,7 +357,7 @@ router.post("/create", auth, async (req, res) => {
     // Xây dựng danh sách thành viên với vai trò phù hợp
     const members = validUserIds.map((id) => ({
       user: id,
-      role: id === creatorId ? "creator" : "member",
+      role: id.toString() === creatorId.toString() ? "creator" : "member",
     }));
 
     // Tạo room, có thể cho phép truyền joinPolicy (đảm bảo chỉ nhận các giá trị hợp lệ)

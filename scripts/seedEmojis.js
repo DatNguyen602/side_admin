@@ -1,26 +1,24 @@
-// seedEmojis.js
 const axios = require("axios");
 const Emoji = require("../models/Emoji");
-const mongoose = require('mongoose');
-require("dotenv").config(); // Import dotenv
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-// Kết nối đến MongoDB – thay đổi chuỗi kết nối cho phù hợp
+// Kết nối đến MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/mydb', {
+    await mongoose.connect("mongodb://127.0.0.1:27017/mydb", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('MongoDB connected');
+    console.log("MongoDB connected");
   } catch (err) {
-    console.error(err);
+    console.error("Lỗi kết nối MongoDB:", err);
     process.exit(1);
   }
 };
 
 /**
- * Hàm chuyển đổi chuỗi unified (ví dụ: "1F600" hoặc "1F3F3-FE0F-200D-1F308")
- * thành emoji thực sự
+ * Hàm chuyển đổi chuỗi unified thành emoji thực sự
  */
 function unifiedToEmoji(unified) {
   return unified
@@ -29,32 +27,47 @@ function unifiedToEmoji(unified) {
     .join("");
 }
 
+/**
+ * Hàm kiểm tra xem một emoji có thể hiển thị được không
+ */
+const emojiRegex = require("emoji-regex");
+
+function isRenderable(emoji) {
+  const regex = emojiRegex();
+  return regex.test(emoji);
+}
+
 async function seedAllEmojis() {
   try {
-    // URL dữ liệu emoji đầy đủ từ repository iamcal/emoji-data
     const url =
       "https://raw.githubusercontent.com/iamcal/emoji-data/master/emoji.json";
     const response = await axios.get(url);
     const emojiData = response.data;
 
-    // Chuyển đổi dữ liệu sao cho phù hợp với schema của bạn
-    // Ở đây, chúng ta sử dụng:
-    // - shortcode: dùng trường short_name và bao trong dấu ":"
-    // - unicode: tính từ trường unified
-    // - category, keywords và order: lấy từ dữ liệu, có thể gán giá trị mặc định nếu thiếu
-    const emojis = emojiData.map((item, index) => {
-        console.log(`item ${index}: ${item.unified}`);
-        return {
-        shortcode: `:${item.short_name}:`,
-        unicode: unifiedToEmoji(item.unified),
-        category: item.category || "Uncategorized",
-        keywords: item.keywords || [],
-        order: item.sort_order || 0,
-        }
-    });
-
-    // Xóa toàn bộ dữ liệu emoji cũ (nếu có)
+    // Xóa toàn bộ dữ liệu emoji cũ trước khi thêm mới
     await Emoji.deleteMany({});
+    console.log("Đã xóa toàn bộ dữ liệu emoji cũ.");
+
+    // Xử lý danh sách emoji, loại bỏ emoji không hiển thị
+    const emojis = emojiData
+      .map((item) => {
+        const unicodeEmoji = unifiedToEmoji(item.unified);
+
+        if (!isRenderable(unicodeEmoji)) {
+          console.log(`Emoji ${unicodeEmoji} không hiển thị được, sẽ bị bỏ qua.`);
+          return null;
+        }
+
+        return {
+          shortcode: `:${item.short_name}:`,
+          unicode: unicodeEmoji,
+          category: item.category || "Uncategorized",
+          keywords: item.keywords || [],
+          order: item.sort_order || 0,
+        };
+      })
+      .filter(Boolean); // Loại bỏ các giá trị null
+
     const inserted = await Emoji.insertMany(emojis);
     console.log(`Đã thêm thành công ${inserted.length} emoji vào cơ sở dữ liệu.`);
   } catch (error) {

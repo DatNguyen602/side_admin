@@ -116,13 +116,12 @@ router.get('/auth/google/callback',
 
 // --- OAuth Facebook ---
 
-router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 
 router.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   async (req, res) => {
-    // Bạn có thể xử lý tương tự tạo token như google
-    res.redirect('/profile');
+    await handleGoogleLogin(req, res);
   }
 );
 

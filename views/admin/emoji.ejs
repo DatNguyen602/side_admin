@@ -20,7 +20,7 @@
     <input name="category" placeholder="Category" class="px-3 py-1 border rounded" />
     <input name="keywords" placeholder="Keywords (comma-separated)" class="px-3 py-1 border rounded" />
     <input name="order" type="number" placeholder="Order" class="px-3 py-1 border rounded" />
-    <button type="submit" class="mt-4 px-5 py-1 bg-green-600 text-white rounded hover:bg-green-500 transition duration-300 shadow-md">
+    <button type="submit" class="px-5 py-1 bg-green-600 text-white rounded hover:bg-green-500 transition duration-300 shadow-md">
       Add Emoji
     </button>
   </div>
@@ -41,7 +41,7 @@
       </thead>
       <tbody>
         <% emojis.forEach(emoji => { %>
-          <tr>
+          <tr class="hover:bg-gray-100">
             <td class="border px-4 py-2 text-center"><%= emoji.unicode %></td>
             <td class="border px-4 py-2 text-center"><%= toUnicodeCode(emoji.unicode) %></td>
             <td class="border px-4 py-2 text-center"><%= emoji.shortcode %></td>

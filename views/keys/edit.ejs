@@ -44,8 +44,8 @@
       <div>
         <label class="block font-medium mb-1">Người dùng</label>
         <select name="userIds" multiple <%= (view) ? "disabled" : "" %>
-          class="w-full h-40 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <% users.forEach(user => { if (user !== null) { %>
+          class="w-full h-96 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <% users.forEach(user => { if (user !== null && (!view || key.userIds && key.userIds.some(uid => uid.toString() === user._id.toString()))) { %>
             <option value="<%= user._id %>" <%= key.userIds && key.userIds.some(uid => uid.toString() === user._id.toString()) ? 'selected' : '' %>>
               <%= user.username %> (<%= user.email %>)
               <% if (user.agency) { %> - <%= user.agency.name %> <% } %>

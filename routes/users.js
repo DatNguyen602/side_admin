@@ -361,7 +361,6 @@ router.post("/find", auth, async (req, res) => {
 router.post("/friends/unrequests", auth, async (req, res) => {
   try {
       const id = req.body.targetId;
-      console.log(id);
       const rq = await FriendRequest.findOne(
         {
           $or: [{ _id: id, requester: req.user._id },
@@ -378,6 +377,7 @@ router.post("/friends/unrequests", auth, async (req, res) => {
 
       res.json({ message: "Xóa thành công!", deletedUser });
   } catch (error) {
+      console.log(error)
       res.status(500).json({ message: "Lỗi server", error });
   }
 });

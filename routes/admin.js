@@ -717,6 +717,30 @@ router.post("/roles/:id/delete", auth, async (req, res) => {
     res.redirect("/admin/roles");
 });
 
+// 1. Route để proxy GIF (tránh CSP)
+//    Client sẽ load <img src="/api/gif/proxy?url=<GIF_URL>">
+router.get("/proxy", auth, async (req, res) => {
+  const { url } = req.query;
+  if (!url) {
+    return res.status(400).send("Missing 'url' parameter");
+  }
+
+  try {
+    // Fetch nhị phân (arraybuffer) từ Giphy
+    const response = await axios.get(decodeURIComponent(url), {
+      responseType: "arraybuffer",
+    });
+
+    // Đặt content-type là image/gif
+    res.set("Content-Type", "image/gif");
+    // (Nếu cần caching, có thể bổ sung Cache-Control ở đây)
+    return res.send(response.data);
+  } catch (err) {
+    console.error("Error proxying GIF:", err.message);
+    return res.status(500).send("Cannot fetch GIF");
+  }
+});
+
 // Trang quản lý emoji
 router.get("/emoji", auth, async (req, res) => {
   const emojis = await Emoji.find().sort("order");
@@ -735,7 +759,7 @@ router.post("/emoji", auth, async (req, res) => {
 });
 
 // Xóa emoji
-router.delete("/emoji/:id", auth, async (req, res) => {
+router.post("/emoji/:id", auth, async (req, res) => {
   await Emoji.findByIdAndDelete(req.params.id);
   res.redirect("/admin/emoji");
 });
@@ -801,114 +825,16 @@ router.get("/stickers/edit/:id", auth, async (req, res) => {
   res.render("admin/editStickerPack", { 
     title: "stickers",
     user: req.user,
-    packs });
+    pack });
 });
 
 // Submit chỉnh sửa
-router.put("/stickers/:id", auth, async (req, res) => {
+router.post("/stickers/:id", auth, async (req, res) => {
   const { name, description } = req.body;
   await StickerPack.findByIdAndUpdate(req.params.id, { name, description });
   res.redirect("/admin/stickers");
 });
 
-const GIPHY_API_KEY = process.env.API_GIPHY; // thay bằng key thật
-
-router.get("/gif/search", auth, async (req, res) => {
-  const q = req.query.q;
-  let gifs = [];
-
-  if (q) {
-    const response = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
-      params: {
-        api_key: GIPHY_API_KEY,
-        q,
-        limit: 10
-      }
-    });
-    gifs = response.data.data;
-    //console.dir(gifs, {depth : null})
-  }
-
-  res.render("admin/gifSearch", { 
-    title: "gif/gifSearch",
-    user: req.user,
-    gifs, 
-    query: q });
-});
-
-// Lưu vào DB
-router.post("/gif/save", auth, async (req, res) => {
-  try {
-    const gif = typeof req.body.gifJson === 'string'
-      ? JSON.parse(req.body.gifJson)
-      : req.body.gifJson;
-
-    const existing = await Gif.findOne({ id: gif.id });
-    if (existing) {
-      return res.send('GIF đã tồn tại trong hệ thống.');
-    }
-
-    const fileName = `${gif.id}.gif`;
-    const savePath = path.join(__dirname, '../public/uploads/gifs', fileName);
-
-    // Tải file GIF gốc về server
-    const writer = fs.createWriteStream(savePath);
-    const response = await axios({
-      url: gif.images?.original?.url || gif.url, // Ưu tiên ảnh gốc
-      method: 'GET',
-      responseType: 'stream',
-    });
-    response.data.pipe(writer);
-
-    await new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
-
-    // Tạo dữ liệu đầy đủ để lưu vào DB
-    const gifData = {
-      id: gif.id,
-      type: gif.type,
-      title: gif.title,
-      slug: gif.slug,
-      url: gif.url,
-      embed_url: gif.embed_url,
-      rating: gif.rating,
-      is_sticker: gif.is_sticker === 1,
-      imported_at: gif.import_datetime ? new Date(gif.import_datetime) : null,
-      path: process.env.DOMAIN + `/uploads/gifs/${fileName}`,
-      uploadedBy: req.user?._id,
-      images: {
-        original: gif.images?.original?.url,
-        preview: gif.images?.preview_gif?.url || gif.images?.preview?.url,
-        fixed_height_small: gif.images?.fixed_height_small?.url,
-        original_mp4: gif.images?.original_mp4?.mp4
-      },
-      user: gif.user ? {
-        username: gif.user.username,
-        display_name: gif.user.display_name,
-        profile_url: gif.user.profile_url,
-        avatar_url: gif.user.avatar_url,
-        is_verified: gif.user.is_verified
-      } : undefined
-    };
-
-    await Gif.create(gifData);
-
-    res.send('Đã lưu GIF vào hệ thống!');
-  } catch (err) {
-    console.error('Error saving GIF:', err);
-    res.status(500).send('Lỗi khi lưu GIF.');
-  }
-});
-
-// Xem thư viện gif
-router.get("/gif/library", auth, async (req, res) => {
-  const gifs = await Gif.find();
-  res.render("admin/gifLibrary", { 
-    title: "gif/library",
-    user: req.user,
-    gifs });
-});
+router.use("/gif", require("./api/gif"));
 
 module.exports = router;

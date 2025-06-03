@@ -33,6 +33,7 @@ const UserSchema = new mongoose.Schema(
     state: { type: String, enum: ['online', 'offline'], required: true, default: 'online' },
     lastSeen: { type: Date, default: Date.now },
     avatar: { type: String, default: '' },
+    path: { type: String, default: '' },
     devices: [
       {
         deviceId: { type: String, required: true, default: '' },

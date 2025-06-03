@@ -1,37 +1,34 @@
-//routes/media.js
 const express = require("express");
 const router = express.Router();
 const Emoji = require("../models/Emoji");
 const StickerPack = require("../models/StickerPack");
 const Gif = require("../models/Gif");
+const auth = require("../middleware/auth");
 
-// GET /emoji
-router.get("/emoji", async (req, res) => {
-  const emojis = await Emoji.find().sort("order");
+// GET /emoji với phân trang
+router.get("/emoji", auth, async (req, res) => {
+  const { limit = 50, offset = 0 } = req.query; // Nhận tham số từ request
+  const emojis = await Emoji.find().skip(parseInt(offset)).limit(parseInt(limit)).sort("order");
   res.json(emojis);
 });
 
-// GET /stickers
-router.get("/stickers", async (req, res) => {
-  const packs = await StickerPack.find({ isPublic: true });
+// GET /stickers với phân trang
+router.get("/stickers", auth, async (req, res) => {
+  const { limit = 20, offset = 0 } = req.query;
+  const packs = await StickerPack.find({ isPublic: true })
+    .skip(parseInt(offset))
+    .limit(parseInt(limit));
   res.json(packs);
 });
 
-// GET /stickers/:packId
-router.get("/stickers/:packId", async (req, res) => {
-  const pack = await StickerPack.findById(req.params.packId);
-  if (!pack) return res.status(404).json({ error: "Not found" });
+// GET /gif với phân trang
+router.get("/gif", auth, async (req, res) => {
+  const { limit = 20, offset = 0 } = req.query;
+  const pack = await Gif.find()
+    .skip(parseInt(offset))
+    .limit(parseInt(limit))
+    .sort("order");
   res.json(pack);
-});
-
-// GET /gif/search?q=funny
-router.get("/gif/search", async (req, res) => {
-  const q = req.query.q;
-  if (!q) return res.status(400).json({ error: "Missing query" });
-
-  // Optional: Replace with real Giphy/Tenor API
-  const gifs = await Gif.find({ tags: { $in: [q] } }).limit(20);
-  res.json(gifs);
 });
 
 module.exports = router;

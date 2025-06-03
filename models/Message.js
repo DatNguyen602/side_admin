@@ -12,20 +12,23 @@ const ContentSchema = new mongoose.Schema({
       "emoji",
       "sticker",
       "gif",
-      "icon",     // NEW - icon đơn giản, kiểu biểu tượng hệ thống
-      "reaction"  // NEW - biểu cảm người dùng gán vào message khác
+      "icon",
+      "reaction"
     ],
     required: true
   },
-  data: { type: String, required: true }, // có thể là text, URL hoặc mã emoji/icon
-  meta: { type: mongoose.Schema.Types.Mixed } // caption, size, unicode, stickerPack, duration...
+  data: { type: String, required: true },
+  meta: { type: mongoose.Schema.Types.Mixed, default: {} }
 }, { _id: false });
 
 const MessageSchema = new mongoose.Schema({
   sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  room: { type: mongoose.Schema.Types.ObjectId, ref: "Room", required: true },
+  room: { type: mongoose.Schema.Types.ObjectId, ref: "Room", required: true, index: true },
 
-  contents: [ContentSchema], // có thể chứa nhiều nội dung trong 1 message
+  contents: {
+    type: [ContentSchema],
+    validate: v => v.length > 0
+  },
 
   replyTo: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
   forwardedFrom: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -36,21 +39,21 @@ const MessageSchema = new mongoose.Schema({
     default: "sent"
   },
 
-  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-
-  // NEW - Biểu cảm phản ứng từ người dùng (reaction riêng biệt với nội dung tin nhắn)
   reactions: [
     {
-      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      type: { type: String, enum: ["like", "love", "laugh", "sad", "angry", "wow", "custom"] },
-      icon: { type: String }, // mã emoji hoặc đường dẫn ảnh icon
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+      type: { type: String, required: true }, // e.g., "like", "heart", "laugh", "angry"
+      icon: { type: String }, // có thể lưu emoji code hoặc đường dẫn icon
       addedAt: { type: Date, default: Date.now }
     }
   ],
 
-  createdAt: { type: Date, default: Date.now },
+  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", unique: true }],
+  deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", unique: true }],
+
+  createdAt: { type: Date, default: Date.now, index: true },
   editedAt: { type: Date },
+  editedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   deletedAt: { type: Date }
 });
 
