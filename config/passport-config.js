@@ -132,7 +132,7 @@ async function handleSocialLogin(provider, profile) {
 passport.use('google-web', new GoogleStrategy({
   clientID: process.env.OAUTH_CLIENT_ID,
   clientSecret: process.env.OAUTH_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL, // URL đã đăng ký cho giao diện
+  callbackURL: process.env.DOMAIN + process.env.GOOGLE_CALLBACK_URL, // URL đã đăng ký cho giao diện
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     const user = await handleSocialLogin("google", profile);
@@ -146,7 +146,7 @@ passport.use('google-web', new GoogleStrategy({
 passport.use('google-api', new GoogleStrategy({
   clientID: process.env.OAUTH_CLIENT_ID,
   clientSecret: process.env.OAUTH_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL + '/api', // URL đã đăng ký cho API
+  callbackURL: process.env.DOMAIN + process.env.GOOGLE_CALLBACK_URL + '/api', // URL đã đăng ký cho API
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     const user = await handleSocialLogin("google", profile);
@@ -162,13 +162,11 @@ passport.use('google-api', new GoogleStrategy({
 passport.use(new FacebookStrategy({
   clientID: process.env.FB_APP_ID,
   clientSecret: process.env.FB_APP_SECRET,
-  callbackURL: process.env.FB_CALLBACK_URL,
+  callbackURL: process.env.DOMAIN + process.env.FB_CALLBACK_URL,
   profileFields: ['id', 'displayName', 'emails', 'photos']
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    console.log(profile)
     const user = await handleSocialLogin("facebook", profile);
-    console.log(user)
     return done(null, user);
   } catch (error) {
     return done(error, null);
@@ -181,7 +179,7 @@ passport.use(new FacebookStrategy({
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_KEY,
   consumerSecret: process.env.TWITTER_SECRET,
-  callbackURL: process.env.TWITTER_CALLBACK_URL,
+  callbackURL: process.env.DOMAIN + process.env.TWITTER_CALLBACK_URL,
   includeEmail: true
 }, async (token, tokenSecret, profile, done) => {
   try {
