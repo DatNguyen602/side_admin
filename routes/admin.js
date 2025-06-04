@@ -11,6 +11,13 @@ const storedata = require("../middleware/storedata");
 const fs = require('fs');
 require("dotenv").config(); // Import dotenv
 
+const multer = require("multer");
+const xlsx = require("xlsx");
+const Emoji = require("../models/Emoji");
+const StickerPack = require("../models/StickerPack");
+const { default: axios } = require("axios");
+const upload = multer({ dest: "uploads/excel" });
+
 // Models
 const User = require("../models/User");
 const Role = require("../models/Role");
@@ -152,14 +159,6 @@ router.post(
         }
     }
 );
-
-const multer = require("multer");
-const xlsx = require("xlsx");
-const Emoji = require("../models/Emoji");
-const StickerPack = require("../models/StickerPack");
-const Gif = require("../models/Gif");
-const { default: axios } = require("axios");
-const upload = multer({ dest: "uploads/excel" });
 
 router.post(
     "/users/import",

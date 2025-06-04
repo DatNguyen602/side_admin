@@ -64,10 +64,14 @@ router.post("/send-verification", async (req, res) => {
 });
 
 router.post("/verify-email", async (req, res) => {
+    // if(!process.env.DOMAIN.includes(req.headers.host)) {
+    //     return res.status(400).send("Nguồn xác minh không đáng tin cậy!");
+    // }
     const { email, verificationCode } = req.body;
     if (storedVerificationCodes[email] !== verificationCode) {
         return res.status(400).send("Mã xác minh không đúng!");
     }
+    storedVerificationCodes[email] = null;
     res.send("Xác minh thành công! Bạn có thể đăng ký.");
 });
 

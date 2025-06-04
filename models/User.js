@@ -56,20 +56,47 @@ const UserSchema = new mongoose.Schema(
     }
 );
 
-UserSchema.pre("save", async function () {
+UserSchema.pre("save", async function (next) {
+    if (this.protected) {
+        const existing = await mongoose.models.User.findOne({
+            protected: true,
+            _id: { $ne: this._id },
+        });
+        if (existing) {
+            return next(new Error("Only one user can have protected: true"));
+        }
+    }
+
     if (this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 10);
     }
+
+    next();
 });
 
-// Middleware cho findOneAndUpdate: nếu cập nhật password thì mã hóa nó
 UserSchema.pre("findOneAndUpdate", async function (next) {
     const update = this.getUpdate();
+
+    // Trường hợp đang cố gắng set protected = true
+    if (update.protected === true) {
+        const query = this.getQuery(); // Lấy điều kiện filter
+        const currentUser = await mongoose.models.User.findOne(query);
+
+        const existing = await mongoose.models.User.findOne({
+            protected: true,
+            _id: { $ne: currentUser?._id },
+        });
+
+        if (existing) {
+            return next(new Error("Only one user can have protected: true"));
+        }
+    }
+
     if (update.password) {
         const hashed = await bcrypt.hash(update.password, 10);
-        // Cập nhật lại password đã được mã hóa
         this.setUpdate({ ...update, password: hashed });
     }
+
     next();
 });
 
