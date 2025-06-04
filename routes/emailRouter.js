@@ -35,6 +35,7 @@ router.post("/send-email", auth, async (req, res) => {
         if (!email) return res.status(400).send("Email không hợp lệ!");
 
         await sendEmail(email, req.body.emailSubject, req.body.emailContent);
+        console.log("email: " + req.body.emailContent);
         res.render("utils/send-email", {
             users: users,
             title: "Email",
