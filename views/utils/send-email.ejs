@@ -13,10 +13,11 @@
     <% } %>
 
     <form method="POST" action="/mail/send-email" class="">
+      <!-- Email và Tiêu đề giữ nguyên -->
       <div class="flex items-center mb-4">
         <label for="email" class="block font-medium mb-1 min-w-32">Email</label>
-        <input list="email-list" id="email" name="email" placeholder="Nhập email hoặc chọn user..." 
-          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400" />
+        <input list="email-list" id="email" name="email" placeholder="Nhập email hoặc chọn user..."
+               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400" />
         <datalist id="email-list">
           <% if (users && users.length > 0) { %>
             <% users.forEach(user => { %>
@@ -30,21 +31,28 @@
 
       <div class="flex items-center mb-4">
         <label for="emailSubject" class="block font-medium mb-1 min-w-32">Tiêu đề</label>
-        <textarea id="emailSubject" name="emailSubject" rows="4" placeholder="Nhập tiêu đề email..." 
-          class="w-full h-[32px] min-h-[32px] max-h-[32px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"></textarea>
+        <textarea id="emailSubject" name="emailSubject" rows="4" placeholder="Nhập tiêu đề email..."
+                  class="w-full h-[32px] min-h-[32px] max-h-[32px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"></textarea>
       </div>
 
+      <!-- Phần soạn thảo được cải tiến -->
       <div class="mb-4">
         <label for="emailContent" class="block font-medium mb-1">Nội dung Email</label>
 
         <!-- Toolbar container -->
-        <div id="toolbar" class="mb-2"></div>
+        <div id="toolbar" class="mb-2 flex flex-wrap gap-2"></div>
 
         <!-- Vùng soạn thảo rich text -->
         <div id="editor"
              class="w-full h-[350px] min-h-[300px] max-h-[500px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 overflow-y-auto"
              contenteditable="true"
-             data-placeholder="Nhập nội dung email..."></div>
+             data-placeholder="Nhập nội dung email...">
+        </div>
+
+        <!-- Thông tin số ký tự và số từ -->
+        <div id="counter" class="text-sm text-gray-600 mt-1">
+          <span id="char-count">Ký tự: 0</span> • <span id="word-count">Từ: 0</span>
+        </div>
 
         <!-- Hidden input để chứa HTML khi submit -->
         <input type="hidden" id="emailContent" name="emailContent">
@@ -52,14 +60,14 @@
 
       <div class="flex items-center justify-between mt-4">
         <!-- Nút xem trước -->
-        <button type="button" onclick="previewEmail()" 
-          class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition duration-200">
+        <button type="button" id="previewEmail"
+                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition duration-200">
           Xem trước
         </button>
 
         <!-- Nút Gửi Email -->
         <button type="submit"
-          class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
+                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
           Gửi Email
         </button>
       </div>
@@ -79,18 +87,14 @@
     display: block;
   }
 
-  /* Kiểu toolbar */
+  /* Kiểu chung cho toolbar */
   #toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 8px;
-    background: #f7f7f7;
-    border: 1px solid #e0e0e0;
+    background: #fafafa;
+    border: 1px solid #ddd;
     border-radius: 6px;
+    padding: 6px;
   }
 
-  /* Kiểu chung cho nút toolbar */
   .toolbar-btn {
     background: #ffffff;
     color: #333;
@@ -104,6 +108,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: relative;
   }
 
   .toolbar-btn:hover {
@@ -111,11 +116,15 @@
     border-color: #b3b3b3;
   }
 
-  .toolbar-btn:active {
-    transform: scale(0.95);
+  .toolbar-btn.active {
+    background: #e0f2ff;
+    border-color: #66b2ff;
   }
 
-  /* Kiểu cho select dropdown */
+  .toolbar-btn:focus {
+    outline: none;
+  }
+
   .toolbar-select {
     height: 30px;
     border: 1px solid #ccc;
@@ -126,20 +135,48 @@
     cursor: pointer;
   }
 
-  /* Ẩn đường cuộn ngang */
-  #editor {
-    white-space: pre-wrap;
+  /* Dropdown “More” cho toolbar responsive */
+  #more-dropdown {
+    position: relative;
+  }
+  #more-dropdown-btn {
+    background: #ffffff;
+    border: 1px solid #ccc;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #more-dropdown-btn:hover {
+    background: #f0f0f0;
+  }
+  #more-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 36px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    z-index: 100;
+    min-width: 120px;
+  }
+  #more-dropdown-content.open {
+    display: block;
+  }
+  #more-dropdown-content .dropdown-item {
+    display: block;
+    padding: 4px 8px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #more-dropdown-content .dropdown-item:hover {
+    background: #f0f0f0;
   }
 </style>
-
-<script>
-  // Hàm preview nội dung email
-  function previewEmail() {
-    const html = document.getElementById('editor').innerHTML;
-    const win = window.open("", "_blank", "width=800,height=600");
-    win.document.write("<html><head><title>Xem trước Email</title></head><body>");
-    win.document.write(html);
-    win.document.write("</body></html>");
-    win.document.close();
-  }
-</script>
