@@ -1,7 +1,7 @@
 <% layout('layouts/main') %>
 
 <div class="h-full flex items-center justify-center">
-  <div class="w-full px-8">
+  <div class="w-full px-8 h-full flex flex-col">
     <h1 class="text-2xl font-bold mb-6 text-center"><%= title || "Gửi Email Thông Báo" %></h1>
 
     <% if(errors) { %>
@@ -12,7 +12,7 @@
       <div class="text-green-500 font-semibold mb-4 text-center"><%= alert %></div>
     <% } %>
 
-    <form method="POST" action="/mail/send-email" class="">
+    <form method="POST" action="/mail/send-email" class="flex flex-col flex-1">
       <!-- Email và Tiêu đề giữ nguyên -->
       <div class="flex items-center mb-4">
         <label for="email" class="block font-medium mb-1 min-w-32">Email</label>
@@ -36,7 +36,7 @@
       </div>
 
       <!-- Phần soạn thảo được cải tiến -->
-      <div class="mb-4">
+      <div class="mb-4 flex flex-col flex-1">
         <label for="emailContent" class="block font-medium mb-1">Nội dung Email</label>
 
         <!-- Toolbar container -->
@@ -44,7 +44,7 @@
 
         <!-- Vùng soạn thảo rich text -->
         <div id="editor"
-             class="w-full h-[350px] min-h-[300px] max-h-[500px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 overflow-y-auto"
+             class="w-full flex-1 min-h-[200px] max-h-[500px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 overflow-y-auto"
              contenteditable="true"
              data-placeholder="Nhập nội dung email...">
         </div>
@@ -58,7 +58,7 @@
         <input type="hidden" id="emailContent" name="emailContent">
       </div>
 
-      <div class="flex items-center justify-between mt-4">
+      <div class="flex items-center justify-between">
         <!-- Nút xem trước -->
         <button type="button" id="previewEmail"
                 class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition duration-200">
