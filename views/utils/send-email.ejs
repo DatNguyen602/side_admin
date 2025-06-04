@@ -33,61 +33,113 @@
         <textarea id="emailSubject" name="emailSubject" rows="4" placeholder="Nhập tiêu đề email..." 
           class="w-full h-[32px] min-h-[32px] max-h-[32px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"></textarea>
       </div>
+
       <div class="mb-4">
         <label for="emailContent" class="block font-medium mb-1">Nội dung Email</label>
-        <div id="toolbar"></div>
 
-        <!-- Trình soạn thảo -->
+        <!-- Toolbar container -->
+        <div id="toolbar" class="mb-2"></div>
+
+        <!-- Vùng soạn thảo rich text -->
         <div id="editor"
-        class="w-full h-[312px] min-h-[256px] max-h-[450px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
-        contenteditable="true">
-        </div>
-        <input type="hidden" id="emailContent" name="emailContent" rows="4" placeholder="Nhập nội dung email..." 
-          ></input>
+             class="w-full h-[350px] min-h-[300px] max-h-[500px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 overflow-y-auto"
+             contenteditable="true"
+             data-placeholder="Nhập nội dung email..."></div>
+
+        <!-- Hidden input để chứa HTML khi submit -->
+        <input type="hidden" id="emailContent" name="emailContent">
       </div>
 
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justify-between mt-4">
+        <!-- Nút xem trước -->
+        <button type="button" onclick="previewEmail()" 
+          class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold transition duration-200">
+          Xem trước
+        </button>
+
+        <!-- Nút Gửi Email -->
         <button type="submit"
           class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
           Gửi Email
         </button>
       </div>
-      
     </form>
   </div>
 </div>
 
+<!-- Script chính cho editor -->
 <script src="/js/mail_editor.js"></script>
+
 <style>
-  /* Kiểu cho toolbar */
-  #toolbar {
-      display: flex;
-      overflow-x: auto;
-      gap: 5px;
-      padding: 10px;
-      background: #f4f4f4;
-      border-radius: 8px;
-      margin-bottom: 10px;
+  /* Placeholder cho #editor */
+  #editor:empty:before {
+    content: attr(data-placeholder);
+    color: #999;
+    pointer-events: none;
+    display: block;
   }
 
-  /* Kiểu cho nút */
+  /* Kiểu toolbar */
+  #toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+  }
+
+  /* Kiểu chung cho nút toolbar */
   .toolbar-btn {
-      background: #3498db;
-      color: #fff;
-      border: none;
-      width: 32px;
-      height: 26px;
-      font-size: 14px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #ccc;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .toolbar-btn:hover {
-      background: #2980b9;
+    background: #f0f0f0;
+    border-color: #b3b3b3;
   }
 
   .toolbar-btn:active {
-      transform: scale(0.95);
+    transform: scale(0.95);
+  }
+
+  /* Kiểu cho select dropdown */
+  .toolbar-select {
+    height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    padding: 2px 4px;
+    cursor: pointer;
+  }
+
+  /* Ẩn đường cuộn ngang */
+  #editor {
+    white-space: pre-wrap;
   }
 </style>
+
+<script>
+  // Hàm preview nội dung email
+  function previewEmail() {
+    const html = document.getElementById('editor').innerHTML;
+    const win = window.open("", "_blank", "width=800,height=600");
+    win.document.write("<html><head><title>Xem trước Email</title></head><body>");
+    win.document.write(html);
+    win.document.write("</body></html>");
+    win.document.close();
+  }
+</script>
