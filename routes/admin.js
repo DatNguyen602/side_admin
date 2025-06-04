@@ -631,7 +631,7 @@ router.post("/keys/:id/delete", auth, rbac("key:delete"), async (req, res) => {
 
 // List role
 router.get("/roles", auth, async (req, res) => {
-    const roles = await Role.find({ $and: [{ name: { $ne: "admin" } }, { name: { $ne: "viewer" } }] });
+    const roles = await Role.find(); //{ $and: [{ name: { $ne: "admin" } }, { name: { $ne: "viewer" } }] }
     res.render("roles/list", {
         title: "Roles",
         roles,

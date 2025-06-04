@@ -1,15 +1,15 @@
 <% layout('layouts/main') %>
 
 <%
-  const perms = (typeof user !== 'undefined' && user && user.role.permissions)
-                ? user.role.permissions
-                : [];
+  const perms = (typeof user !== 'undefined' && user && user?.role && user.role.permissions) 
+                ? user.role.permissions 
+                : []; 
 %>
 
 <%- include('../partials/table', {
   title: title,
   action_new: `
-    ${(perms.includes('key:create')) ? 
+    ${(user?.protected || perms.includes('key:create')) ? 
     `<div class='flex px-6 mb-6'>
       <a href='/admin/keys/new' class='px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 transition duration-300 shadow-md'>
         + Tạo Key mới
@@ -25,7 +25,7 @@
     { label: 'Ngày bắt đầu', key: 'dateStartUse', center: true },
     { label: 'Ngày kết thúc', key: 'dateEndUse', center: true },
     { label: 'Status', key: 'status', center: true },
-    { label: 'Actions', key: 'actions', center: true, minWidth: 'min-w-[14rem]', canAction: !perms.includes('key:delete') }
+    { label: 'Actions', key: 'actions', center: true, minWidth: 'min-w-[14rem]', canAction: !(user?.protected || perms.includes('key:delete') || perms.includes('key:update') || perms.includes('key:read')) }
 ],
   rows: keys.map(k => ({
     _id: k._id,
@@ -40,11 +40,11 @@
     actions: `
       <a href="/admin/keys/${k._id}/view" class="inline-block px-3 py-1 bg-green-600 text-white rounded hover:bg-green-500 transition duration-300">Xem</a>
         
-      ${(perms.includes('key:update')) ? 
+      ${(user?.protected || perms.includes('key:update')) ? 
         `<a href="/admin/keys/${k._id}/edit" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition duration-300">Sửa</a>` 
         : ''}
 
-      ${(perms.includes('key:delete')) ? `
+      ${(user?.protected || perms.includes('key:delete')) ? `
       <form
         action="/admin/keys/${k._id}/delete"
         method="POST"

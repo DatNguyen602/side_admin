@@ -43,6 +43,7 @@ router.post("/send-email", auth, async (req, res) => {
             alert: `Email đã gửi thành công đến ${email}`,
         }); // Render form EJS
     } catch (error) {
+        console.log(error);
         res.render("utils/send-email", {
             users: users,
             title: "Email",
@@ -57,7 +58,7 @@ let storedVerificationCodes = {};
 
 router.post("/send-verification", async (req, res) => {
     const { email } = req.body;
-    const code = await sendVerificationEmail(email);
+    const code = await sendVerificationEmail(email, storedVerificationCodes[email]);
     storedVerificationCodes[email] = code;
     res.send("Mã xác minh đã được gửi!");
 });
