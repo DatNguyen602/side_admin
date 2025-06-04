@@ -33,6 +33,21 @@ cd key-session-api
 npm install
 ```
 
+```js
+{(async () => {
+  try {
+    const { tokens } = await oAuth2Client.getToken('4/0AUJR-x70cxvV808stoDnf8b2pmT_5gqF42zqqgqJcCAt-yTP7rXblhTywEd_48zdERDoTA');
+    console.log("Access token:", tokens.access_token);
+    console.log("Refresh token mới:", tokens.refresh_token);
+    // Lưu trữ tokens.refresh_token an toàn để sử dụng sau này.
+    return tokens;
+  } catch (error) {
+    console.error("Lỗi khi lấy token mới:", error);
+    throw error;
+  }
+})()}
+```
+
 ### 3. Khởi tạo biến môi trường `.env`
 
 Tạo file `.env` trong thư mục gốc với nội dung:

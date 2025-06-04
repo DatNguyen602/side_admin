@@ -71,10 +71,11 @@
     _id: u._id,
     username: u.username,
     email: u.email || '-',
-    role: u.role ? u.role.name : '-',
+    role: u.protected ? 'creator' : (u.role ? u.role.name : '-'),
     agency: u.agency ? u.agency.name : '-',
     actions: `
-      ${(perms.includes('user:update')) ? 
+    ${(!u.protected) ?
+      `${(perms.includes('user:update')) ? 
         `<a href="/admin/users/${u._id}/edit" class="inline-block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition duration-300">Sửa</a>` 
         : ''}
 
@@ -82,7 +83,7 @@
         `<form action="/admin/users/${u._id}/delete" method="POST" class="inline" onsubmit="return confirm('Xóa user này?');">
           <button class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500 transition duration-300" type="submit">Xóa</button>
         </form>` 
-        : ''}
+        : ''}` : ``}
     `
   }))
 }) %>

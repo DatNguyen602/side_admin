@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 require('dotenv').config();
+const crypto = require("crypto");
 
 // Các biến cấu hình OAuth2
 const GMAIL_USER = process.env.GMAIL_USER;
@@ -63,5 +64,16 @@ async function sendLoginNotification(email, username) {
   return sendEmail(email, 'Thông báo đăng nhập hệ thống', content);
 }
 
+async function sendVerificationEmail(email) {
+    const verificationCode = crypto.randomBytes(3).toString("hex").toUpperCase();
+    await sendEmail(
+      email.toString(), 
+      "Xác minh email",
+      `<p>Mã xác minh của bạn là: <strong>${verificationCode}</strong></p>`
+    );
+
+    return verificationCode;
+}
+
 // Xuất module
-module.exports = { sendLoginNotification, sendEmail };
+module.exports = { sendLoginNotification, sendEmail, sendVerificationEmail };

@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/User"); // Import model User
-const { sendLoginNotification, sendEmail } = require("../utils/mailer"); // Hàm gửi email
+const { sendVerificationEmail, sendEmail } = require("../utils/mailer"); // Hàm gửi email
 const auth = require("../middleware/auth");
 
 const router = express.Router();
@@ -51,6 +51,23 @@ router.post("/send-email", auth, async (req, res) => {
             alert:  null,
         });
     }
+});
+
+let storedVerificationCodes = {};
+
+router.post("/send-verification", async (req, res) => {
+    const { email } = req.body;
+    const code = await sendVerificationEmail(email);
+    storedVerificationCodes[email] = code;
+    res.send("Mã xác minh đã được gửi!");
+});
+
+router.post("/verify-email", async (req, res) => {
+    const { email, verificationCode } = req.body;
+    if (storedVerificationCodes[email] !== verificationCode) {
+        return res.status(400).send("Mã xác minh không đúng!");
+    }
+    res.send("Xác minh thành công! Bạn có thể đăng ký.");
 });
 
 module.exports = router;
