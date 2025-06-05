@@ -12,7 +12,7 @@
       <div class="text-green-500 font-semibold mb-4 text-center"><%= alert %></div>
     <% } %>
 
-    <form method="POST" action="/mail/send-email" class="flex flex-col flex-1">
+    <form id="emailForm" method="POST" action="/mail/send-email" class="flex flex-col flex-1">
       <!-- Email và Tiêu đề giữ nguyên -->
       <div class="flex items-center mb-4">
         <label for="email" class="block font-medium mb-1 min-w-32">Email</label>
@@ -43,7 +43,7 @@
         <div id="toolbar" class="mb-2 flex flex-wrap gap-2"></div>
 
         <!-- Vùng soạn thảo rich text -->
-        <div id="editor"
+        <div id="editor" contenteditable="true"
              class="w-full flex-1 min-h-[200px] max-h-[500px] px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 overflow-y-auto"
              contenteditable="true"
              data-placeholder="Nhập nội dung email...">
@@ -79,6 +79,13 @@
 <script src="/js/mail_editor.js"></script>
 
 <style>
+  /* menu,ol,ul {
+    list-style: initial;
+    list-style-position: inside;
+    padding: initial !important;
+    margin: initial !important;
+  } */
+
   /* Placeholder cho #editor */
   #editor:empty:before {
     content: attr(data-placeholder);
