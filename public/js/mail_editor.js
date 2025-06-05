@@ -20,8 +20,6 @@
  *     hiddenInputSelector: '#emailContent',
  *     formSelector: '#emailForm',
  *     previewButtonSelector: '#previewEmail',
- *     autoSaveKey: 'myEmailDraft',
- *     autoSaveInterval: 5000 // in ms
  *   });
  *   editor.init();
  */
@@ -34,8 +32,6 @@ class MailEditor {
      * @param {string} options.hiddenInputSelector CSS selector for the hidden input to sync HTML.
      * @param {string} options.formSelector       CSS selector for the form element.
      * @param {string} options.previewButtonSelector CSS selector for the “Preview” button.
-     * @param {string} [options.autoSaveKey]      localStorage key for auto-saving.
-     * @param {number} [options.autoSaveInterval] Auto-save interval in milliseconds.
      */
     constructor({
         editorSelector,
@@ -43,8 +39,6 @@ class MailEditor {
         hiddenInputSelector,
         formSelector,
         previewButtonSelector,
-        autoSaveKey = null,
-        autoSaveInterval = 5000,
     }) {
         // DOM elements
         this.editor = document.querySelector(editorSelector);
@@ -52,11 +46,6 @@ class MailEditor {
         this.hiddenInput = document.querySelector(hiddenInputSelector);
         this.form = document.querySelector(formSelector);
         this.previewButton = document.querySelector(previewButtonSelector);
-
-        // Auto-save settings
-        this.autoSaveKey = autoSaveKey;
-        this.autoSaveInterval = autoSaveInterval;
-        this.autoSaveTimerId = null;
 
         // Plugin container
         this.plugins = [];
@@ -649,10 +638,6 @@ class MailEditor {
             } else {
                 this._updateHiddenInput();
             }
-            // Clear auto-save once submitted
-            if (this.autoSaveKey) {
-                localStorage.removeItem(this.autoSaveKey);
-            }
         });
     }
 
@@ -740,36 +725,6 @@ class MailEditor {
             }
         }
     }
-
-    /**
-     * Save current content to localStorage (if configured).
-     */
-    _autoSaveContent() {
-        if (!this.autoSaveKey) return;
-        const html = this.isCodeView
-            ? this.editor.value
-            : this.editor.innerHTML;
-        try {
-            localStorage.setItem(this.autoSaveKey, html);
-        } catch (e) {
-            console.warn("Auto-save failed:", e);
-        }
-    }
-
-    /**
-     * Restore content from localStorage (if available).
-     */
-    _restoreAutoSavedContent() {
-        if (!this.autoSaveKey) return;
-        const saved = localStorage.getItem(this.autoSaveKey);
-        if (saved) {
-            this.editor.innerHTML = saved;
-        }
-        // Start auto-save timer (debounced)
-        this.autoSaveTimerId = setInterval(() => {
-            this._autoSaveContent();
-        }, this.autoSaveInterval);
-    }
 }
 
 // Initialize once DOM is loaded
@@ -779,9 +734,7 @@ document.addEventListener("DOMContentLoaded", () => {
         toolbarSelector: "#toolbar",
         hiddenInputSelector: "#emailContent",
         formSelector: "#emailForm",
-        previewButtonSelector: "#previewEmail",
-        autoSaveKey: "myEmailDraft", // Change key as needed
-        autoSaveInterval: 5000, // Every 5 seconds
+        previewButtonSelector: "#previewEmail"
     });
 
     // Example of registering a dummy plugin (e.g., emoji picker) in the future:

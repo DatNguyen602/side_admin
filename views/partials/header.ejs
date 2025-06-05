@@ -24,49 +24,49 @@
       absolute top-[100%] rounded-2xl p-6 bg-gray-300 w-[90%]
       md:flex-row md:relative md:p-0 md:bg-transparent md:w-max">
         <% if (user?.protected || perms.includes('dashboard:view')) { %>
-          <li class="nav-item py-4">
-            <a href="/admin/dashboard" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Dashboard</a></li>
+          <li class="nav-item md:py-4">
+            <a href="/admin/dashboard" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Dashboard</a></li>
         <% } %>
 
         <% if (user?.protected || perms.includes('user:read')) { %>
-          <li class="nav-item py-4">
-            <a href="/admin/users" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Users</a></li>
+          <li class="nav-item md:py-4">
+            <a href="/admin/users" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Users</a></li>
         <% } %>
 
         <% if (user?.protected || perms.includes('agency:read')) { %>
-          <li class="nav-item py-4">
-            <a href="/admin/agencies" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Agencies</a></li>
+          <li class="nav-item md:py-4">
+            <a href="/admin/agencies" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Agencies</a></li>
         <% } %>
 
         <% if (user?.protected || perms.includes('branch:read')) { %>
-          <li class="nav-item py-4">
-            <a href="/admin/branches" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Branches</a></li>
+          <li class="nav-item md:py-4">
+            <a href="/admin/branches" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Branches</a></li>
         <% } %>
 
         <% if (user?.protected || perms.includes('key:read')) { %>
-          <li class="nav-item py-4">
-            <a href="/admin/keys" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Keys</a></li>
+          <li class="nav-item md:py-4">
+            <a href="/admin/keys" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Keys</a></li>
         <% } %>
 
         <% if (user?.protected) { %>
-          <li class="nav-item py-4">
-            <a href="/admin/roles" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Roles</a></li>
-          <li class="nav-item py-4">
-            <a href="/mail/send-email" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Email</a>
+          <li class="nav-item md:py-4">
+            <a href="/admin/roles" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Roles</a></li>
+          <li class="nav-item md:py-4">
+            <a href="/mail/send-email" class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Email</a>
           </li>
         <% } %>
         
         <% if (user?.protected) { %>
-          <li class="nav-item py-4"><a
-            class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3"
+          <li class="nav-item md:py-4"><a
+            class="nav-link w-full md:w-max block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3"
             href="/admin/emoji">Web chat</a></li>
         <% } %>
       </div>
 
       <% if (user) { %>
         <li class="flex-1"></li>
-        <li class="nav-item py-4">
-          <a href="/login" class="nav-link text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Logout</a></li>
+        <li class="nav-item md:py-4">
+          <a href="/login" class="nav-link block text-blue-500 text-lg rounded-lg hover:bg-green-200 hover:text-blue-800 px-4 py-3">Logout</a></li>
       <% } %>
     </ul>
     <% if (user) { %>
