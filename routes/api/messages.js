@@ -189,12 +189,23 @@ router.get("/:roomId", auth, async (req, res) => {
       .populate("sender", "username avatar")
       .lean();
 
+    console.log("userId: " + userId);
     // Cập nhật readBy cho user hiện tại
     const messageIds = messages.map((msg) => msg._id);
-    await Message.updateMany(
-      { _id: { $in: messageIds }, readBy: { $ne: userId } },
-      { $addToSet: { readBy: userId } }
-    );
+    for (const messageId of messageIds) {
+        try {
+            const result = await Message.updateOne(
+                { _id: messageId, "readBy.userId": { $ne: userId } },
+                { $addToSet: { readBy: { userId, timestamp: new Date() } } }
+            );
+            console.log(`Cập nhật thành công messageId: ${messageId}`, result);
+        } catch (err) {
+            console.error(
+                `Lỗi tại messageId ${messageId}:`,
+                JSON.stringify(err, null, 2)
+            );
+        }
+    }  
 
     // Xử lý metadata file và group reactions
     messages = await Promise.all(

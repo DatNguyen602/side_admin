@@ -55,7 +55,7 @@ router.get("/temp", auth, (req, res) => {
 });
 
 router.get("/profile", auth, async (req, res) => {
-  const { _id, password, ...user} = req.user;
+  const { password, ...user} = req.user;
   return res.json({
     ...user,
     avatar: user.avatar ?? process.env.DOMAIN + "/uploads/avatars/default-avatar.png"
