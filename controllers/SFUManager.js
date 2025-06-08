@@ -1,13 +1,15 @@
 const mediasoup = require("mediasoup");
 const { v4: uuidv4 } = require("uuid");
-const User = require("./models/User"); // Import model User
+const User = require("../models/User");
 
 class SFUManager {
     constructor() {
         this.workers = [];
-        this.routers = new Map();
+        this.nextWorkerIndex = 0;
+        this.routers = new Map(); // sfuId → router
     }
 
+    // Tạo worker mới
     async createWorker() {
         const worker = await mediasoup.createWorker();
         worker.on("died", () => console.error(`Worker died: ${worker.pid}`));
@@ -15,12 +17,19 @@ class SFUManager {
         return worker;
     }
 
-    async createSFU() {
-        const worker =
-            this.workers.length > 0
-                ? this.workers[0]
-                : await this.createWorker();
+    // Lấy worker theo round-robin
+    async getOrCreateWorker() {
+        if (this.workers.length === 0) {
+            await this.createWorker();
+        }
+        const worker = this.workers[this.nextWorkerIndex];
+        this.nextWorkerIndex = (this.nextWorkerIndex + 1) % this.workers.length;
+        return worker;
+    }
 
+    // Tạo SFU/router mới
+    async createSFU() {
+        const worker = await this.getOrCreateWorker();
         const router = await worker.createRouter({
             mediaCodecs: [
                 {
@@ -33,14 +42,14 @@ class SFUManager {
             ],
         });
 
-        // Mỗi router có userContexts map
-        router.userContexts = new Map();
+        // Chuẩn bị các map
+        router.userContexts = new Map(); // userId → context
+        router.transports = new Map(); // transportId → transport (chung)
+        router.producers = new Map(); // producerId → { producer, userId }
+        router.consumers = new Map(); // consumerId → { consumer, userId }
 
         const sfuId = uuidv4();
         this.routers.set(sfuId, router);
-
-        console.log(`Created SFU with ID ${sfuId}`);
-
         return { sfuId, router };
     }
 
@@ -48,138 +57,163 @@ class SFUManager {
         return this.routers.get(sfuId);
     }
 
+    // Thêm user vào SFU
     async addUserToSFU(sfuId, userId) {
         const router = this.getRouter(sfuId);
         if (!router) throw new Error("Router not found");
+        if (router.userContexts.has(userId)) return;
 
-        if (!router.userContexts.has(userId)) {
-            const user = await User.findById(userId).lean();
-            if (!user) throw new Error("User not found");
+        const user = await User.findById(userId).lean();
+        if (!user) throw new Error("User not found");
 
-            // Update User state
-            await User.findByIdAndUpdate(userId, {
-                state: "online",
-                lastSeen: new Date(),
-            });
+        // Cập nhật trạng thái online
+        await User.findByIdAndUpdate(userId, {
+            state: "online",
+            lastSeen: new Date(),
+        });
 
-            router.userContexts.set(userId, {
-                userId,
-                userInfo: user,
-                transports: new Map(),
-                producers: new Map(),
-                consumers: new Map(),
-                joinTime: new Date(),
-            });
-
-            console.log(`User ${userId} joined SFU ${sfuId}`);
-        }
+        router.userContexts.set(userId, {
+            transports: new Set(),
+            producers: new Set(),
+            consumers: new Set(),
+            joinTime: new Date(),
+        });
     }
 
+    // Remove user khỏi SFU
     async removeUserFromSFU(sfuId, userId) {
         const router = this.getRouter(sfuId);
         if (!router) throw new Error("Router not found");
+        const ctx = router.userContexts.get(userId);
+        if (!ctx) return;
 
-        const userContext = router.userContexts.get(userId);
-        if (!userContext) return;
-
-        // Close all transports → auto close producer/consumer
-        for (const transport of userContext.transports.values()) {
-            transport.close();
+        // Close all transports (auto close producers & consumers)
+        for (const tid of ctx.transports) {
+            const tr = router.transports.get(tid);
+            tr?.close();
         }
-
         router.userContexts.delete(userId);
 
-        // Update User state
+        // Cập nhật trạng thái offline
         await User.findByIdAndUpdate(userId, {
             state: "offline",
             lastSeen: new Date(),
         });
-
-        console.log(`User ${userId} left SFU ${sfuId}`);
     }
 
-    async createWebRtcTransport(sfuId, userId, transportOptions = {}) {
+    // Tạo WebRTC transport và kết nối DTLS
+    async createWebRtcTransport(sfuId, userId, options = {}) {
         const router = this.getRouter(sfuId);
         if (!router) throw new Error("Router not found");
-
-        const userContext = router.userContexts.get(userId);
-        if (!userContext) throw new Error("User not in SFU");
+        if (!router.userContexts.has(userId))
+            throw new Error("User not in SFU");
 
         const transport = await router.createWebRtcTransport({
-            listenIps: [{ ip: "0.0.0.0", announcedIp: "YOUR_PUBLIC_IP" }], // ← đổi thành public IP thật của server
+            listenIps: [{ ip: "0.0.0.0", announcedIp: process.env.PUBLIC_IP }],
             enableUdp: true,
             enableTcp: true,
             preferUdp: true,
-            ...transportOptions,
+            ...options,
         });
 
         const transportId = uuidv4();
-        userContext.transports.set(transportId, transport);
+        router.transports.set(transportId, transport);
+        router.userContexts.get(userId).transports.add(transportId);
 
+        // Event logging
+        transport.on("icestatechange", (s) => console.log("ICE state", s));
+        transport.on("dtlsstatechange", (s) => console.log("DTLS state", s));
         transport.on("close", () => {
-            userContext.transports.delete(transportId);
+            router.transports.delete(transportId);
+            router.userContexts.get(userId).transports.delete(transportId);
         });
-
-        console.log(
-            `Created transport ${transportId} for user ${userId} in SFU ${sfuId}`
-        );
 
         return { transportId, transport };
     }
 
-    async createProducer(sfuId, userId, transportId, kind, rtpParameters) {
+    async connectTransport(sfuId, userId, transportId, dtlsParameters) {
         const router = this.getRouter(sfuId);
-        if (!router) throw new Error("Router not found");
+        const transport = router?.transports.get(transportId);
+        if (!transport) throw new Error("Transport not found");
+        await transport.connect({ dtlsParameters });
+    }
 
-        const userContext = router.userContexts.get(userId);
-        if (!userContext) throw new Error("User not in SFU");
-
-        const transport = userContext.transports.get(transportId);
+    // Tạo producer (user gửi media lên)
+    async createProducer(
+        sfuId,
+        userId,
+        transportId,
+        kind,
+        rtpParameters,
+        appData = {}
+    ) {
+        const router = this.getRouter(sfuId);
+        const transport = router?.transports.get(transportId);
         if (!transport) throw new Error("Transport not found");
 
-        const producer = await transport.produce({ kind, rtpParameters });
-
+        const producer = await transport.produce({
+            kind,
+            rtpParameters,
+            appData,
+        });
         const producerId = uuidv4();
-        userContext.producers.set(producerId, producer);
+        router.producers.set(producerId, { producer, userId });
+        router.userContexts.get(userId).producers.add(producerId);
 
         producer.on("close", () => {
-            userContext.producers.delete(producerId);
+            router.producers.delete(producerId);
+            router.userContexts.get(userId).producers.delete(producerId);
         });
-
-        console.log(
-            `Created producer ${producerId} for user ${userId} in SFU ${sfuId}`
+        producer.on("pause", () => console.log("Producer paused", producerId));
+        producer.on("resume", () =>
+            console.log("Producer resumed", producerId)
         );
 
         return { producerId, producer };
     }
 
+    async pauseProducer(sfuId, producerId) {
+        const rec = this.routers.get(sfuId)?.producers.get(producerId);
+        if (!rec) throw new Error("Producer not found");
+        await rec.producer.pause();
+    }
+    async resumeProducer(sfuId, producerId) {
+        const rec = this.routers.get(sfuId)?.producers.get(producerId);
+        if (!rec) throw new Error("Producer not found");
+        await rec.producer.resume();
+    }
+    async closeProducer(sfuId, producerId) {
+        const rec = this.routers.get(sfuId)?.producers.get(producerId);
+        if (rec) rec.producer.close();
+    }
+
+    // Danh sách producers khi join
+    getProducerList(sfuId, excludeUserId) {
+        const router = this.getRouter(sfuId);
+        const list = [];
+        for (const [pid, { producer, userId }] of router.producers) {
+            if (userId !== excludeUserId) {
+                list.push({ producerId: pid, userId, kind: producer.kind });
+            }
+        }
+        return list;
+    }
+
+    // Tạo consumer (user nhận media)
     async createConsumer(
         sfuId,
         userId,
         transportId,
-        producerUserId,
         producerId,
         rtpCapabilities
     ) {
         const router = this.getRouter(sfuId);
-        if (!router) throw new Error("Router not found");
-
-        const userContext = router.userContexts.get(userId);
-        if (!userContext) throw new Error("User not in SFU");
-
-        const transport = userContext.transports.get(transportId);
-        if (!transport) throw new Error("Transport not found");
-
-        const producerContext = router.userContexts.get(producerUserId);
-        if (!producerContext) throw new Error("Producer user not in SFU");
-
-        const producer = producerContext.producers.get(producerId);
-        if (!producer) throw new Error("Producer not found");
-
-        if (!router.canConsume({ producerId: producer.id, rtpCapabilities })) {
-            throw new Error("Cannot consume this producer");
+        if (!router.canConsume({ producerId, rtpCapabilities })) {
+            throw new Error("Cannot consume");
         }
 
+        const transport = router.transports.get(transportId);
+        const { producer } = router.producers.get(producerId);
         const consumer = await transport.consume({
             producerId: producer.id,
             rtpCapabilities,
@@ -187,37 +221,69 @@ class SFUManager {
         });
 
         const consumerId = uuidv4();
-        userContext.consumers.set(consumerId, consumer);
+        router.consumers.set(consumerId, { consumer, userId });
+        router.userContexts.get(userId).consumers.add(consumerId);
 
         consumer.on("close", () => {
-            userContext.consumers.delete(consumerId);
+            router.consumers.delete(consumerId);
+            router.userContexts.get(userId).consumers.delete(consumerId);
         });
-
-        console.log(
-            `Created consumer ${consumerId} for user ${userId} in SFU ${sfuId}, consuming producer ${producerId}`
+        consumer.on("pause", () => console.log("Consumer paused", consumerId));
+        consumer.on("resume", () =>
+            console.log("Consumer resumed", consumerId)
         );
 
         return { consumerId, consumer };
     }
 
+    async pauseConsumer(sfuId, consumerId) {
+        const rec = this.routers.get(sfuId)?.consumers.get(consumerId);
+        if (!rec) throw new Error("Consumer not found");
+        await rec.consumer.pause();
+    }
+    async resumeConsumer(sfuId, consumerId) {
+        const rec = this.routers.get(sfuId)?.consumers.get(consumerId);
+        if (!rec) throw new Error("Consumer not found");
+        await rec.consumer.resume();
+    }
+    async closeConsumer(sfuId, consumerId) {
+        const rec = this.routers.get(sfuId)?.consumers.get(consumerId);
+        if (rec) rec.consumer.close();
+    }
+
+    // Đóng toàn bộ SFU
     async closeSFU(sfuId) {
         const router = this.getRouter(sfuId);
         if (!router) return;
-
-        // Close all transports for all users
-        for (const userContext of router.userContexts.values()) {
-            for (const transport of userContext.transports.values()) {
-                transport.close();
-            }
-        }
-
+        // đóng transports
+        for (const tr of router.transports.values()) tr.close();
         await router.close();
         this.routers.delete(sfuId);
-
-        console.log(`Router ${sfuId} closed`);
     }
 
-    getStats() {
+    // Stats & monitoring
+    async getStats(sfuId) {
+        const router = this.getRouter(sfuId);
+        if (!router) throw new Error("Router not found");
+        const stats = {
+            transports: {},
+            producers: {},
+            consumers: {},
+        };
+        for (const [tid, tr] of router.transports) {
+            stats.transports[tid] = await tr.getStats();
+        }
+        for (const [pid, { producer }] of router.producers) {
+            stats.producers[pid] = await producer.getStats();
+        }
+        for (const [cid, { consumer }] of router.consumers) {
+            stats.consumers[cid] = await consumer.getStats();
+        }
+        return stats;
+    }
+
+    // Thống kê chung
+    getSystemStats() {
         return {
             workerCount: this.workers.length,
             routerCount: this.routers.size,
@@ -225,6 +291,9 @@ class SFUManager {
                 ([sfuId, router]) => ({
                     sfuId,
                     userCount: router.userContexts.size,
+                    transportCount: router.transports.size,
+                    producerCount: router.producers.size,
+                    consumerCount: router.consumers.size,
                 })
             ),
         };
