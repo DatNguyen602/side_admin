@@ -7,8 +7,7 @@ const Message = require("../models/Message");
 const Room = require("../models/Room");
 const { default: mongoose } = require("mongoose");
 
-const signalingRouter = express.Router();
-const userSocketMap = new Map(); // Map userId => socket.id
+const userSocketMap = new Map();
 
 // Hàm an toàn phân tích JSON
 const safeParse = (data) => {
@@ -55,14 +54,14 @@ const initializeSignaling = (server) => {
     io.on("connection", async (socket) => {
         console.log("User connected:", socket.id, "| userId:", socket.userId);
 
-        // Đón nhận các message từ client
-        socket.on("message", async (rawData) => {
+        // Đón nhận các messageChat từ client
+        socket.on("messageChat", async (rawData) => {
             const parsed = safeParse(rawData);
             if (!parsed) return;
 
             const { event, data } = parsed;
-            if (event && handleEvent[event]) {
-                await handleEvent[event](socket, data, io);
+            if (event && handleEventChat[event]) {
+                await handleEventChat[event](socket, data, io);
             }
         });
 
@@ -91,7 +90,7 @@ const initializeSignaling = (server) => {
 };
 
 // Xử lý các sự kiện từ phía client
-const handleEvent = {
+const handleEventChat = {
     // Khi client gửi sự kiện setup để đăng ký thông tin của mình (như device info) lên server
     setup: async (socket, data, io) => {
         const userId = socket.userId;
@@ -161,101 +160,7 @@ const handleEvent = {
                 },
             });
         }
-    },
-
-    // Sự kiện WebRTC: offer
-    "webrtc-offer": async (socket, data, io) => {
-        // data cần chứa: { to: targetUserId, offer: offerObject }
-        const targetSocketId = userSocketMap.get(data.to);
-        if (targetSocketId) {
-            io.to(targetSocketId).emit(
-                "message",
-                JSON.stringify({
-                    event: "webrtc-offer",
-                    data: {
-                        from: socket.userId,
-                        offer: data.offer,
-                    },
-                })
-            );
-            console.log(
-                `[Signaling] Sent webrtc-offer from ${socket.userId} to ${data.to}`
-            );
-        } else {
-            console.warn("Target socket not found for webrtc-offer", data.to);
-        }
-    },
-
-    // Sự kiện WebRTC: answer
-    "webrtc-answer": async (socket, data, io) => {
-        // data cần chứa: { to: targetUserId, answer: answerObject }
-        const targetSocketId = userSocketMap.get(data.to);
-        if (targetSocketId) {
-            io.to(targetSocketId).emit(
-                "message",
-                JSON.stringify({
-                    event: "webrtc-answer",
-                    data: {
-                        from: socket.userId,
-                        answer: data.answer,
-                    },
-                })
-            );
-            console.log(
-                `[Signaling] Sent webrtc-answer from ${socket.userId} to ${data.to}`
-            );
-        } else {
-            console.warn("Target socket not found for webrtc-answer", data.to);
-        }
-    },
-
-    // Sự kiện WebRTC: candidate
-    "webrtc-candidate": async (socket, data, io) => {
-        // data cần chứa: { to: targetUserId, candidate: candidateObject }
-        const targetSocketId = userSocketMap.get(data.to);
-        if (targetSocketId) {
-            io.to(targetSocketId).emit(
-                "message",
-                JSON.stringify({
-                    event: "webrtc-candidate",
-                    data: {
-                        from: socket.userId,
-                        candidate: data.candidate,
-                    },
-                })
-            );
-            console.log(
-                `[Signaling] Sent webrtc-candidate from ${socket.userId} to ${data.to}`
-            );
-        } else {
-            console.warn(
-                "Target socket not found for webrtc-candidate",
-                data.to
-            );
-        }
-    },
-
-    // Sự kiện WebRTC: hangup
-    "webrtc-hangup": async (socket, data, io) => {
-        // data cần chứa: { to: targetUserId }
-        const targetSocketId = userSocketMap.get(data.to);
-        if (targetSocketId) {
-            io.to(targetSocketId).emit(
-                "message",
-                JSON.stringify({
-                    event: "webrtc-hangup",
-                    data: {
-                        from: socket.userId,
-                    },
-                })
-            );
-            console.log(
-                `[Signaling] Sent webrtc-hangup from ${socket.userId} to ${data.to}`
-            );
-        } else {
-            console.warn("Target socket not found for webrtc-hangup", data.to);
-        }
-    },
+    }
 };
 
-module.exports = { signalingRouter, initializeSignaling };
+module.exports = { initializeSignaling };

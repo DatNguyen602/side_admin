@@ -11,7 +11,7 @@ const path = require('path');
 const passport = require('passport');
 const session = require('express-session');
 const http = require("http");
-const { signalingRouter, initializeSignaling } = require("./controllers/signalingController");
+const { initializeSignaling } = require("./controllers/signalingController");
 
 require('./config/passport-config');
 
@@ -27,6 +27,7 @@ app.use(session({
 const server = http.createServer(app);
 // Kết hợp signaling vào server chính
 const io = initializeSignaling(server);
+// initializeSFU(server);
 
 
 // Cấu hình view engine (ví dụ dùng EJS)
