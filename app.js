@@ -70,6 +70,7 @@ app.use("/", require("./routes/adminAuth"));
 app.use("/mail", require("./routes/emailRouter"));
 app.use("/file", require("./routes/upload"));
 app.use('/api/link-preview', require('./routes/linkPreview'));
+app.use("/channels", require('./routes/channelRouter'));
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/js', express.static(path.join(__dirname, 'public/js'))); // nếu cần
