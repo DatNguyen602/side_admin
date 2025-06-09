@@ -8,6 +8,8 @@ const Room = require("../models/Room");
 const { default: mongoose } = require("mongoose");
 
 const userSocketMap = new Map();
+const rtcMapoffer = new Map();
+const rtcMapcandidate = new Map();
 
 // Hàm an toàn phân tích JSON
 const safeParse = (data) => {
@@ -53,6 +55,7 @@ const initializeSignaling = (server) => {
     // Xử lý kết nối
     io.on("connection", async (socket) => {
         console.log("User connected:", socket.id, "| userId:", socket.userId);
+        userSocketMap.set(socket.userId, socket.id);
 
         // Đón nhận các messageChat từ client
         socket.on("messageChat", async (rawData) => {
@@ -63,6 +66,37 @@ const initializeSignaling = (server) => {
             if (event && handleEventChat[event]) {
                 await handleEventChat[event](socket, data, io);
             }
+        });
+
+        socket.on("signal", async (rawData) => {
+            const parsed = safeParse(rawData);
+            if (!parsed) return;
+
+            const otherId = (
+                parsed.room.members?.find(
+                    (u) => u.user._id !== socket.userId
+                ) ?? {}
+            ).user._id;
+            console.log(socket.userId + " / " + otherId);
+            if (parsed.message.type === "candidate") {
+                rtcMapcandidate.set(otherId, parsed);
+            } else if (parsed.message.type === "offer") {
+                rtcMapoffer.set(otherId, parsed);
+            }
+
+            const socketOther = userSocketMap.get(otherId);
+            console.log(socketOther);
+            if (socketOther) {
+                io.to(socketOther).emit("signal", parsed);
+                io.to(socketOther).emit("signal", parsed);
+            }
+        });
+
+        socket.on("getSignal", (data) => {
+            const tOffer = rtcMapoffer.get(data.room._id);
+            const tCandidate = rtcMapcandidate.get(data.room._id);
+            io.to(socket.id).emit("signal", tOffer);
+            io.to(socket.id).emit("signal", tCandidate);
         });
 
         // Xử lý disconnect
@@ -91,12 +125,10 @@ const initializeSignaling = (server) => {
 
 // Xử lý các sự kiện từ phía client
 const handleEventChat = {
-    // Khi client gửi sự kiện setup để đăng ký thông tin của mình (như device info) lên server
     setup: async (socket, data, io) => {
         const userId = socket.userId;
-        const { deviceId, deviceName } = data;
 
-        if (userId && deviceId) {
+        if (userId) {
             // Lưu socket id của user vào Map
             userSocketMap.set(userId, socket.id);
 
@@ -107,8 +139,6 @@ const handleEventChat = {
             io.emit("user-state-change", { userId, state: "online" });
         }
     },
-
-    // Sự kiện chat message (ví dụ trong room)
     message: async (socket, { room, content }, io) => {
         const sender = socket.userId;
         if (!room || !content || !sender) return;
@@ -125,7 +155,7 @@ const handleEventChat = {
             return;
         }
 
-        const saved = null;
+        let saved = null;
         try {
             saved = await Message.create({
                 sender,
@@ -160,7 +190,25 @@ const handleEventChat = {
                 },
             });
         }
-    }
+    },
+    react: async (socket, { room, content }, io) => {
+        const sender = socket.userId;
+        if (!room || !sender) return;
+
+        const r = await Room.findById(room);
+
+        r.members.forEach((v) => {
+            if (v.user.toString() !== sender.toString()) {
+                const socketId = userSocketMap.get(v.user.toString());
+                if (socketId) {
+                    console.log(socketId);
+                    io.to(socketId).emit("fetchmessage", {
+                        message: { info: "New message in room" },
+                    });
+                }
+            }
+        });
+    },
 };
 
 module.exports = { initializeSignaling };

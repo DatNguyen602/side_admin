@@ -192,28 +192,27 @@ router.get("/:roomId", auth, async (req, res) => {
             .populate("sender", "username avatar")
             .lean();
 
-        console.log("userId: " + userId);
         // Cập nhật readBy cho user hiện tại
         const messageIds = messages.map((msg) => msg._id);
         for (const messageId of messageIds) {
-            console.log("messageId: " + messageId);
             try {
                 const user = await User.findById(userId);
                 const existingMessage = await Message.findOne({
-                    $and: [(_id = messageId), readBy.includes(user._id)],
+                    $and: [
+                        { _id: messageId },
+                        {readBy: { $elemMatch: { $eq: user._id } }},
+                    ],
                 });
                 if (!existingMessage && user) {
-                    console.log("readBy: ");
-                    console.log(existingMessage.readBy);
                     await Message.updateOne(
                         { _id: messageId },
                         { $addToSet: { readBy: user._id } }
                     );
                 }
-                console.log(
-                    `Cập nhật thành công messageId: ${messageId}`,
-                    result
-                );
+                // console.log(
+                //     `Cập nhật thành công messageId: ${messageId}`,
+                //     result
+                // );
             } catch (err) {
                 // console.error(`Lỗi tại messageId ${messageId}:`);
                 // console.log(err);
