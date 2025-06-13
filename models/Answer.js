@@ -11,12 +11,13 @@ const AnswerSchema = new mongoose.Schema({
         type: String,
         required: false,
         trim: true,
+        default: "",
     },
     geminiAnswer: {
         type: String,
         required: false,
         trim: true,
-        default: '',
+        default: "",
     },
     vector: {
         type: [Number],

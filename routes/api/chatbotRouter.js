@@ -92,7 +92,6 @@ const bannedBrands = [
     "dream",
     "winner",
     "exciter",
-    "xe điện",
     "xe vinfast",
     "peugeot",
     "sirius",
