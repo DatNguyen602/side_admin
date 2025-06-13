@@ -72,14 +72,13 @@ initDatabaseFromJSON();
 
 const GEMINI_KEY = process.env.GEMINI_KEY;
 
-const bannedPhrases = [
+const bannedBrands = [
     "honda",
     "yamaha",
     "suzuki",
     "sym",
     "kymco",
     "vinfast",
-    "peugeot",
     "vespa lx",
     "lx",
     "vision",
@@ -93,47 +92,17 @@ const bannedPhrases = [
     "dream",
     "winner",
     "exciter",
+    "xe điện",
     "xe vinfast",
+    "peugeot",
     "sirius",
 ];
 
-function normalize(text) {
-    return text
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // remove diacritics
-        .replace(/[^\w\s]/g, "") // remove punctuation
-        .replace(/\s+/g, " ") // trim extra spaces
-        .trim();
-}
-
 function containsBannedBrand(message) {
-    const normalizedMessage = normalize(message);
-    const messageTokens = tokenizer.tokenize(normalizedMessage);
-
-    // Check exact match
-    for (const phrase of bannedPhrases) {
-        const normalizedPhrase = normalize(phrase);
-        if (normalizedMessage.includes(normalizedPhrase)) return true;
-    }
-
-    // Optional: fuzzy match token-by-token (Levenshtein distance)
-    const THRESHOLD = 0.85; // fuzzy confidence
-
-    for (const banned of bannedPhrases) {
-        const bannedTokens = tokenizer.tokenize(normalize(banned));
-        for (const token of messageTokens) {
-            for (const bannedToken of bannedTokens) {
-                const similarity = natural.JaroWinklerDistance(
-                    token,
-                    bannedToken
-                );
-                if (similarity >= THRESHOLD) return true;
-            }
-        }
-    }
-
-    return false;
+    const tokens = preprocess(message); // dùng tokenizer có sẵn
+    return bannedBrands.some((brand) =>
+        tokens.some((token) => token.includes(brand))
+    );
 }
 
 router.post("/chat", async (req, res) => {
