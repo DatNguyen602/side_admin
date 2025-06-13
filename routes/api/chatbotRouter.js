@@ -1,49 +1,124 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
+const path = require("path");
 const natural = require("natural");
 const cosine = require("cosine-similarity");
-const path = require("path");
+require("dotenv").config();
 
-// Tách từ và vector hóa
 const tokenizer = new natural.WordTokenizer();
 const TfIdf = natural.TfIdf;
 const tfidf = new TfIdf();
 
-const data = JSON.parse(fs.readFileSync(path.join(__dirname, "../../public/data.json"), "utf8"));
-const questions = data.map((d) => d.question);
+// Bước tiền xử lý nâng cao
+function preprocess(text) {
+    return tokenizer.tokenize(text.toLowerCase().replace(/[^\w\s]/gi, ""));
+}
 
-// Thêm dữ liệu vào tf-idf
-questions.forEach((q) => tfidf.addDocument(q));
+// Load dữ liệu một lần duy nhất
+const dataPath = path.join(__dirname, "../../public/data.json");
+let data = [];
+let questions = [];
+let allTerms = [];
 
-router.post("/chat", (req, res) => {
+try {
+    data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+    questions = data.map((d) => d.question);
+
+    if (questions.length === 0) throw new Error("No questions in data");
+
+    questions.forEach((q) => tfidf.addDocument(q));
+
+    // Sau khi addDocument xong mới lấy terms
+    if (tfidf.documents.length > 0) {
+        const termsSet = new Set();
+        for (let i = 0; i < tfidf.documents.length; i++) {
+            tfidf.listTerms(i).forEach((t) => termsSet.add(t.term));
+        }
+        allTerms = [...termsSet];
+    }
+
+    console.log(`✅ Loaded ${questions.length} questions into TF-IDF.`);
+} catch (err) {
+    console.error("❌ Failed to load or process data.json:", err);
+}
+
+// Tạo vector tf-idf thủ công từ chuỗi raw
+function buildVectorFromText(rawText) {
+    const tempTfidf = new TfIdf();
+    tempTfidf.addDocument(rawText);
+
+    const terms = tempTfidf.listTerms(0);
+    const vector = [];
+
+    for (let term of allTerms) {
+        const found = terms.find((t) => t.term === term);
+        vector.push(found ? found.tfidf : 0);
+    }
+
+    return vector;
+}
+
+// API trả lời câu hỏi
+router.post("/chat", async (req, res) => {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: "Message is required" });
 
-    // Vector hóa câu hỏi người dùng
-    const userTokens = tokenizer.tokenize(message.toLowerCase());
-    const userVector = [];
-    tfidf.tfidfs(message, (i, measure) => userVector.push(measure));
+    const processedMessage = preprocess(message).join(" ");
+    const userVector = buildVectorFromText(processedMessage);
 
-    // Tính tương đồng cosine
     let maxScore = -1;
     let bestMatchIndex = -1;
 
-    for (let i = 0; i < questions.length; i++) {
-        const questionVector = [];
-        tfidf.tfidfs(questions[i], (j, measure) =>
-            questionVector.push(measure)
-        );
+    questions.forEach((q, i) => {
+        const processedQ = preprocess(q).join(" ");
+        const questionVector = buildVectorFromText(processedQ);
         const score = cosine(userVector, questionVector);
+
         if (score > maxScore) {
             maxScore = score;
             bestMatchIndex = i;
         }
-    }
+    });
 
-    const answer =
-        data[bestMatchIndex]?.answer || "Tôi không hiểu câu hỏi của bạn.";
-    res.json({ answer, confidence: maxScore.toFixed(3) });
+    const THRESHOLD = 0.1;
+    const bestAnswer =
+        maxScore >= THRESHOLD
+            ? data[bestMatchIndex].answer
+            : "Tôi không hiểu câu hỏi của bạn.";
+
+    const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" +
+            process.env.GEMINI_KEY,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: `Given the user question: "${message}" and the found answer: "${bestAnswer}", please rewrite the answer in a more natural, fluent way that matches the language, tone, and context of the original question. Do not translate. Keep the original language intact.`,
+                            },
+                        ],
+                    },
+                ],
+            }),
+        }
+    );
+    const dataRes = await response.json();   
+    console.dir(dataRes, { depth: null, colors: true, showHidden: true });
+    // console.log(message + " answer: " + bestAnswer);
+    // console.log(
+    //     "gemini: " + dataRes.candidates?.[0]?.content?.parts?.[0]?.text
+    // );
+
+    res.json({
+        answer: dataRes.candidates?.[0]?.content?.parts?.[0]?.text,
+        confidence: maxScore.toFixed(3),
+    });
 });
 
 module.exports = router;
