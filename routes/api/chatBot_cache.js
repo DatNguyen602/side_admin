@@ -9,16 +9,19 @@ require("dotenv").config();
 
 const Answer = require("../../models/Answer");
 
+const GEMINI_KEY = process.env.GEMINI_KEY;
+const ENABLE_ANSWER_CACHE = process.env.ENABLE_ANSWER_CACHE === "true";
+
 const tokenizer = new natural.WordTokenizer();
 const TfIdf = natural.TfIdf;
 const tfidf = new TfIdf();
 
-// Bước tiền xử lý nâng cao
+// Tiền xử lý
 function preprocess(text) {
     return tokenizer.tokenize(text.toLowerCase().replace(/[^\w\s]/gi, ""));
 }
 
-// Load dữ liệu tĩnh để hỗ trợ khởi tạo nếu không khớp
+// Load dữ liệu gốc
 const dataPath = path.join(__dirname, "../../public/data.json");
 let data = [];
 let questions = [];
@@ -37,21 +40,19 @@ try {
 
     console.log(`✅ Loaded ${questions.length} questions into TF-IDF.`);
 } catch (err) {
-    console.error("❌ Failed to load data.json:", err);
+    console.error("❌ Failed to load or process data.json:", err);
 }
 
-// Tạo vector TF-IDF từ chuỗi raw
+// Tạo vector
 function buildVectorFromText(rawText) {
     const tempTfidf = new TfIdf();
     tempTfidf.addDocument(rawText);
     const terms = tempTfidf.listTerms(0);
 
-    const vector = allTerms.map((term) => {
+    return allTerms.map((term) => {
         const found = terms.find((t) => t.term === term);
         return found ? found.tfidf : 0;
     });
-
-    return vector;
 }
 
 // API chính
@@ -62,7 +63,7 @@ router.post("/chat", async (req, res) => {
     const processedMessage = preprocess(message).join(" ");
     const userVector = buildVectorFromText(processedMessage);
 
-    // 🔎 Tìm trong MongoDB câu hỏi tương tự (cosine similarity)
+    // So khớp với câu hỏi đã lưu trong MongoDB
     const allSaved = await Answer.find({});
     let matchedAnswer = null;
     let highestScore = -1;
@@ -83,10 +84,11 @@ router.post("/chat", async (req, res) => {
             answer: matchedAnswer.answer,
             confidence: highestScore.toFixed(3),
             source: "cached",
+            cached: ENABLE_ANSWER_CACHE,
         });
     }
 
-    // 🔄 Tìm câu hỏi tương tự trong data.json (TF-IDF)
+    // Nếu chưa có trong MongoDB, so với data gốc (data.json)
     let maxScore = -1;
     let bestMatchIndex = -1;
 
@@ -94,6 +96,7 @@ router.post("/chat", async (req, res) => {
         const processedQ = preprocess(q).join(" ");
         const questionVector = buildVectorFromText(processedQ);
         const score = cosine(userVector, questionVector);
+
         if (score > maxScore) {
             maxScore = score;
             bestMatchIndex = i;
@@ -106,9 +109,9 @@ router.post("/chat", async (req, res) => {
             ? data[bestMatchIndex].answer
             : "Tôi không hiểu câu hỏi của bạn.";
 
-    // 🌐 Gọi Gemini để sinh câu trả lời tự nhiên hơn
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_KEY}`,
+    // Gọi Gemini API
+    const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
         {
             method: "POST",
             headers: {
@@ -129,21 +132,28 @@ Make it sound more natural, friendly, and conversational – as if you're a help
         }
     );
 
-    const dataRes = await response.json();
+    const dataRes = await geminiRes.json();
     const geminiAnswer =
         dataRes?.candidates?.[0]?.content?.parts?.[0]?.text || bestAnswer;
 
-    // 💾 Lưu vào MongoDB
-    await Answer.create({
-        question: message,
-        answer: geminiAnswer,
-        vector: userVector,
-    });
+    // Lưu nếu cho phép
+    if (ENABLE_ANSWER_CACHE) {
+        try {
+            await Answer.create({
+                question: message,
+                answer: geminiAnswer,
+                vector: userVector,
+            });
+        } catch (err) {
+            console.error("⚠️ Failed to cache answer:", err.message);
+        }
+    }
 
     res.json({
         answer: geminiAnswer,
         confidence: maxScore.toFixed(3),
         source: "gemini",
+        cached: ENABLE_ANSWER_CACHE,
     });
 });
 
