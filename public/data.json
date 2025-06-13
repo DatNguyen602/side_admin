@@ -1,0 +1,826 @@
+[
+    {
+        "question": "Hello",
+        "answer": "Hi there! How can I assist you today?"
+    },
+    {
+        "question": "What is your name?",
+        "answer": "I'm your assistant bot, here to help!"
+    },
+    {
+        "question": "How do I reset my password?",
+        "answer": "To reset your password, click on 'Forgot password' on the login page."
+    },
+    {
+        "question": "Chào bạn",
+        "answer": "Xin chào! Tôi có thể giúp gì cho bạn?"
+    },
+    {
+        "question": "Tôi cần hỗ trợ đổi mật khẩu",
+        "answer": "Bạn hãy nhấn vào 'Quên mật khẩu' để đổi mật khẩu mới nhé."
+    },
+    {
+        "question": "Bạn là ai?",
+        "answer": "Tôi là chatbot hỗ trợ bạn trong hệ thống này."
+    },
+    {
+        "question": "Which are steps of Pre-Delivery Process?",
+        "answer": "Ordered Steps of Pre-Delivery Process:\n- Aesthetic inspection\n- Engine Inspection\n- Frame Inspection\n- Inspecting safety items before driving\n- Test on the road\n- After driving inspection\n- Other Inspections"
+    },
+    {
+        "question": "What is the standard voltage of battery on Piaggio/Vespa scooters?",
+        "answer": "12.6 Voltage"
+    },
+    {
+        "question": "Why do you need to charge the battery fully before fitting it on the bike?",
+        "answer": "TO GUARANTEE THE LIFE OF BATTERY, BATTERY MUST BE FULLY CHARGED BEFORE USE."
+    },
+    {
+        "question": "Where can you find detailed information about Pre-delivery Inspection?",
+        "answer": "PDI Check sheet in User Manual."
+    },
+    {
+        "question": "Where must periodical maintenance activities and repairs be performed to be recognized by Piaggio?",
+        "answer": "Piaggio only recognizes the value of periodical maintenance activities and repairs being performed at the authorized dealers."
+    },
+    {
+        "question": "The warranty does not apply to which items?",
+        "answer": "Due to function or characteristic of materials, components, the warranty does not apply to:\n-  Oxygen phenomenon.\n- Engine Oil, Hub Oil, grease, brake fluid, coolant, and other additional material.\n- Tool kits, saddle, revision kit, transmission cables.\n- Materials and components that due to their characteristics are subject to wear, in using time except for manufacturing and/or construction defects. As Examples:\n     + Air filter, Oil filter, Fuel Filter.\n     + Tires, rubber push button, stickers, gaskets, pipe and other rubber parts.\n     + Spark plug, fuses, bulbs.\n     + Brake pads, brake disk, brake drum, centrifugal pads, rollers, drive belt, front and rear pulleys, battery."
+    },
+    {
+        "question": "Why is it necessary to perform periodical maintenance?",
+        "answer": "By conducting periodical maintenance, the following results can be achieved:\n - It is possible to detect and prevent major problems/damage that may occur later.\n - Meet the standards and regulations of the law.\n- Extend the life of the vehicle.\n- Help customers drive safely and economically."
+    },
+    {
+        "question": "How is the maintenance interval determined?",
+        "answer": "The maintenance interval is determined depending on the distance the vehicles travel and the period of use of the vehicles from the previous maintenance."
+    },
+    {
+        "question": "Why must periodically replace engine oil?",
+        "answer": "Engine oil will be dirty because it carries impurities and soot inside the engine when the engine is working. Engine oil will lose its quality and quantity even when not in use."
+    },
+    {
+        "question": "Is it necessary to replace the cartridge oil filter when changing engine oil?",
+        "answer": "Yes"
+    },
+    {
+        "question": "What maintenance needs to be performed on the mesh oil filter when changing the engine oil?",
+        "answer": "Inspection-Clean"
+    },
+    {
+        "question": "Do you check the valve clearance when the engine is hot or cold?",
+        "answer": "Cold"
+    },
+    {
+        "question": "If the valve clearance is too large, what symptoms will the engine have?",
+        "answer": "Abnormal noises from the engine."
+    },
+    {
+        "question": "If the valve clearance is too small, what symptoms will the engine have?",
+        "answer": "Overheating the exhaust pipe or burning combustion face of valve."
+    },
+    {
+        "question": "What is the valve clearance standard of the 3V-Iget engine?",
+        "answer": "intake: 0.08 mm exhaust: 0.08 mm"
+    },
+    {
+        "question": "What could be the causes of poor engine performance on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of poor engine performance on Piaggio/Vespa bikes:\n - Air filter blocked or dirty.\n - Excessive drive belt wear.\n - Lack of compression: parts, cylinder and valves worn.\n - Oil level exceeds maximum.\n - Excess of scales in the combustion chamber.\n - Incorrect timing or worn timing system elements.\n - Silencer obstructed.\n - Inefficient automatic transmission.\n - Wrong valve adjustment.\n - Overheated valves.\n - Valve seat distorted.\n - Worn cylinder, Worn or broken piston rings"
+    },
+    {
+        "question": "What could be the causes of being difficult to start the engine on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of being difficult to start the engine on Piaggio/Vespa bikes:\n - Flat battery.\n - Faulty spark plug.\n - Incorrect valve sealing or valve adjustment.\n - Starter motor and/or start-up system fault.\n - Altered fuel characteristics.\n - Air filter obstructed or dirty.\n - Fuel pump fault."
+    },
+    {
+        "question": "What could be the causes of Excessive oil consumption/Exhaust smoke on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of Excessive oil consumption/Exhaust smoke on Piaggio/Vespa bikes:\n- Wrong valve adjustment.\n- Overheated valves.\n- Misshapen/worn valve seats.\n- Worn cylinder, Worn or broken piston rings.\n- Worn or broken piston rings or piston rings that have not been fitted properly.\n- Oil leaks from the couplings or from the gaskets.\n- Worn valve oil seal.\n- Worn valve guides."
+    },
+    {
+        "question": "What could be the causes of Insufficient lubrication pressure on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of Insufficient lubrication pressure on Piaggio/Vespa bikes:\n- By-Pass remains open.\n- Oil pump with excessive clearance.\n- Oil filter is too dirty.\n- Oil level is too low."
+    },
+    {
+        "question": "What could be the causes of Insufficient braking of drum brake on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of of Insufficient braking of drum brake on Piaggio/Vespa bikes:\n- Worn brake pads or shoes.\n- Excessive clearance in the brake control cable."
+    },
+    {
+        "question": "What could be the causes of Insufficient braking of hydraulic brake on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of of Insufficient braking of hydraulic brake on Piaggio/Vespa bikes:\n- Worn brake pads or disks.\n- Disk loose or deformed.\n- Air bubbles inside the hydraulic braking system.\n- Fluid leakage in hydraulic braking system."
+    },
+    {
+        "question": "What could be the causes Brakes overheating on Piaggio/Vespa bikes?",
+        "answer": "Possible causes of of Brakes overheating on Piaggio/Vespa bikes:\n- Rubber gaskets swollen or stuck.\n- Compensation holes on the pump clogged.\n- Brake disk slack or distorted.\n- Defective piston sliding."
+    },
+    {
+        "question": "What should you keep in mind when using the battery on a Piaggio/Vespa bike?",
+        "answer": "The battery is the electrical device in the system that requires the most frequent inspections and thorough maintenance. If the\nvehicle is not used for some time (1 month or more) the battery needs to be recharged periodically. The battery runs down\ncompletely in the course of 5 to 6 months. If the battery is fitted on a motorcycle, be careful not to invert the connections, keeping in mind that the black ground wire is connected to the negative terminal while the red wire is connected to the terminal\nmarked+. In addition, you need to recharge the battery I.A.W correct process."
+    },
+    {
+        "question": "What checks should you perform when Heavy steering occurs Piaggio/Vespa bikes?",
+        "answer": "Check the tightening of the top and bottom ring nuts. If irregularities continue in turning the steering even after making the\nabove adjustments, check the seats in which the ball bearings rotate: replace them if they are recessed or if the balls are flattened."
+    },
+    {
+        "question": "What checks should you perform when EXCESSIVE STEERING CLEARANCE occurs Piaggio/Vespa bikes?",
+        "answer": "Check the tightening of the top ring nut. If irregularities continue in turning the steering even after making the above adjustments, check the seats in which the ball bearings rotate: replace if they are recessed."
+    },
+    {
+        "question": "What checks should you perform when Noisy suspension occurs Piaggio/Vespa bikes?",
+        "answer": "If the front suspension is noisy, check: that the front shock absorber works properly and the ball bearings are good condition.\nFinally, check the locking torque of the wheel axle nut, the brake calliper and the disc. Check that the swinging arm connecting the engine to the chassis and the rear shock absorber work properly."
+    },
+    {
+        "question": "What is Immobilizer System on Piaggio/Vespa bikes without traditional keys?",
+        "answer": "The electronic ignition system is controlled by the Engine control unit with the integrated Immobilizer system. The immobiliser is an antitheft system which allows the vehicle to function only if it is activated by means of the coded keys that the engine control unit\nrecognises. The code is integrated in a transponder in the key. This allows the rider clear operation without having to do anything other than just turning the key. The Immobilizer system consists of the following components:\n- Engine Control unit\n- Immobilizer antenna\n- Master and service keys with built-in transponder\n- CODE Lamp"
+    },
+    {
+        "question": "What is Immobilizer System on Keyless Piaggio/Vespa bikes?",
+        "answer": "The Immobilizer is an anti-theft system which allows the vehicle to function only if it is started after recognizing the remote control from the keyless control unit. The code is stored in a transponder in the\nremote control. This allows transparent operation for the driver, who does not have to perform any operations in addition to the normal rotation of the ignition switch.\nThe Immobilizer system consists of the following components: - keyless control unit. - immobilizer antenna - TAG with built-in transponder - remote control - diagnostic led integrated into the instrument panel."
+    },
+    {
+        "question": "What is Virgin ECU?",
+        "answer": "ECU has not programmed for Key yet."
+    },
+    {
+        "question": "What is some important notes about Virgin ECU?",
+        "answer": "When the ignition system is not encrypted, any key will start the engine but limited to 2,000 rpm. The keys can only be recognised if the control unit has been programmed properly. The data storage procedure for a previously not programmed control unit provides for the recognition of the Master as\nthe first key to be stored to memory: this becomes particularly important because it is the only key that enables the control unit to be wiped clean and reprogrammed for the memorisation of the service keys."
+    },
+    {
+        "question": "When the immobilizer system has an error, what light codes will the CODE lamp have?",
+        "answer": "A light code is displayed according to the fault detected, after which the LED remains on steadily. The engine cannot be started. The codes that can be transmitted are:\n- 1-flash code.\n- 2-flash code.\n- 3-flash code."
+    },
+    {
+        "question": "What is the leakage current testing procedure on Piaggio/Vespa bike?",
+        "answer": "Procedure to check leakage current on Piaggio/Vespa bike:\n- BEFORE CARRYING OUT THE CHECK, MAKE SURE THAT THE BATTERY IS IN GOOD WORKING ORDER.\n- Access the battery by removing the specific cover.\n- Check that the battery does not show signs of losing fluid before checking the output voltage.\n- Turn the ignition key to position OFF, connect the terminals of the tester between the negative pole (-) of the battery and the black cable and only then disconnect the black cable from the negative pole\n(-) of the battery.\n- With the ignition key always at OFF, the reading indicated by the ammeter must be ≤ 0.5 mA."
+    },
+    {
+        "question": "What is the procedure for checking charging system on Piaggio/Vespa bike?",
+        "answer": "Procedure to check charging system on Piaggio/Vespa bike:\n- BEFORE CARRYING OUT THE CHECK, MAKE SURE THAT THE BATTERY IS IN GOOD WORKING ORDER.\n- Place the vehicle on its centre stand.\n- With the battery correctly connected to the circuit, place the multimeter leads between the battery terminals.\n- Start the engine, ensure that the lights are all out, increase the engine speed and at the same time measure the voltage (Standard: Voltage ranging between 14.0 and 15.0V at 5000 rpm).\n- With engine off and panel set to \"ON\" turn on the lights and let the battery voltage set to 12V.\n- Connect ammeter clamps to the 2 recharge positive poles in output from the regulator.\n-  Keep the lights on and start the engine, bring it to normal speed and read the values on the ammeter. With an efficient battery a value must be detected: > 20A."
+    },
+    {
+        "question": "What should you keep in mind when measuring continuity?",
+        "answer": "ALL CONTINUITY TESTS MUST BE CARRIED OUT WITH THE CORRESPONDING CONNECTORS DISCONNECTED."
+    },
+    {
+        "question": "What is the operating principle and function of the engine temperature sensor?",
+        "answer": "ENGINE TEMPERATURE SENSOR:\nFunction: Serves the purpose of communicating the engine temperature to the control unit in order to optimize performance.\nOperating principle: NTC type sensor (resistance sensor, inversely variable with temperature)."
+    },
+    {
+        "question": "What is the operating principle and function of the lambda sensor?",
+        "answer": "LAMBDA PROBE:\nFunction: In charge of telling the control unit whether the mixture is lean or rich.\nOperating principle: Based on the difference of oxygen in the exhaust fumes and the environment, this generates voltage which is read and interpreted by the injection control unit. It does not require an external supply\nsource but, in order to work properly, it should reach a high operating temperature: that is why there is a heating circuit inside."
+    },
+    {
+        "question": "What is the operating principle and function of the injector?",
+        "answer": "INJECTOR:\nFunction: Provide the correct amount of fuel at the correct time.\nOperating principle: Injector coil is excited for the petrol passage to open."
+    },
+    {
+        "question": "What is the operating principle and function of the HV Coil?",
+        "answer": "Function: Allows generation of the electrical discharge on the spark plug, with an increase of voltage.\nOperating principle: An ignition coil consists of an iron core surrounded by two coils (windings) made from copper wire. The primary winding has relatively few turns of heavy wire, while the secondary winding consists of thousands of turns of smaller wire and is insulated from the high voltage by enamel on the wires and layers of oiled paper insulation.\nWhen the electrical circuit connected from the power source to the primary winding is closed, current flows through the primary winding, which produces a magnetic field around the core. This current flow lasts for a period of time to build up energy in the coil. Once the coil is charged, the circuit is opened, and the resulting oscillation in the magnetic field induces a high voltage in the secondary winding. This high-voltage electricity travels to the spark plug, where it is used to ignite the air/fuel mixture."
+    },
+    {
+        "question": "What is the operating principle and function of the Fuel Pump?",
+        "answer": "FUEL PUMP:\nFunction: Pump fuel from the tank to the injection circuit.\nOperating principle: \nThe structure of the fuel pump assembly includes:\n- Mesh coarse filter.\n- Motor.\n- 1-way valve.\n- Secondary filter.\n- Pressure regulator valve.\nWhen the pump motor rotates, the pump impeller will suck fuel from the fuel tank through the filter screen -> through the pump motor -> through the one-way valve -> through the fine filter -> through the pressure regulator valve -> fuel pipeline -> injector.\nThe pump is lubricated and cooled by fuel, so the fuel tank should not be left too empty."
+    },
+    {
+        "question": "What is the operating principle and function of the THROTTLE BODY POSITION SENSOR?",
+        "answer": "THROTTLE BODY POSITION SENSOR:\nFunction: In charge of sending the size of throttle opening to the control unit.\nOperating principle: \nThere are 2 types of THROTTLE BODY POSITION SENSOR:\n1) Non-contact sensor:\nUses an electronic chip to determine the throttle opening angle.\nThe sensor is composed of a magnetic disc mounted on the top of the throttle shaft. When the driver turns the throttle, the throttle will rotate and change the air flow into the combustion chamber, and at the same time make the magnet disc rotate at the same time as the throttle.\nWhen the magnet disc rotates, its magnetic field affecting the electronic chip will change. This electronic chip will detect changes in the magnetic field of the magnet disc and send a signal to the ECU. Based on this signal, the ECU can determine the rotation angle of the magnet disc, which is the rotation angle of the throttle valve.\n2) Contact Sensor:\nInside the sensor there is a variable resistor and the resistor's contact is connected to the throttle shaft. Changing the position of the throttle will change the position of the contact on the variable resistor. The ECU will supply a fixed voltage of 5V to both ends of the resistor and measure the voltage obtained from the resistor's contacts. Depending on the position of the contact on the resistor, the measured voltage will be different. Based on that voltage value, the ECU will determine the rotation angle (position) of the throttle."
+    },
+    {
+        "question": "What is the operating principle and function of the IDLE VALVE?",
+        "answer": "IDLE VALVE:\nFunction: This valve has the effect of adjusting the idle speed and adjusting the amount of air entering the combustion chamber when the engine is operating at idle.\nOperating principle: \nWhen the engine operates at idle, the ECU calculates the engine's target idle speed according to the engine temperature. At the same time, the ECU will control the power supply to the coil of the idle speed control valve to open the valve during the engine's suction stroke. The longer the power supply time, the greater the amount of air admitted through the idle valve. The ECU will calculate the corresponding fuel injection time to create the appropriate air-fuel mixture. If the engine idle speed is higher than the calculated level, the ECU will reduce valve power time and reduce fuel injection volume to lower the idle speed. Conversely, if the actual idle speed is lower than the calculation, the ECU will increase the valve power supply time and increase the amount of fuel injection to increase the idle speed."
+    },
+    {
+        "question": "What is the operating principle and function of the Engine Speed Sensor?",
+        "answer": "Engine Speed Sensor:\nFunction:\nThe engine speed sensor will provide the ECU with the following important information to control engine operation:\n- Engine rotation speed\n- Position of piston (top dead center)\n- Engine working cycle (Intake – Compression – Explosion – Exhaust)\nOperating principle: \nThe structure of the engine speed sensor includes:\n- Magnet core\n- Coil\nWhen the flywheel rotates, the magnetic lugs on the surface of the flywheel will sweep across the sensor head and cause the magnetic field of the magnet to change. The change in the magnetic field surrounding the magnet core will generate an induced current in the coil wound around the magnet core. The ECU will measure the frequency of this current to know the engine's rotation speed because these two parameters are proportional to each other."
+    },
+    {
+        "question": "When installing the piston, what should you pay attention to about the direction of the arrow mark on the piston?",
+        "answer": "Aligning the piston arrow towards exhaust duct."
+    },
+    {
+        "question": "What is CVT transmission trên xe Piaggio/Vespa bike?",
+        "answer": "CVT = Continuously Variable ratio \nTransmission\nIt comprises an expandable pulley variator (with variable useful diameter) \nconnected by a belt.\nTHERE ARE 2 PULLEYS:\nFront driving pulley with half-pulley keyed onto the crankshaft where the driving power comes from, and movable half-pulley with rollers and roller support plate that forms part of the crankshaft.\nRear driven pulley: driven by the belt, it transmits the driving power to the secondary reduction gear unit.\nEach pulley is divided into two sections (half-pulleys), one fixed and the other movable.\nThe transmission system control takes advantage of the engine centrifugal force."
+    },
+    {
+        "question": "What is the structure of the transmission on a Piaggio/Vespa bike?",
+        "answer": "The transmission housing foresees an intake air cooling circuit by means of the rotary driving power of the (driving and driven) half-pulleys, with integrated fans and forced circulation.\nAir goes into the transmission housing through a single air deflector to cool the driven pulley, the clutch assembly and the belt.\nOccasionally, air intakes have filters and/or inlet ducts."
+    },
+    {
+        "question": "What are the notes when installing a front drive pulley on a Piaggio/Vespa engine?",
+        "answer": "Insert the spacer with the internal chamfered side facing towards the insertion inside.\nAssembly the half-pulley together with the roller contrast plate and the sliding blocks.,\nPlace the rollers in the half-pulley.\nThe rollers inside the container must be placed properly, so that the closed side rests on the roller container thrust internal side."
+    },
+    {
+        "question": "What are the things to note when checking the drive belt on the engine of a Piaggio/Vespa bike?",
+        "answer": "The rim bottom of the toothing does not show signs of incisions or cracks. If it does, change the belt."
+    },
+    {
+        "question": "What is the general description of the final reduction assembly on a Piaggio/Vespa bike?",
+        "answer": "This is a final reduction with helicoidal gears in oil bath."
+    },
+    {
+        "question": "What is the working principle of the air-cooling system on engines of Piaggio/Vespa bikes?",
+        "answer": "The working principle of the air-cooling system on engines of Piaggio/Vespa bikes:\n- Cool air is sucked in (by cooling fan).\n- Air that laps the cylinder, and the head is distributed and removes heat (through the fins).\n- Hot air is released at the section under the cylinder-head (outlet side)."
+    },
+    {
+        "question": "What is the function of thermostat on liquid-cooled engines?",
+        "answer": "When the engine is cold, the thermostat is closed and coolant travels in the engine. This lets the engine warm up more quickly.\nWhen the engine is hot, the thermostat opens, allowing hot coolant to pass through the radiator, cool and return, once cooled, to the head/cylinder system."
+    },
+    {
+        "question": "What is the function of swing arm on Piaggio/Vespa bikes?",
+        "answer": "The swinging arm is the component that connects the engine to the chassis. \nBesides connecting the engine to the chassis, the swinging arm partly absorbs the vibrations that the rear suspension transmits to the engine and as a consequence, the vibrations transmitted from the engine to the chassis; this is possible due to silent-blocks. \nSilent-blocks can be spare parts of the swinging arm. \nVibrations can be absorbed by bushings and/or buffers besides silent-blocks.\nThe front part is connected to the chassis, while the rear part is connected to the engine. \nSwinging arms are not all the same; some of them are only a single piece."
+    },
+    {
+        "question": "What is some general technical information about crankcases and main bushings on Piaggio/Vespa engines?",
+        "answer": "CRANKCASES are supplied including main bushings, therefore they cannot be replaced.\nMain bushings comprise two half-shells, one solid and the other with holes and channels for lubrication and high-pressure oil flowing.\nCrankcase halves are measured at the end of the machining operation and subdivided into categories according to the size of the bushing housing hole."
+    },
+    {
+        "question": "What is some general technical information about crankshaft on Piaggio/Vespa engines?",
+        "answer": "The CRANKSHAFT is supplied including a connecting rod fitted on the crankpin.\nCrankshaft fitted on 2 bearings (main bushings), one on the transmission-side crankcase half and the other on the flywheel-side crankcase half.\nInside the crankshaft, the oil lubricates the connecting rod head at high pressure.\nThe CRANKSHAFT is available in different CATEGORIES.\nYou need to install CRANKSHAFT and 2 crankcase halves with similar CATEGORY NUMBER."
+    },
+    {
+        "question": "What are some things to pay attention to when removing and reinstalling the valves on the engine?",
+        "answer": "When removing and installing valves, pay attention to their position so that you can install the correct contact position of the valve base.\nDo not reverse the positions of the inlet and outlet valves."
+    },
+    {
+        "question": "In general, how many positions are there on the engine to check to see if the piston is at top dead center?",
+        "answer": "2 positions:\n- Cylinder Head.\n- Flywheel Cover Side."
+    },
+    {
+        "question": "How many types of oil filters are there on Piaggio/Vespa engines?",
+        "answer": "2 types:\n- Oil mesh pre-filter:\n + Made in plastic.\n + Works during intake; placed upstream the oil pump to ensure its integrity.\n + Removable; its cap also serves as an engine oil drainage plug.\n- Cartridge oil filter:\n + Placed downstream the oil pump.\n + Works under pressure."
+    },
+    {
+        "question": "What is basic technical information about the oil pump on Piaggio/Vespa engines?",
+        "answer": "Trochoidal-type lobe pump (inside crankcase), chain-driven by the crankshaft."
+    },
+    {
+        "question": "What is the function of the safety (by-pass) valve in the lubrication system of the Piaggio/Vespa engine?",
+        "answer": "The By-pass valve intervenes when the oil pressure exceeds the calibration value by draining oil into the sump."
+    },
+    {
+        "question": "What is the function of Minimum pressure sensor in the lubrication system of the Piaggio/Vespa engine?",
+        "answer": "Located in the lubrication circuit, downstream the filter.\nChecks the correct pressure of the circulating oil by signalling any oil pressure drop."
+    },
+    {
+        "question": "What should you check if the engine can not start when pushing start button on Piaggio/Vespa bikes?",
+        "answer": "Systems need to be check:\n- Immobilizer System.\n- Fuel pump, HV Coil, Injector, Engine Speed Sensor.\n- Fuel System: Fuel in the tank, Fuel pressure, Injector Flow.\n- Spark Plug.\n- Timing of engine.\n- PADS parameters: engine temperature, intake air temperature.\n- Combustion Chamber pressure.\n- Start System.\n- Air supply system.\n- Idle speed control device (idle valve, step motor)."
+    },
+    {
+        "question": "What should you check if ENGINE DOES NOT HOLD IDLING/ IDLING IS UNSTABLE/ IDLING TOO LOW on Piaggio/Vespa bikes?",
+        "answer": "Systems need to be check:\n- Fuel pump, HV Coil, Injector, Engine Speed Sensor, Air Temperature Sensor, Engine Temperature Sensor, Air pressure sensor.\n- Spark Plug, Ignition System.\n- TPS.\n- Air Supply System: Air Filter, Throttle Body, Hoses.\n- Fuel System: Fuel in the tank, Fuel pressure, Injector Flow.\n- Cylinder Head.\n- Idle speed control device (idle valve, step motor)."
+    },
+    {
+        "question": "What should you check if ENGINE DOES NOT RETURN TO IDLING SPEED/IDLING SPEED TOO HIGH on Piaggio/Vespa bikes?",
+        "answer": "Systems need to be check:\n- Fuel pump, HV Coil, Injector, Engine Speed Sensor, Air Temperature Sensor, Engine Temperature Sensor, Air pressure sensor.\n- Ignition System.\n- Air Supply System: Air Filter, Throttle Body, Hoses.\n- Fuel System: Fuel in the tank, Fuel pressure, Injector Flow.\n- Cylinder Head.\n- TPS.\n- Idle speed control device (idle valve, step motor)."
+    },
+    {
+        "question": "What should you check if EXHAUST BACKFIRING WHEN DECELERATING on Piaggio/Vespa bikes?",
+        "answer": "Systems need to be check:\n- Fuel pump, HV Coil, Injector, Engine Speed Sensor, Air Temperature Sensor, Engine Temperature Sensor, Air pressure sensor, Lambda Sensor.\n- TPS.\n- Idle speed control device (idle valve, step motor).\n- Air Supply System: Air Filter, Throttle Body, Hoses.\n- Cylinder Head.\n- Fuel System: Fuel in the tank, Fuel pressure, Injector Flow.\n- Exhaust System: Exhaust manifold, Silencer."
+    },
+    {
+        "question": "What should you check if KNOCKING SOUND COMES FROM COMBUSTION CHAMBER on Piaggio/Vespa bikes?",
+        "answer": "Systems need to be check:\n- Fuel pump, HV Coil, Injector, Engine Speed Sensor, Air Temperature Sensor, Engine Temperature Sensor, Air pressure sensor, Lambda Sensor.\n- Spark Plug.\n- TPS.\n- Ignition System.\n- Air Supply System.\n- Fuel Supply System: Fuel Quality, Fuel Pump, Fuel Pressure, Injector Flow.\n- Cylinder base gasket thickness."
+    },
+    {
+        "question": "Where is the fuel pressure regulator valve on Piaggio/Vespa bikes?",
+        "answer": "The fuel pressure regulator valve is fitted in the fuel pump."
+    },
+    {
+        "question": "Before checking the fuel pump or injectors, what voltage does the battery need to reach on a Piaggio/Vespa vehicle?",
+        "answer": "At least 12 Voltages."
+    },
+    {
+        "question": "On a Piaggo/Vespa, if the fuel pump operates normally, what is the pressure in the fuel supply system when the fuel pump is operating?",
+        "answer": "2.5 Bar"
+    },
+    {
+        "question": "On a Piaggo/Vespa, if the fuel pump operates normally, what is the flow rate of the fuel pump when the fuel pump is operating?",
+        "answer": "110 cc/15 seconds"
+    },
+    {
+        "question": "On a Piaggo/Vespa vehicle, if the injector operates normally, what is the fuel flow through the injector when the fuel supply system pressure is 2.5 bar and the injector is energized?",
+        "answer": "40 cc/15 seconds"
+    },
+    {
+        "question": "On Piaggo/Vespa vehicles, what is the procedure to check injector leaks?",
+        "answer": "- Dry the injector outlet with a blast of compressed air.\n- Activate the fuel pump.\n- Wait for one minute, making sure there are no leaks coming from the injector.\n- Slight oozing is normal.\n- Value limit = 1 drop per minute."
+    },
+    {
+        "question": "On Piaggo/Vespa vehicles, when do you need to reset the throttle position sensor?",
+        "answer": "You need to reset the throttle position sensor after performing at least one of the following service actions:\n- Remove and refit the throttle body.\n- Replace the throttle body.\n- Replace Engine ECU."
+    },
+    {
+        "question": "On Piaggo/Vespa vehicles, when do you need to reset the self-adaptive parameter?",
+        "answer": "You need to the self-adaptive parameter after performing at least one of the following service actions:\n- Maintenance related to the air supply system.\n- Maintenance related to the fuel supply system.\n- Maintenance related to the engine.\n- Replace Engine ECU."
+    },
+    {
+        "question": "What is the valve clearance standard of the 4V-Iget engine?",
+        "answer": "Intake: 0.10 mm, Exhaust: 0.15 mm"
+    },
+    {
+        "question": "What is the valve clearance standard of the 4V-Iget HPE engine?",
+        "answer": "Intake: 0.10 mm, Exhaust: 0.15 mm"
+    },
+    {
+        "question": "What is the valve clearance standard of the 300 HPE engine?",
+        "answer": "Intake: 0.10 mm, Exhaust: 0.10 mm"
+    },
+    {
+        "question": "What is the valve clearance standard of the 2V LEADER engine?",
+        "answer": "Intake: 0.10 mm, Exhaust: 0.15 mm"
+    },
+    {
+        "question": "What is the valve clearance standard of the 400 engine?",
+        "answer": "Intake: 0.10 mm, Exhaust: 0.15 mm"
+    },
+    {
+        "question": "What is the valve clearance standard of the 500 engine?",
+        "answer": "Intake: 0.15 mm, Exhaust: 0.15 mm"
+    },
+    {
+        "question": "What is the operating principle of the ABS system?",
+        "answer": "An anti-lock braking system (ABS) is a safety anti-skid braking system. ABS operates by preventing the wheels from locking up during braking, thereby maintaining tractive contact with the road surface and allowing the rider to maintain more control over the vehicle."
+    },
+    {
+        "question": "What equipment does the ABS system on Piaggio/Vespa vehicles include?",
+        "answer": "ABS System includes:\n- Electronic control unit.\n- Modulator.\n- Tone wheel(s).\n- Hall effect sensor(s)."
+    },
+    {
+        "question": "When checking brake discs, what dimensions do you need to measure?",
+        "answer": "Dimensions need to be checked:\n- Thickness.\n- Deviation."
+    },
+    {
+        "question": "What dimension do you need to check after installing the speed sensor/ABS sensor?",
+        "answer": "The distance between the brake disc and the sensor."
+    },
+    {
+        "question": "What is the general introduction about the Start Stop system on Piaggio/Vespa vehicles?",
+        "answer": "One of the most innovative new features introduced with RISS Fuel Injection System is is the Start & Stop system.\nWhen activated, the system cuts out the engine each time the vehicle comes to a stop, and restarts the engine automatically when the rider simply twists the throttle grip.\nThe Start & Stop system does not use a conventional starter motor engaged with the engine via a gear transmission system, but a brushless motor/generator unit mounted directly onto the crankshaft."
+    },
+    {
+        "question": "What are the advantages of the Start Stop system on Piaggio/Vespa vehicles?",
+        "answer": "ZERO drag/friction, translating to extraordinarily silent starts and durability/reliability of the system itself."
+    },
+    {
+        "question": "On Piaggio/Vespa vehicles equipped/with tilt sensor function, after the vehicle falls over, what should be done to start the engine?",
+        "answer": "To enable engine start again, the ignition switch must be turned to OFF and then back to ON."
+    },
+    {
+        "question": "What is ASR system on Piaggio/Vespa bikes?",
+        "answer": "The ASR system is to help the rider during acceleration manoeuvres, especially on slippery surfaces or in conditions that can cause sudden slippage of the rear wheel. The ASR in these situations automatically intervenes by reducing engine output within the limit imposed by the grip conditions, contributing significantly to the maintenance of stability of the vehicle."
+    },
+    {
+        "question": "What is the operation principle of ASR system?",
+        "answer": "The wheel speed sensors measure angular speed (the angle ω through which the wheels rotate in a unit of time), not absolute wheel speed.\nThe control unit multiplies the angular speed ω by the wheel radius to calculate the effective wheel speed:\nV = ω X R\nThe electronic unit then calculates the difference in speed between the rear and front wheels, and reduces the ignition advance in proportion to the value obtained."
+    },
+    {
+        "question": "When do you need to perform ASR calibration procedure?",
+        "answer": "ASR calibration procedure must be carried out whenever the tyre(s) is(are) changed or if the electronic unit is replaced."
+    },
+    {
+        "question": "Where can I find information about Multimedia Platform on Piaggio/Vespa bikes?",
+        "answer": "Let check websites:\nhttps://app.vespa.com/\nhttps://app.piaggio.com/"
+    },
+    {
+        "question": "How many types of Multimedia ECU are there on Piaggio/Vepa bikes?",
+        "answer": "2 types: PMP3, PMP2"
+    },
+    {
+        "question": "What is the principle of parking system on MP3 vehicles?",
+        "answer": "To inhibit roll, an electro-actuator (GEAR MOTOR), controlled by the\"dedicated\" electronic control unit, actuates the following:\n- The mechanical linkage for the articulated quadrilateral locking clamp.\n- The hydraulic circuit for the shock absorber locking clamp."
+    },
+    {
+        "question": "What is the principle of Tilt lock calliper on MP3 vehicles?",
+        "answer": "When the lock is engaged, the calliper grips the circular segment fixed to one of the cross members of the quadrilateral: the quadrilateral is now locked and the vehicle cannot tilt.\nThe calliper is operated by a cable linkage that must be adjusted occasionally: there must be a small degree of free play in the cable when the calliper is open (to ensure that the calliper is completely open)."
+    },
+    {
+        "question": "What is the principle of Roll lock callipers on MP3 vehicles?",
+        "answer": "When the lock is engaged, the two hydraulic callipers lock the stanchions fixed to the two suspensions: the suspensions for both wheel stiffen.\nThe two callipers are equipped with bleed valves."
+    },
+    {
+        "question": "What is the principle of Geared motor on MP3 vehicles?",
+        "answer": "The gear motor actuates the hold assist devices mechanically and hydraulically:\n- An electric motor is mounted on the gear motor unit.\n- The electric motor, controlled by the hold assist ECU, compresses the spring assembly, which simultaneously actuate the following:\n  + A linkage which, via cable, operates the mechanical calliper locking the qualdrilateral (tilt lock).\n  + A hydraulic pump (similar to a brake pump) locking the suspension (roll lock).\n- The gear motor is controlled via a potentiometer.\n- The system uses preloaded springs to ensure calliper grip (to compensate for settling due to operating and ambient conditions and mechanical/hydraulic component wear)."
+    },
+    {
+        "question": "When do you need to engage parking brake of MP3 vehicles?",
+        "answer": "If the vehicle is parked with the hold assist function engaged and without using the centre stand, the parking brake must be engaged.\nActivate the parking brake first, and then the steering lock.\nThe parking brake locks the rear brake disc with a mechanical calliper."
+    },
+    {
+        "question": "When do you need to perform auto configuration for Parking ECU of MP3 vehicles?",
+        "answer": "This procedure is required when setting up the control unit (CeCa) after it has been replaced (Vehicle recognition: MP3 300, MP3 500, etc.)."
+    },
+    {
+        "question": "What should you do before performing Potentiometer Reset for Parking ECU of MP3?",
+        "answer": "Perform Lower Stop Search."
+    },
+    {
+        "question": "What conditions need to be met at the same time to activate the front suspension locking system on an MP3 vehicle?",
+        "answer": "THE FOLLOWING CONDITIONS MUST BE MET SIMULTANEOUSLY:\n- At vehicle speeds below the enable threshold, which may be from 15 to 23 Km/h, the consent threshold varies in relation to deceleration. With high rates of deceleration, the consent threshold is raised.\n- Throttle valve closed.\n- Engine speed below clutch engagement point.\n- The ECU (CeCa) does not detect any faults or malfunctions."
+    },
+    {
+        "question": "When will the front suspension locking system be released automatically on MP3 vehicle?",
+        "answer": "- The lock is released automatically when the throttle valve starts to open if the engine is running and the rider is seated on the vehicle.\n- The lock is released automatically when the engine speed exceeds the clutch engagement point (3000 rpm for the 125, 2600 rpm for the 250 ie, 2000 rpm for the 400 i.e. and 2000 rpm for the 500 i.e.).\n- The lock releases automatically when the vehicle speed exceeds 15 Km/h."
+    },
+    {
+        "question": "When do you need to perform Forced Release of front suspension locking system on MP3?",
+        "answer": "This procedure is performed only as a result of improper use of the system or in the event of a malfunction, according to two different safety levels."
+    },
+    {
+        "question": "Các bước cần thực hiện trong quá trình kiểm tra trước khi giao xe?",
+        "answer": "Các bước kiểm tra trước khi giao xe (theo thứ tự):\n- Kiểm tra bên ngoài xe\n- Kiểm tra động cơ\n- Kiểm tra khung xe\n- Kiểm tra các hạng mục an toàn trước khi lái xe\n- Kiểm tra thử trên đường\n- Kiểm tra sau khi chạy thử\n- Các bước kiểm tra khác"
+    },
+    {
+        "question": "Điện áp tiêu chuẩn của bình điện trên xe Piaggio/Vespa?",
+        "answer": "12,6 Vôn"
+    },
+    {
+        "question": "Vì sao cần sạc đầy bình điện trước khi lắp nó lên xe?",
+        "answer": "ĐỂ ĐẢM BẢO TUỔI THỌ CỦA BÌNH ĐIỆN, BÌNH ĐIỆN CẦN PHẢI ĐƯỢC TIẾN HÀNH SẠC TRƯỚC KHI SỬ DỤNG."
+    },
+    {
+        "question": "Bạn có thể tìm thông tin chi tiết về viêc kiểm tra trước khi giao xe ở đâu?",
+        "answer": "Phiếu kiểm tra trước khi giao xe ở trong Sách hướng dẫn sử dụng."
+    },
+    {
+        "question": "Bảo dưỡng định kỳ và sửa chữa phải được thực hiện ở đâu thì mới được Piaggio công nhận?",
+        "answer": "Piaggio chỉ công nhận giá trị của các hoạt động bảo dưỡng định kỳ và sửa chữa bảo hành được thực hiện tại các cửa hàng ủy nhiệm."
+    },
+    {
+        "question": "Việc bảo hành không được áp dụng cho các thiết bị nào ?",
+        "answer": "Việc sửa chữa bảo hành không áp dụng đối với:\n - Các hiện tượng oxy hóa các chi tiết mạ, oxy hóa các chi tiết nhôm.\n - Bộ dụng cụ, yên xe, dây ga.\n - Dầu nhớt động cơ, dầu nhớt hộp truyền động, mỡ bôi trơn, dầu phanh, dung dịch làm mát và/hoặc các phụ phẩm khác\n - Những chi tiết, phụ tùng hoặc cụm tổng thành trên xe có đặc tính hoạt động của chúng phải chịu hao mòn theo thời gian và cường độ sử dụng xe, bao gồm:\n  + Lọc dầu, lọc gió, lọc nhiên liệu.\n  + Săm lốp, nút ấn, tay nắm, tem trang trí, các loại ống dẫn, gioăng đệm các loại và các chi tiết bằng cao su khác.\n  + Bu-gi, cầu chì, bóng đèn, chổi than và cổ góp mô-tơ đề.\n  + Guốc phanh, má phanh, đĩa phanh, tang phanh, guốc ly hợp, bi văng, guốc trượt bi văng, dây đai dẫn động, puly dẫn động trước và sau, bình điện."
+    },
+    {
+        "question": "Vì sao cần thực hiện bảo dưỡng định kỳ?",
+        "answer": "Bằng cách tiến hành bảo dưỡng định kỳ, có thể đạt được các kết quả sau:\n- Có thể phát hiện và ngăn chặn được những vấn đề/hư hỏng lớn có thể xảy ra sau này.\n- Thỏa mãn được những tiêu chuẩn, quy định của pháp luật.\n - Kéo dài tuổi thọ của xe.\n - Giúp khách hàng lái xe an toàn và tiết kiệm."
+    },
+    {
+        "question": "Chu kỳ bảo dưỡng được xác định như thế nào?",
+        "answer": "Chu kỳ bảo dưỡng được xác định tùy theo quãng đường xe đi được và khoảng thời gian sử dụng xe tính từ lần bảo dưỡng trước."
+    },
+    {
+        "question": "Vì sao phải định kỳ thay thế dầu động cơ?",
+        "answer": "Dầu động cơ sẽ bị bẩn do nó cuốn theo các tạp chất và muội than bên trong động cơ khi động cơ làm việc. Dầu động cơ sẽ bị hao hụt và biết chất kể cả khi không sử dụng."
+    },
+    {
+        "question": "Có cần phải thay mới lọc dầu tinh khi thay dầu động cơ?",
+        "answer": "Có"
+    },
+    {
+        "question": "Cần phải tiến hành công việc bảo dưỡng nào với lọc dầu thô khi thay dầu động cơ?",
+        "answer": "Kiểm tra-Làm sạch"
+    },
+    {
+        "question": "Bạn kiểm tra khe hở xupap khi động cơ nóng hay nguội?",
+        "answer": "Nguội"
+    },
+    {
+        "question": "Nếu khe hở xupap quá lớn, động cơ sẽ có triệu chứng như thế nào?",
+        "answer": "Tiếng kêu bất thường từ động cơ."
+    },
+    {
+        "question": "Nếu khe hở xupap quá nhỏ, động cơ sẽ có triệu chứng như thế nào?",
+        "answer": "Ống xả bị quá nhiệt hoặc cháy nấm xu páp."
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 3V-Iget là bao nhiêu?",
+        "answer": "xupap nạp: 0,08 mm xupap xả: 0,08 mm"
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng động cơ hoạt động không ổn định trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng động cơ hoạt động không ổn định trên xe Piaggio/Vespa:\n - Lọc gió bị tắc hoặc bẩn.\n - Mòn đai truyền động.\n - Thiếu áp suất nén: các chi tiết, xy-lanh và xu páp mòn.\n - Mức dầu vượt mức tối đa.\n - Thể tích buồng đốt không đúng.\n - Thời điểm đánh lửa sai hoặc mòn các chi tiết trong hệ thống phối khí.\n - Ống xả bị tắc.\n - Bộ truyền động hoạt động không hiệu quả.\n - Điều chỉnh xu páp không đúng.\n - Xu páp bị quá nhiệt.\n - Bệ xu páp bị méo.\n - Xy-lanh bị mòn, séc măng bị mòn hoặc gãy."
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng khó khởi động trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng khó khởi động trên xe Piaggio/Vespa:\n - Ắc quy hết điện.\n - Bugi hỏng.\n - Xu páp bị kênh hoặc điều chỉnh xu páp không đúng.\n - Mô tơ đề và/hoặc hệ thống khởi động không hoạt động.\n - Xăng không tốt.\n - Lọc gió bị tắc hoặc bẩn.\n - Bơm xăng hỏng."
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng Tiêu thụ dầu quá mức/Khí xả có màu sắc không bình thường trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng Tiêu thụ dầu quá mức/Khí xả có màu sắc không bình thường trên xe Piaggio/Vespa:\n- Điều chỉnh xu páp không đúng.\n- Xu páp bị cháy.\n- Bệ xu páp mòn/méo.\n- Xy-lanh bị mòn, séc măng bị mòn hoặc gãy.\n- Séc măng bị mòn hoặc gãy hoặc séc măng được lắp ráp không đúng cách.\n- Gioăng làm kín hoặc các mặt lắp bị rò rỉ dầu.\n- Phớt dầu xu páp bị mòn.\n- Mòn ống dẫn hướng xu páp."
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng ÁP SU ́T D ̀U BÔI TRƠN KHÔNG ĐỦ trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng ÁP SU ́T D ̀U BÔI TRƠN KHÔNG ĐỦ trên xe Piaggio/Vespa:\n- Van an toàn luôn mở.\n- Khe hở bơm dầu quá lớn.\n- Lọc dầu quá bẩn.\n- Mức dầu quá thấp."
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng Phanh không ăn của hệ thống phanh tang trống trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng Phanh không ăn của hệ thống phanh tang trống trên xe Piaggio/Vespa:\n- Guốc phanh hoặc má phanh bị mòn.\n- Hành trình tự do của phanh lớn."
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng Phanh không ăn của hệ thống phanh dầu trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng Phanh không ăn của hệ thống phanh tang trống trên xe Piaggio/Vespa:\n- Guốc phanh hoặc đĩa bị mòn.\n- Đĩa phanh không chặt hoặc biến dạng.\n- Có bọt khí trong hệ thống phanh thủy lực.\n- Rỉ dầu trong hệ thống phanh thủy lực."
+    },
+    {
+        "question": "Nguyên nhân gây ra hiện tượng Phanh quá nhiệt trên xe Piaggio/Vespa?",
+        "answer": "Nguyên nhân gây ra hiện tượng Phanh quá nhiệt trên xe Piaggio/Vespa:\n- Đệm cao su bị trương hoặc nghẽn.\n- Các lỗ hồi dầu trên bơm bị tắc.\n- Đĩa phanh lỏng hoặc méo.\n- Pít-tông phanh hỏng."
+    },
+    {
+        "question": "Cần lưu ý gì khi sử dụng bình điện trên xe Piaggio/Vespa?",
+        "answer": "Ắc quy là thiết bị điện nằm trong hệ thống cần kiểm tra và bảo dưỡng thường xuyên nhất. Nếu không sử dụng xe trong một\nthời gian (1 tháng hoặc hơn) ắc quy cần được sạc định kỳ. Ắc quy hoàn toàn hết điện trong vòng 5 - 6 tháng. Nếu lắp ắc quy\nvào xe, chú ý không được đảo đầu dây, luôn nhớ dây mát màu đen được đấu vào cực âm (-) và dây màu đỏ đấu vào cực dương (+). Ngoài ra, cần chú ý sặc bình điện theo đúng quy trình."
+    },
+    {
+        "question": "Bạn cần thực hiện kiểm tra gì khi hiện tượng CỨNG CỔ LÁI xuất hiện trên xe Piaggio/Vespa?",
+        "answer": "Kiểm tra độ chặt của đai ốc tròn trên và dưới. Nếu còn hiện tượng bất thường khi quay cổ lái ngay cả khi điều chỉnh, kiểm tra ổ chứa vòng bi: nếu bị lõm hoặc bị vỡ, hãy thay chúng."
+    },
+    {
+        "question": "Bạn cần thực hiện kiểm tra gì khi hiện tượng CỔ LÁI CÓ ĐỘ RƠ QUÁ LỚN xuất hiện trên xe Piaggio/Vespa?",
+        "answer": "Kiểm tra độ chặt của đai ốc tròn phía trên. Nếu còn hiện tượng bất thường khi quay cổ lái ngay cả khi điều chỉnh, kiểm tra ổ\nchứa vòng bi: thay nếu chúng bị lõm sâu."
+    },
+    {
+        "question": "Bạn cần thực hiện kiểm tra gì khi hiện tượng Hệ thống treo hoạt động ồn xuất hiện trên xe Piaggio/Vespa?",
+        "answer": "Nếu giảm xóc trước kêu, kiểm tra: đảm bảo giảm xóc trước hoạt động bình thường và vòng bi hoạt động tốt. Cuối cùng, kiểm tra lực siết của bu lông trục bánh, ngàm phan và đĩa phanh. Kiểm tra treo máy nối động cơ với khung và giảm sóc sau hoạt động đúng."
+    },
+    {
+        "question": "Mô tả chung về hệ thống Khóa từ trên xe Piaggio/Vespa với hệ thống khóa truyền thống?",
+        "answer": "Hệ thống đánh lửa điện tử được điều khiển bởi bộ điều khiển phun xăng tích hợp với hệ thống khóa từ. Hệ thống khóa từ là hệ thống chống trộm cho phép xe chỉ hoạt động khi bộ điều khiển nhận dạng ra chìa được mã hóa. Mã này có sẵn trong chíp từ và được tích hợp trong chuôi chìa khóa. Người lái chỉ cần vặn chìa khóa để kích hoạt hệ thống. Hệ thống khóa từ gồm có các chi tiết sau đây:\n- Bộ điều khiển phun xăng\n- Ăng ten hệ thống khóa từ\n- Chìa chính và chìa phụ có gắn chíp từ bên trong\n- Đèn CODE hệ thống khóa từ"
+    },
+    {
+        "question": "Mô tả chung về hệ thống Khóa từ trên xe Piaggio/Vespa Keyless?",
+        "answer": "Hệ thống khóa từ là hệ thống chống trộm cho phép xe chỉ hoạt động chỉ khi được khởi động sau khi bộ điều khiển Keyless nhận dạng được bộ điều khiển từ xa. Mã được lưu trong bộ phát đáp trong bộ điều khiển từ xa. Hệ thống này cho phép người điều khiển xe vận hành xe mà không phải thực hiện\nthêm bất kỳ thao tác nào ngoài việc xoay ổ khóa điện như bình thường.\nHệ thống khóa từ gồm có các chi tiết sau đây: - bộ điều khiển Keyless. - anten hệ thống khóa từ - thẻ TAG với bộ phát đáp tích hợp - bộ điều khiển từ xa - đèn led chẩn đoán tích hợp vào bảng đồng hồ."
+    },
+    {
+        "question": "ECU trắng là gì?",
+        "answer": "ECU chưa cài đặt khóa từ."
+    },
+    {
+        "question": "Một số lưu ý quan trọng về ECU trắng là gì?",
+        "answer": "Khi hệ thống đánh lửa chưa được lập trình thì bất kỳ chìa khóa nào cũng có thể dùng để khởi động động cơ được, nhưng tốc độ động cơ chỉ giới hạn ở 2.000 vòng/phút. Bộ điều khiển trung tâm chỉ có thể nhận dạng được các chìa khóa khi nó được lập trình đúng cách. Dữ liệu của chìa khóa nào được lưu vào hệ thống đầu tiên sẽ trở thành chìa khóa chính:điều này đặc biệt quan trọng vì chìa\nnày có thể dung để cài đặt cho các chìa phụ khác."
+    },
+    {
+        "question": "Khi hệ thống khóa từ có lỗi, đèn báo hệ thống khóa từ sẽ có những kiểu nháy như thế nào?",
+        "answer": "Đèn LED (code) sẽ nháy để báo lỗi, sau đó đèn LED sáng mãi. Động cơ không thể khởi động. Các mã lỗi là:\n- Lỗi 1 nháy.\n- Lỗi 2 nháy.\n- Lỗi 3 nháy."
+    },
+    {
+        "question": "Quy trình kiểm tra dòng điện rò trên xe Piaggio/Vespa là gì?",
+        "answer": "Quy trình kiểm tra dòng điện rò trên xe Piaggio/Vespa:\n- TRƯỚC KHI TIẾN HÀNH KIỂM TRA, ĐẢM BẢO ẮC QUY V ̃N ĐANG HOẠT ĐỘNG TỐT.\n- Tháo nắp che bình ắc quy.\n- Kiểm tra đảm bảo ắc quy không có dấu hiệu cạn dung dịch trước khi kiểm tra mức điện áp phát ra.\n- Vặn khóa điện sang vị trí OFF, tháo cực âm (-) của ắc quy ra. Nối dây dương của đồng hồ đo với dây âm (-) của ắc quy vừa tháo. Nối dây âm của đồng hồ với cực âm của bình điện.\n- Khi khóa điện luôn ở vị trí OFF, chỉ số của ampe kế sẽ ≤ 0,5 mA."
+    },
+    {
+        "question": "Quy trình kiểm tra hệ thống sạc trên xe Piaggio/Vespa là gì?",
+        "answer": "Quy trình kiểm tra hệ thống sạc trên xe Piaggio/Vespa:\n- TRƯỚC KHI TIẾN HÀNH KIỂM TRA, ĐẢM BẢO ẮC QUY V ̃N ĐANG HOẠT ĐỘNG TỐT.\n- Dựng xe bằng chân chống giữa.\n- Với ắc quy được nối đúng mạch, đặt dây đo của đồng hồ đo điện vạn năng vào các điện cực ắc quy.\n- Khởi động động cơ, tắt tất cả các đèn, tăng tốc độ của động cơ và đồng thời đo mức điện áp (Tiêu chuẩn: Điện áp nằm trong khoảng từ 14,0 đến 15,0 V ở tốc độ 5.000 vòng/phút).\n- Tắt động cơ, \"BẬT\" các đèn bằng cách chuyển công tắc đèn sang bên trái và để điện áp ắc quy về mức 12 V.\n- Nối đầu kẹp giữ ampe kế với cực dương nạp lại tại đầu ra từ bộ chỉnh lưu.\n- Bật đèn pha, khởi động động cơ, giữ động cơ ở tốc độ trung bình và đọc giá trị trên ampe kế. Giá trị đo được cần: > 20 ampe."
+    },
+    {
+        "question": "Lưu ý khi đo thông mạch là gì?",
+        "answer": "Ngắt mạch trước khi đo để đảm bảo điện trong mạch được giải phóng, không tích điện."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của cảm biến nhiệt độ động cơ là gì?",
+        "answer": "CẢM BIẾN NHIỆT ĐỘ ĐỘNG CƠ:\nChức năng: Đóng vai trò để bộ điều khiển trung tâm nhận biết nhiệt độ động cơ nhằm tối ưu hóa vận hành.\nNguyên lý hoạt động: Cảm biến kiểu NTC (cảm biến điện trở, nghịch biến với nhiệt độ)."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của cảm biến khí xả là gì?",
+        "answer": "CẢM BIẾN KHÍ XẢ:\nChức năng: Gửi thôn tin cho bộ điều khiển về tình trạng nghèo hoặc giàu của hỗn hợp xăng và khí.\nNguyên lý hoạt động: Theo sự khác biệt của ôxy trong khí thải và môi trường, cảm biến khí xả tạo ra điện áp được truyền về bộ điều khiển phun xăng. Không yêu cầu nguồn cấp bên ngoài nhưng,để hoạt động đúng cách động cơ cần đạt đến nhiệt độ vận hành cao:đó là lý do có mạch gia nhiệt bên trong."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của kim phun là gì?",
+        "answer": "KIM PHUN:\nNguyên lý: Cung cấp lượng xăng đúng thời điểm.\nNguyên lý hoạt động: Kích thích cuộn điện trong kim phun để đường xăng mở."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của mô bin sườn là gì?",
+        "answer": "MÔ BIN SƯỜN:\nNguyên lý: Để phóng điện ở bugi bằng cách tăng điện áp.\nNguyên lý hoạt động: Cuộn dây đánh lửa bao gồm một lõi sắt được bao quanh bởi hai cuộn dây (cuộn dây) được làm từ dây đồng. Cuộn dây sơ cấp có tương đối ít vòng dây nặng, trong khi cuộn thứ cấp gồm hàng nghìn vòng dây nhỏ hơn và được cách điện với điện áp cao bằng lớp tráng men trên dây và các lớp cách điện bằng giấy dầu.\n\nKhi mạch điện nối từ nguồn điện tới cuộn sơ cấp đóng lại, dòng điện chạy qua cuộn sơ cấp tạo ra từ trường xung quanh lõi. Dòng điện này tồn tại trong một khoảng thời gian để tích tụ năng lượng trong cuộn dây. Sau khi cuộn dây được tích điện, mạch sẽ mở ra và tạo ra dao động trong từ trường tạo ra điện áp cao trong cuộn dây thứ cấp. Dòng điện cao áp này truyền tới bugi, nơi nó được sử dụng để đốt cháy hỗn hợp không khí/nhiên liệu."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của Bơm xăng là gì?",
+        "answer": "BƠM XĂNG:\nChức năng: Bơm xăng từ bình để dẫn xăng vào kim phun.\nNguyên lý hoạt động:\nCấu tạo của cụm bơm xăng gồm có:\n- Bộ lọc thô dạng lưới\n- Mô tơ bơm xăng \n- Van một chiều\n- Bộ lọc tinh\n- Van điều áp\nKhi mô tơ bơm quay, cánh bơm sẽ hút nhiên liệu từ bình xăng qua lưới lọc -> qua mô tơ bơm -> qua van một chiều -> qua bộ lọc tinh -> qua van điều áp -> đường ống dẫn nhiên liệu -> kim phun.\nBơm được bôi trơn và làm mát nhờ nhiên liệu, do vậy không để bình xăng quá cạn."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của CẢM BIẾN VỊ TRÍ BƯỚM GA là gì?",
+        "answer": "CẢM BIẾN VỊ TRÍ BƯỚM GA:\nChức năng: Chịu trách nhiệm cảm biến kích cỡ mở bướm ga cho bộ điều khiển.\nNguyên lý hoạt động:\nCó 2 loại CẢM BIẾN VỊ TRÍ BƯỚM GA:\n1) Cảm biến không tiếp xúc:\nSử dụng một con chíp điện tử để xác định góc xoay của bướm ga.\nCảm biến có cấu tạo gồm một đĩa nam châm được gắn trên đầu trục của bướm ga, khi người lái vặn tay ga, bướm ga sẽ xoay và làm thay đổi lưu lượng khí nạp vào buồng đốt, đồng thời làm đĩa nam châm xoay cùng với bướm ga.\nKhi đĩa nam châm quay, từ trường của nó tác động lên chíp điện tử sẽ bị thay đổi. Chíp điện tử này sẽ phát hiện sự thay đổi từ trường của đĩa nam châm và gửi tín hiệu về cho ECU. Dựa vào tín hiệu này ECU có thể xác định được góc xoay của đĩa nam châm, chính là góc xoay của bướm ga.\n2) Cảm biến tiếp xúc:\nBên trong cảm biến có một biến trở và tiếp điểm của biến trở được nối với trục của bướm ga, khi thay đổi vị trí của bướm ga sẽ làm thay đổi vị trí của tiếp điểm trên biến trở. ECU sẽ cấp điện áp cố định 5V vào hai đầu biến trở và đo điện áp thu được từ tiếp điểm của biến trở. Tùy theo vị trí của tiếp điểm trên biến trở mà điện áp đo được sẽ khác nhau. Dựa vào giá trị điện áp đó, ECU sẽ xác định được góc xoay (vị trí) của bướm ga."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của VAN CẦM CHỪNG là gì?",
+        "answer": "VAN CẦM CHỪNG:\nChức năng: Van này có tác dụng điều chỉnh lượng khí nạp vào trong buồng đốt khi động cơ hoạt động ở trạng thái không tải, để từ đó điều chỉnh tốc độ không tải của động cơ theo tính toán của ECU.\nNguyên lý hoạt động:\nKhi động cơ hoạt động ở trạng thái không tải, ECU sẽ tính toán tốc độ không tải mục tiêu của động cơ theo nhiệt độ của động cơ. Đồng thời ECU sẽ điều khiển cấp điện cho cuộn dây của van điều khiển tốc độ không tải để mở van trong kỳ hút của động cơ. Thời gian cấp điện càng lâu thì lượng khí nạp vào qua van không tải càng lớn, ECU sẽ tính toán thời gian phun nhiên liệu tương ứng để tạo hỗn hợp khí – nhiên liệu phù hợp. Nếu tốc độ không tải của động cơ cao hơn so với mức tính toán ECU sẽ giảm bớt thời gian cấp điện cho van và giảm lượng phun nhiên liệu để hạ thấp tốc độ không tải. Ngược lại nếu tốc độ không tải thực tế thấp hơn tính toán, ECU sẽ tăng thời gian cấp điện cho van và tăng lượng phun nhiên liệu để tăng tốc độ không tải."
+    },
+    {
+        "question": "Nguyên lý hoạt động và chức năng của Cảm biến tốc độ động cơ là gì?",
+        "answer": "Cảm biến tốc độ động cơ:\nChức năng:\nCảm biến tốc độ động cơ sẽ cung cấp cho ECU các thông tin quan trọng sau để điều khiển hoạt động của động cơ:\n- Tốc độ quay của động cơ\n- Vị trí của pít tông (điểm chết trên)\n- Chu kỳ làm việc của động cơ (Nạp – Nén – Nổ – Xả)\nNguyên lý hoạt động:\nCấu tạo của cảm biến tốc độ động cơ gồm có:\n- Lõi nam châm\n- Cuộn dây\nKhi vô lăng điện quay, các vấu từ trên bề mặt của vô lăng điện sẽ quét qua đầu của cảm biến và làm cho từ trường của nam châm bị thay đổi. Sự thay đổi của từ trường bao quanh lõi nam châm sẽ làm phát sinh dòng điện cảm ứng trong cuộn dây được quấn xung quanh lõi nam châm. ECU sẽ đo tần số của dòng điện này để biết được tốc độ quay của động cơ do hai thông số này tỷ lệ với nhau."
+    },
+    {
+        "question": "Khi lắp pít-tông, cần lưu ý gì về chiều của dấu mũi tên trên pít-tông?",
+        "answer": "Căn chỉnh mũi tên pít-tông về phía hướng ống xả."
+    },
+    {
+        "question": "Truyền động CVT trên xe Piaggio/Vespa nghĩa là gì?",
+        "answer": "CVT = Continuously Variable ratio \nTransmission (hệ truyền động có ty số truyền thay đổi liên tục).\nHệ thống CVT bao gồm 2 pu-li được kết nối bởi dây đai.\nCÓ 2 PU-LI:\nRòng rọc dẫn động phía trước có nửa ròng rọc được cố định vào trục cơ, nơi sinh ra lực dẫn động và nửa ròng rọc di động có con lăn và tấm đỡ con lăn tạo thành một phần của trục cơ.\nRòng rọc được dẫn động phía sau: được dẫn động bằng dây đai, nó truyền lực dẫn động đến bộ giảm tốc thứ cấp.\nMỗi ròng rọc được chia thành hai phần (nửa ròng rọc), một phần cố định và phần còn lại có thể di chuyển.\nHệ thống điều khiển truyền động tận dụng lực ly tâm của động cơ."
+    },
+    {
+        "question": "Cấu tạo của bưởng bộ truyền động trên xe Piaggio/Vespa là gì?",
+        "answer": "Vỏ hộp số có ​​một mạch làm mát bằng không khí  được nạp bằng sức quay của các nửa puly (dẫn động và được dẫn động), có tích hợp quạt và tuần hoàn cưỡng bức.\nKhông khí đi vào vỏ hộp số thông qua một bộ chuyển hướng gió duy nhất để làm mát puli dẫn động, cụm ly hợp và dây đai.\nĐôi khi, cửa hút gió có bộ lọc và/hoặc ống dẫn khí vào."
+    },
+    {
+        "question": "Các lưu ý khi lắp pu-li dẫn động phía trước trên động cơ của xe Piaggio/Vespa là gì?",
+        "answer": "Lắp bạc cách sao cho phần vát hướng vào bên trong.\nNgoài các viên bi văng bọc nhựa, nửa puly trước còn có cấu tạo gồm phần vách chịu lực và bạc nhựa.\nĐặt các viên bi văng vào nửa puly trước.\nKhi lắp các viên bi văng vào puly trước cần chú ý lắp đúng chiều sao cho phần đầu bọc nhựa của bi văng sẽ tiếp xúc với phần vách chịu lực của puly trước."
+    },
+    {
+        "question": "Các lưu ý khi kiểm tra đai truyền động trên động cơ của xe Piaggio/Vespa là gì?",
+        "answer": "Kiểm tra phần mặt trong của dây đai tại điểm lõm nhất. Nếu có dấu hiệu nứt gãy tại điểm kể trên, cần thay dây đai mới."
+    },
+    {
+        "question": "Mô tả chung về cụm láp trên xe Piaggio/Vespa là gì?",
+        "answer": "Đây là bộ giảm tốc với các bánh răng côn được ngâm trong dầu."
+    },
+    {
+        "question": "Nguyên lý làm việc của hệ thống làm mát bằng không khí trên động cơ xe Piaggio/Vespa là gì?",
+        "answer": "Nguyên lý làm việc của hệ thống làm mát bằng không khí trên động cơ xe Piaggio/Vespa:\n- Không khí bên ngoài được hút vào động cơ nhờ lực hút của quạt tản nhiệt gắn trên vô lăng điện. Quạt này sẽ quay cùng với trục cơ của động cơ.\n- Không khí sẽ được thổi qua xi lanh và đầu quy lát (qua các cánh tản nhiệt) làm mát cho động cơ trong khi hoạt động.\n- Gió nóng được thổi ra ngoài qua 2 cửa thoát gió, một ở phía dưới bên trái động cơ và một cửa phía gần cổ xả."
+    },
+    {
+        "question": "Chức năng của van hằng nhiệt trên động cơ làm mát bằng chất lỏng là gì?",
+        "answer": "Khi động cơ nguội van hằng nhiệt độ sẽ đóng và nước làm mát sẽ tuần hoàn trong động cơ. Điều này giúp động cơ khởi động dễ dàng.\nKhi động cơ nóng, van hằng nhiệt sẽ mở, giúp nước làm mát còn nóng chảy qua bộ tản nhiệt, được làm mát rồi quay trở lại làm mát cho hệ thống xy-lanh/đầu quy lát."
+    },
+    {
+        "question": "Chức năng của hệ thống treo máy trên xe Piaggio/Vespa?",
+        "answer": "Cơ cấu treo máy là một cụm các chi tiết nối động cơ với khung xe.\nBên cạnh nhiệm vụ chính là nối động cơ với khung xe, treo máy còn có tác dụng giảm và triệt tiêu một phần các rung giật mà hệ thống giảm sóc sau truyền lên động cơ và đồng thời triệt tiêu các rung giật từ động cơ truyền lên khung xe; tất cả các nhiệm vụ trên được thực hiện thông qua các cục cao su giảm chấn của treo máy. \nCục cao su giảm chấn của treo máy có thể được thay thế riêng.\nNgoài cục cao su giảm chấn ra các rung giật còn được hấp thụ một phần thông qua các đệm, bạc cao su.\nPhần phía trước của treo máy được liên kết với khung xe, trong khi đó phần sau được liên kết với động cơ.\nTreo máy không giống nhau với tất cả các loại xe, một số loại treo máy là tập hợp của nhiều chi tiết."
+    },
+    {
+        "question": "Một số thông tin kỹ thuật chung về vách máy và bạc trục cơ trên động cơ xe Piaggio/Vespa là gì?",
+        "answer": "VÁCH MÁY đã được lắp sẵn bạc khuỷu (bạc trục), do đó không thể thay thế bạc trục khuỷu rời được.\nBạc trục khuỷu được chế tạo gồm 02 nửa bán nguyệt, một nửa được chế tạo đặc, một nửa được chế tạo có lỗ và rãnh dẫn nhớt có áp suất lớn.\nCác nửa vách máy được tiến hành đo đạc vào cuối qui trình sản xuất, và được chia làm các nhóm theo kích thước lỗ lắp bạc trục khuỷu."
+    },
+    {
+        "question": "Một số thông tin kỹ thuật chung về trục cơ trên động cơ xe Piaggio/Vespa là gì?",
+        "answer": "TRỤC CƠ có cấu tạo từ 02 bán trục và tay biên.\nTrục khuỷu được lắp trên 02 bạc khuỷu, một nằm trên vách máy phía bên hộp số và một nằm trên vách máy phía bên mâm điện.\nĐầu to của tay biên được bôi trơn bằng nhớt có áp lực cao bơm xuyên qua thân của trục khuỷu.\nTRỤC CƠ cũng được chia thành các nhóm kích thước.\nBạn phải lắp trục cơ và vách máy có cùng mã hiệu của nhóm kích thước."
+    },
+    {
+        "question": "Một số chú ý khi tháo và lắp lại xu pap trên động cơ là gì?",
+        "answer": "Khi tháo và lắp xu páp cần chú ý đến vị trí của chúng để có thể lắp đúng vị trí tiếp xúc của đế xu páp.\nKhông đảo vị trí của xu páp nạp và xu páp xả cho nhau."
+    },
+    {
+        "question": "Nói chung, có mấy vị trí trên động cơ để kiểm tra xem piston đã ở điểm chết trên chưa?",
+        "answer": "2 vị trí:\n- Đầu quy lát.\n- Phía bưởng điện."
+    },
+    {
+        "question": "Có bao nhiêu loại lọc dầu trên động cơ xe Piaggio/Vespa?",
+        "answer": "2 loại:\n- Lọc thô-Lọc lưới:\n + Làm bằng chất liệu nhựa.\n + Lọc sơ dầu bôi trơn trước khi qua bơm dầu, nhằm đảm bảo rằng các cặn bẩn không lọt vào bơm dầu khi bơm hoạt động.\n + Nắp chụp phần lọc thô đồng thời là ốc xả nhớt.\n- Bộ lọc tinh (lọc giấy):\n + Được bố trí phía sau bơm dầu.\n + Bộ lọc tinh sẽ lọc hết cặn bẩn trong dầu bôi trơn trước khi bơm lên vách máy."
+    },
+    {
+        "question": "Thông tin kỹ thuật cơ bản về bơm dầu trên động cơ xe Piaggio/Vespa là gì?",
+        "answer": "Bơm dầu kiểu bánh răng xicloit (bố trí bên trong vách máy) được dẫn động trực tiếp từ trục khuỷu thông qua xích."
+    },
+    {
+        "question": "Chức năng của van an toàn trong hệ thống bôi trơn của động cơ xe Piaggio/Vespa là gì?",
+        "answer": "Van an toàn của hệ thống bôi trơn sẽ mở ra khi áp lực nhớt vượt quá giá trị cho phép và cho phép dầu bôi trơn trở về các te dầu để tránh làm hỏng hệ thống bơm dầu. \nKhi áp suất dầu lớn hơn mức cho phép, áp lực dầu tác động lên đỉnh pít tông sẽ thắng được lực căng của lò xo, làm lò xo nén lại và tạo ra khe hở giữa đầu pít tông và vách máy. Từ đó dầu quay trở lại các te dầu."
+    },
+    {
+        "question": "Chức năng của cảm biến áp suất dầu trong hệ thống bôi trơn của động cơ xe Piaggio/Vespa là gì?",
+        "answer": "Công tắc này được bố trí trên mạch bôi trơn của hệ thống, phía sau lọc tinh.\nKhi áp suất dầu bôi trơn trong hệ thống thấp hơn mức tối thiếu, công tắc này sẽ cấp mát cho mạch cảm biến áp suất dầu thấp."
+    },
+    {
+        "question": "Bạn cần kiểm tra các chi tiết nào nếu động cơ không khởi động khi ấn nút đề trên xe Piaggio/Vespa?",
+        "answer": "Hệ thống cần kiểm tra:\n- Hệ thống khóa từ.\n- Bơm xăng, Mô bin sườn, Kim phun, Cảm biến tốc độ động cơ.\n- Hệ thống cung cấp xăng: Xăng trong bình xăng, Áp suất bơm xăng, hoạt động của kim phun.\n- Bu-gi.\n- Đặt tầm động cơ.\n- Tham số PADS: nhiệt độ động cơ, nhiệt độ khí nạp.\n- Áp suất buồng đốt.\n- Hệ thống khởi động.\n- Hệ thống cung cấp khí.\n- Thiết bị điều chỉnh tốc độ cầm chừng (van cầm chừng, mô-tơ bước)."
+    },
+    {
+        "question": "Bạn cần kiểm tra các chi tiết nào nếu ĐỘNG CƠ KHÔNG CÓ TỐC ĐỘ C ̀M CHỪNG/ TỐC ĐỘ C ̀M CHỪNG KHÔNG ỔN ĐỊNH/\nTỐC ĐỘ C ̀M CHỪNG QUÁ TH ́P trên xe Piaggio/Vespa?",
+        "answer": "Hệ thống cần kiểm tra:\n- Bơm xăng, Mô bin sườn, Kim phun, Cảm biến tốc độ động cơ, cảm biến nhiệt độ môi trường, cảm biến nhiệt độ động cơ, cảm biến áp suất không khí.\n- Bu-gi, hệ thống đánh lửa.\n- Cảm biến vị trí bướm ga.\n- Hệ thống cung cấp khí: Lọc gió, họng ga, các ống nối.\n- Hệ thống cung cấp xăng: Xăng trong bình xăng, Áp suất bơm xăng, hoạt động của kim phun.\n- Đầu quy-lát.\n- Thiết bị điều chỉnh tốc độ cầm chừng (van cầm chừng, mô-tơ bước)."
+    },
+    {
+        "question": "Bạn cần kiểm tra các chi tiết nào nếu ĐỘNG CƠ KHÔNG HỒI VỀ TỐC ĐỘ CẦM CHỪNG/TỐC ĐỘ CẦM CHỪNG QUÁ CAO trên xe Piaggio/Vespa?",
+        "answer": "Hệ thống cần kiểm tra:\n- Bơm xăng, Mô bin sườn, Kim phun, Cảm biến tốc độ động cơ, cảm biến nhiệt độ môi trường, cảm biến nhiệt độ động cơ, cảm biến áp suất không khí.\n- Hệ thống đánh lửa.\n- Hệ thống cung cấp khí: Lọc gió, họng ga, các ống nối.\n- Hệ thống cung cấp xăng: Xăng trong bình xăng, Áp suất bơm xăng, hoạt động của kim phun.\n- Đầu quy lát.\n- Cảm biến vị trí bướm ga.\n- Thiết bị điều chỉnh tốc độ cầm chừng (van cầm chừng, mô-tơ bước)."
+    },
+    {
+        "question": "Bạn cần kiểm tra các chi tiết nào nếu NỔ NGƯỢC ỐNG XẢ KHI GIẢM TỐC trên xe Piaggio/Vespa?",
+        "answer": "Hệ thống cần kiểm tra:\n- Bơm xăng, Mô bin sườn, Kim phun, Cảm biến tốc độ động cơ, cảm biến nhiệt độ môi trường, cảm biến nhiệt độ động cơ, cảm biến áp suất không khí.\n- Cảm biến vị trí bướm ga.\n- Thiết bị điều chỉnh tốc độ cầm chừng (van cầm chừng, mô-tơ bước).\n- Hệ thống cung cấp khí: Lọc gió, họng ga, các ống nối.\n- Đầu quy-lát.\n- Hệ thống cung cấp xăng: Xăng trong bình xăng, Áp suất bơm xăng, hoạt động của kim phun.\n- Hệ thống ống xả: cổ xả, ống bô."
+    },
+    {
+        "question": "Bạn cần kiểm tra các chi tiết nào nếu XUẤT HIỆN  M THANH BẤT THƯỜNG TỪ BUỒNG ĐỐT trên xe Piaggio/Vespa?",
+        "answer": "Hệ thống cần kiểm tra:\n- Bơm xăng, Mô bin sườn, Kim phun, Cảm biến tốc độ động cơ, cảm biến nhiệt độ môi trường, cảm biến nhiệt độ động cơ, cảm biến áp suất không khí, cảm biến lambda.\n- Bu-gi.\n- Cảm biến vị trí bướm ga.\n- Hệ thống đánh lửa.\n- Hệ thống cung cấp khí.\n- Hệ thống cung cấp xăng: Chất lượng xăng, Bơm xăng, Áp suất xăng, Hoạt động của kim phun."
+    },
+    {
+        "question": "Vị trí của van điều áp hệ thống cung cấp xăng trên xe Piaggio/Vespa?",
+        "answer": "Van điều áp hệ thống cung cấp xăng ở trong bơm xăng."
+    },
+    {
+        "question": "Trước khi kiểm tra bơm xăng hoặc kim phun, điện áp của bình điện cần đạt được là bao nhiêu trên xe Piaggio/Vespa?",
+        "answer": "Ít nhất đạt 12 Vôn."
+    },
+    {
+        "question": "Trên xe Piaggo/Vespa, nếu bơm xăng hoạt động bình thường thì áp suất hệ thống cung cấp xăng khi bơm xăng hoạt động là bao nhiêu?",
+        "answer": "2.5 Bar"
+    },
+    {
+        "question": "Trên xe Piaggo/Vespa, nếu bơm xăng hoạt động bình thường thì lưu lượng xăng đi qua bơm xăng khi bơm xăng hoạt động là bao nhiêu?",
+        "answer": "110 cc/15 giây"
+    },
+    {
+        "question": "Trên xe Piaggo/Vespa, nếu kim phun hoạt động bình thường thì lưu lượng xăng qua kim phun là bao nhiêu khi áp suất hệ thống cung cấp xăng là 2.5 bar và kim phun được cấp điện?",
+        "answer": "40 cc/15 giây"
+    },
+    {
+        "question": "Trên xe Piaggo/Vespa, quy trình kiểm tra độ rò rỉ của kim phun là gì?",
+        "answer": "- Làm khô lỗ kim phun bằng cách xịt khí nén.\n- Kích hoạt bơm xăng.\n- Đợi trong một phút để chắc chắn không có rò rỉ từ kim phun.\n- Chảy một chút là bình thường.\n- Giới hạn giá trị = 1 giọt/phút."
+    },
+    {
+        "question": "Trên xe Piaggo/Vespa, khi nào cần cài đặt lại cảm biến vị trí bướm ga?",
+        "answer": "Bạn cần cài đặt lại cảm biến vị trí bướm ga sau khi thực hiện ít nhất một trong các hành động bảo dưỡng sau đây:\n- Tháo và lắp lại họng ga.\n- Thay thế họng ga.\n- Thay thế Bộ điều khiển động cơ."
+    },
+    {
+        "question": "Trên xe Piaggo/Vespa, khi nào cần cài đặt lại tham số tự nhiên?",
+        "answer": "Bạn cần cài đặt lại tham số tự nhiên sau khi thực hiện ít nhất một trong các hành động bảo dưỡng sau đây:\n- Bảo dưỡng, sửa chữa liên quan đến hệ thống cấp khí.\n- Bảo dưỡng, sửa chữa liên quan đến hệ thống cấp xăng.\n- Bảo dưỡng, sửa chữa liên quan đến động cơ.\n- Thay thế Bộ điều khiển động cơ."
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 4V-Iget là bao nhiêu?",
+        "answer": "Nạp: 0.10 mm, Xả: 0.15 mm"
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 4V-Iget HPE là bao nhiêu?",
+        "answer": "Nạp: 0.10 mm, Xả: 0.15 mm"
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 300 HPE là bao nhiêu?",
+        "answer": "Nạp: 0.10 mm, Xả: 0.10 mm"
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 2V LEADER là bao nhiêu?",
+        "answer": "Nạp: 0.10 mm, Xả: 0.15 mm"
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 400 là bao nhiêu?",
+        "answer": "Nạp: 0.10 mm, Xả: 0.15 mm"
+    },
+    {
+        "question": "Tiêu chuẩn khe hở xu-pap của động cơ 500 là bao nhiêu?",
+        "answer": "Nạp: 0.15 mm, Xả: 0.15 mm"
+    },
+    {
+        "question": "Nguyên lý hoạt động của hệ thống ABS là gì?",
+        "answer": "Hệ thống chống thắng trượt (ABS, viết tắt của anti-lock braking system) là một hệ thống trên xe máy, giúp cho bánh xe của phương tiện không bị bó cứng trong lúc thắng (phanh trượt), chống lại việc bánh xe bị trượt dài trên mặt đường."
+    },
+    {
+        "question": "Hệ thống ABS trên xe Piaggio/Vespa bao gồm những thiết bị nào?",
+        "answer": "Hệ thống ABS bao gồm:\n- ECU.\n- Hệ thống van, bơm thủy lực.\n- Đĩa cảm biến.\n- Cảm biến Hall."
+    },
+    {
+        "question": "Khi kiểm tra đĩa phanh, bạn cần phải đo những kích thước nào?",
+        "answer": "Các kích thước cần kiểm tra:\n- Độ dày.\n- Độ lệch trục."
+    },
+    {
+        "question": "Bạn cần kiểm tra kích thước nào sau khi lắp đặt cảm biến tốc độ/cảm biến ABS?",
+        "answer": "Khoảng cách từ đĩa phanh đến cảm biến."
+    },
+    {
+        "question": "Giới thiệu chung về hệ thống Start Stop trên xe Piaggio/Vespa là gì?",
+        "answer": "Một trong những cải tiến quan trọng nhất được giới thiệu với hệ thống phun xăng điện tử RISS là hệ thống Start & Stop. Khi được kích hoạt, hệ thống này sẽ tự tắt máy mỗi khi dừng xe, và tự động khởi động lại khi người điều khiển vặn tay ga.\nHệ thống Start & Stop không sử dụng mô tơ đề thông thường được gắn với động cơ qua hệ truyền động, mà sử dụng cụm máy phát điện/mô tơ không tiếp xúc gắn trực tiếp trên trục cơ."
+    },
+    {
+        "question": "Ưu điểm của hệ thống Start Stop trên xe Piaggio/Vespa là gì?",
+        "answer": "Triệt tiêu hoàn toàn ma sát từ mô-tơ đề và đĩa đề trong quá trình khởi động, giảm thiểu tối đa tiếng ồn và tăng cường tính bền bỉ của hệ thống khởi động."
+    },
+    {
+        "question": "Trên các xe Piaggio/Vespa được trang bị/có chức năng cảm biến nghiêng, sau khi xe bị đổ, cần làm gì để có thể khởi động động cơ?",
+        "answer": "Để cho phép khởi động lại động cơ, khóa điện phải được chuyển sang vị trí TẮT rồi quay lại vị trí BẬT."
+    },
+    {
+        "question": "Hệ thống ASR trên xe Piaggio/Vespa là gì?",
+        "answer": "Hệ thống ASR hỗ trợ người lái khi tăng tốc nếu bánh sau của xe bị trượt. Trong trường hợp đó, hệ thống ASR sẽ can thiệp giảm công suất động cơ để đảm bảo khả năng bám đường tốt, giúp xe hoạt động ổn định."
+    },
+    {
+        "question": "Nguyên lý hoạt động của hệ thống ASR là gì?",
+        "answer": "Cảm biến tốc độ bánh xe đo tốc độ góc (góc ω mà bánh xe quay trong một đơn vị thời gian), chứ không phải tốc độ tuyệt đối của bánh xe.\nBộ điều khiển nhân tốc độ góc ω với bán kính bánh xe để tính tốc độ bánh xe hiệu dụng:\nV = ω X R\nSau đó, bộ phận điện tử sẽ tính toán sự khác biệt về tốc độ giữa bánh sau và bánh trước, đồng thời giảm góc đánh lửa sớm tương ứng với giá trị thu được."
+    },
+    {
+        "question": "Khi nào bạn cần tiến hành cài đặt hệ thống ASR?",
+        "answer": "Cần tiến hành cài đặt hệ thống ASR khi thay 1 hoặc 2 lốp xe hoặc sau khi thay thế ECU phun xăng."
+    },
+    {
+        "question": "Tôi có thể tìm thông tin về Nền tảng đa phương tiện trên xe Piaggio/Vespa ở đâu?",
+        "answer": "Hãy truy cập trang web:\nhttps://app.vespa.com/\nhttps://app.piaggio.com/"
+    },
+    {
+        "question": "Có bao nhiêu loại ECU đa phương tiện trên xe Piaggio/Vepa?",
+        "answer": "2 loại: PMP3, PMP2"
+    },
+    {
+        "question": "Nguyên lý của hệ thống khóa bánh trước trên xe MP3 là gì?",
+        "answer": "Để khóa bánh, một thiết bị truyền động điện (GEAR MOTOR), được điều khiển bởi bộ điều khiển điện tử, sẽ hoạt động như sau :\n- Liên kết cơ học cho kẹp khóa hình tứ giác có khớp nối.\n- Mạch thủy lực cho kẹp khóa giảm xóc."
+    },
+    {
+        "question": "Nguyên lý của Kẹp khóa nghiêng trên xe MP3 là gì?",
+        "answer": "Khi khóa được kích hoạt, thước cặp kẹp chặt đoạn tròn được cố định vào một trong các thành phần chéo của hình tứ giác: hình tứ giác hiện đã bị khóa và xe không thể nghiêng.\nThước cặp được vận hành bởi một liên kết cáp thỉnh thoảng phải được điều chỉnh: phải có một mức độ nhỏ tự do trong cáp khi thước cặp mở (để đảm bảo rằng thước cặp mở hoàn toàn)."
+    },
+    {
+        "question": "Nguyên lý của Kẹp khóa giảm xóc trên xe MP3 là gì?",
+        "answer": "Khi khóa được thực hiện, hai kẹp thủy lực sẽ khóa các giảm sóc được cố định vào hai hệ thống treo: hệ thống treo cho cả hai bánh xe cứng lại.\nHai kẹp giảm sóc được trang bị van xả khí."
+    },
+    {
+        "question": "Nguyên lý của Động cơ bánh răng trên xe MP3 là gì?",
+        "answer": "Động cơ bánh răng hoạt động các thiết bị hỗ trợ giữ bằng cơ học và thủy lực:\n- Một động cơ điện được gắn trên bộ động cơ bánh răng.\n- Động cơ điện, được điều khiển bởi ECU hỗ trợ giữ, nén cụm lò xo, đồng thời hoạt động như sau:\n  + Một liên kết, thông qua cáp, vận hành thước cặp cơ học khóa (khóa nghiêng).\n  + một cần bơm thủy lực (tương tự như một tay phanh) khóa hệ thống treo (khóa cuộn).\n- Động cơ bánh răng được điều khiển thông qua một chiết áp.\n- Hệ thống sử dụng lò xo được tải trước để đảm bảo độ bám của calliper (để bù đắp cho sự sai số do điều kiện hoạt động và môi trường xung quanh cũng như mài mòn các bộ phận cơ khí / thủy lực)."
+    },
+    {
+        "question": "Khi nào bạn cần sử dụng phanh tay trên xe MP3?",
+        "answer": "Nếu xe đang đỗ với chức năng khóa bánh được kích hoạt và không sử dụng chân trống chính, thì phanh tay phải được kéo lên.\nKích hoạt phanh tay trước, và sau đó đến hệ thống khóa bánh.\nHệ thống phanh tay sẽ khóa bánh sau với dây phanh truyền lực phanh đế ngàm phanh sau."
+    },
+    {
+        "question": "Khi nào bạn cần thực hiện auto configuration cho ECU khóa bánh xe trên MP3?",
+        "answer": "Quy trình này là bắt buộc khi thiết lập bộ điều khiển (CeCa) sau khi được thay thế (Nhận dạng xe: MP3 300, MP3 500, v.v.)."
+    },
+    {
+        "question": "Bạn cần thực hiện công việc gì trước khi tiến hành Potentiometer Reset cho ECU khóa bánh xe trên MP3?",
+        "answer": "Thực hiện Lower Stop Search."
+    },
+    {
+        "question": "Các điều kiện nào cần phải được đảm bảo cùng một lúc để có thể kích hoạt được hệ thống khóa bánh trước trên xe MP3?",
+        "answer": "CÁC ĐIỀU KIỆN SAU Đ Y PHẢI ĐẢM BẢO CÙNG MỘT LÚC:\n- Ở tốc độ xe dưới ngưỡng cho phép, có thể từ 15 đến 23 km / h, ngưỡng đồng ý thay đổi liên quan đến việc giảm tốc. Với tỷ lệ giảm tốc cao, ngưỡng đồng ý được nâng lên.\n- Tay ga đóng.\n- Tốc độ động cơ dưới ngưỡng ly hợp mở.\n- ECU (CeCa) không phát hiện bất kỳ lỗi hoặc trục trặc nào."
+    },
+    {
+        "question": "Khi nào hệ thống khóa bánh trước sẽ được mở một cách tự động trên xe MP3?",
+        "answer": "- Khóa sẽ tự động nhả khi tay ga bắt đầu mở nếu động cơ đang chạy và người lái đã ngồi trên xe.\n- Khóa sẽ tự động nhả khi tốc độ động cơ vượt quá điểm khớp ly hợp ăn khớp (3000 vòng/phút đối với 125, 2600 vòng/phút đối với 250 vòng/phút, 2000 vòng/phút đối với 400 vòng/phút và 2000 vòng/phút đối với 500 vòng/phút).\n- Khóa tự động nhả khi tốc độ xe vượt quá 15 km/h."
+    },
+    {
+        "question": "Khi nào cần thực hiện Ép mở khóa cho hệ thống khóa bánh trước trên xe MP3?",
+        "answer": "Quy trình này chỉ được thực hiện do sử dụng hệ thống không đúng cách hoặc trong trường hợp có sự cố, theo hai mức độ an toàn khác nhau."
+    }
+]
