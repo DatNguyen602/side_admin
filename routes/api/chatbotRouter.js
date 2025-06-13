@@ -72,13 +72,14 @@ initDatabaseFromJSON();
 
 const GEMINI_KEY = process.env.GEMINI_KEY;
 
-const bannedBrands = [
+const bannedPhrases = [
     "honda",
     "yamaha",
     "suzuki",
     "sym",
     "kymco",
     "vinfast",
+    "peugeot",
     "vespa lx",
     "lx",
     "vision",
@@ -92,17 +93,47 @@ const bannedBrands = [
     "dream",
     "winner",
     "exciter",
-    "xe điện",
     "xe vinfast",
-    "peugeot",
     "sirius",
 ];
 
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+        .replace(/[^\w\s]/g, "") // remove punctuation
+        .replace(/\s+/g, " ") // trim extra spaces
+        .trim();
+}
+
 function containsBannedBrand(message) {
-    const tokens = preprocess(message); // dùng tokenizer có sẵn
-    return bannedBrands.some((brand) =>
-        tokens.some((token) => token.includes(brand))
-    );
+    const normalizedMessage = normalize(message);
+    const messageTokens = tokenizer.tokenize(normalizedMessage);
+
+    // Check exact match
+    for (const phrase of bannedPhrases) {
+        const normalizedPhrase = normalize(phrase);
+        if (normalizedMessage.includes(normalizedPhrase)) return true;
+    }
+
+    // Optional: fuzzy match token-by-token (Levenshtein distance)
+    const THRESHOLD = 0.85; // fuzzy confidence
+
+    for (const banned of bannedPhrases) {
+        const bannedTokens = tokenizer.tokenize(normalize(banned));
+        for (const token of messageTokens) {
+            for (const bannedToken of bannedTokens) {
+                const similarity = natural.JaroWinklerDistance(
+                    token,
+                    bannedToken
+                );
+                if (similarity >= THRESHOLD) return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 router.post("/chat", async (req, res) => {
@@ -153,19 +184,22 @@ router.post("/chat", async (req, res) => {
         "${bestMatch.defaultAnswer || "No answer available."}"
 
         🎯 Task:
-        Rewrite the suggested answer so that it reflects both expertise and warmth — like a knowledgeable expert explaining to someone in a clear, friendly, and respectful way.
+        Improve the suggested answer to sound more helpful, friendly, and professional — like a Piaggio expert talking to a curious customer in an easy-to-understand and respectful way.
 
-        🔍 If the current answer lacks depth, is outdated, or could be made more helpful, look up relevant and trustworthy information online to improve it.
+        🔍 Important:
+        Only discuss topics related to **Piaggio** — its vehicles, history, technology, services, or brand values. 
+        If the current answer is outdated, incomplete, or unclear, feel free to enhance it — but only with information about Piaggio.
+        If the user's question is not related to Piaggio, kindly avoid answering or gently let them know you're focused on Piaggio topics.
 
-        📌 Guidelines:
-        - Do NOT translate the language — use the same language as the user's question.
-        - Keep the tone professional yet approachable — confident, warm, and easy to follow.
-        - If helpful, briefly include additional context, caveats, or real-world tips based on your web search.
-        - If no relevant information is found online, just polish and clarify the existing answer.
-        - Return only one improved answer — no variations, no bullet points, no notes.
+        📌 Style Guidelines:
+        - Keep the answer in the same language as the question.
+        - Be informative but conversational — confident yet warm.
+        - Avoid comparing Piaggio with any other brands or mentioning competitors.
+        - If needed, enrich the answer with extra Piaggio facts, insights, or practical tips.
+        - Return just one polished, natural-sounding answer — no bullet points or side notes.
 
         ✅ Output:
-        [A single expert-yet-friendly answer, improved and optionally enhanced with researched information.]
+        [One friendly, knowledgeable response — focused entirely on Piaggio.]
         `;
 
         const geminiRes = await fetch(
@@ -195,7 +229,24 @@ router.post("/chat", async (req, res) => {
     }
 
     // Không tìm thấy câu giống → tạo mới hoàn toàn từ Gemini
-    const fallbackPrompt = `Please answer this question as naturally and helpfully as possible: "${message}".`;
+    const fallbackPrompt = `
+    User's Question:
+    "${message}"
+
+    🎯 Task:
+    Answer the question in a helpful, natural, and expert manner — but only if it is clearly related to **Piaggio**, the Italian vehicle manufacturer.
+
+    📌 Requirements:
+    - Only answer if the question is about Piaggio — its scooters, motorcycles, technologies, history, services, or brand.
+    - If the question is not related to Piaggio, respond politely by explaining that your knowledge is limited to Piaggio topics.
+    - Do NOT include or refer to any other brands, companies, or comparisons.
+    - Use the same language as the user's question.
+    - Keep the tone warm, professional, and easy to understand.
+    - Output just one clear and concise answer — no footnotes, no lists, no extra formatting.
+
+    ✅ Output:
+    [One friendly, informative answer about Piaggio or a polite refusal if not applicable.]
+    `;
 
     const fallbackRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
