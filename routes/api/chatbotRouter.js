@@ -100,7 +100,9 @@ router.post("/chat", async (req, res) => {
                     {
                         parts: [
                             {
-                                text: `Given the user question: "${message}" and the found answer: "${bestAnswer}", please rewrite the answer in a more natural, fluent way that matches the language, tone, and context of the original question. Do not translate. Keep the original language intact.`,
+                                text: `Please rewrite the answer based on the user question: "${message}" and the suggested answer: "${bestAnswer}". 
+                                Make it sound more natural, friendly, and conversational – as if you're a helpful friend explaining it. 
+                                Do not translate – preserve the original language of the question.`,
                             },
                         ],
                     },
@@ -108,7 +110,7 @@ router.post("/chat", async (req, res) => {
             }),
         }
     );
-    const dataRes = await response.json();   
+    const dataRes = await response.json();
     console.dir(dataRes, { depth: null, colors: true, showHidden: true });
     // console.log(message + " answer: " + bestAnswer);
     // console.log(

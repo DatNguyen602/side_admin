@@ -15,6 +15,12 @@ Một hệ thống RESTful API sử dụng **Node.js**, **Express**, **MongoDB**
 - [Mongoose](https://mongoosejs.com/)
 - [JWT (JSON Web Token)](https://jwt.io/)
 - [bcrypt](https://www.npmjs.com/package/bcrypt) (mã hóa mật khẩu)
+- [Gemini - Chatbot](https://aistudio.google.com/apikey)
+```
+Mỗi model (vd: gemini-2.0-flash) có thể gửi tối đa:
+15 request/phút và 1000 request/ngày (miễn phí)
+1 triệu token/phút
+```
 
 ---
 
