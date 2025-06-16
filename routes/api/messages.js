@@ -161,7 +161,6 @@ router.get("/:roomId", auth, async (req, res) => {
         return res.status(400).json({ error: "Room ID không hợp lệ!" });
     }
 
-    // Lấy limit/offset từ query (mặc định limit = 30, tối đa 100)
     const limit = Math.min(parseInt(req.query.limit) || 30, 100);
     const offset = parseInt(req.query.offset) || 0;
 
@@ -182,6 +181,7 @@ router.get("/:roomId", auth, async (req, res) => {
         });
 
         // Lấy messages theo phòng, skip/limit, sort giảm dần (newest first)
+        // Nếu mục đích là paginating theo newest, bạn có thể giữ sort({createdAt: -1}) và tránh đảo ngược khi không cần thiết
         let messages = await Message.find({
             room: roomId,
             deletedBy: { $ne: userId },
@@ -192,34 +192,16 @@ router.get("/:roomId", auth, async (req, res) => {
             .populate("sender", "username avatar")
             .lean();
 
-        // Cập nhật readBy cho user hiện tại
-        const messageIds = messages.map((msg) => msg._id);
-        for (const messageId of messageIds) {
-            try {
-                const user = await User.findById(userId);
-                const existingMessage = await Message.findOne({
-                    $and: [
-                        { _id: messageId },
-                        {readBy: { $elemMatch: { $eq: user._id } }},
-                    ],
-                });
-                if (!existingMessage && user) {
-                    await Message.updateOne(
-                        { _id: messageId },
-                        { $addToSet: { readBy: user._id } }
-                    );
-                }
-                // console.log(
-                //     `Cập nhật thành công messageId: ${messageId}`,
-                //     result
-                // );
-            } catch (err) {
-                // console.error(`Lỗi tại messageId ${messageId}:`);
-                // console.log(err);
-            }
+        // Bulk update readBy: cập nhật tất cả các message mà user chưa đọc
+        const messageIds = messages.map((m) => m._id);
+        if (messageIds.length) {
+            await Message.updateMany(
+                { _id: { $in: messageIds }, readBy: { $ne: userId } },
+                { $addToSet: { readBy: userId } }
+            );
         }
 
-        // Xử lý metadata file và group reactions
+        // Xử lý metadata file và group reactions (vẫn dùng Promise.all cho các thao tác bất đồng bộ)
         messages = await Promise.all(
             messages.map(async (msg) => {
                 // Group reactions theo type
@@ -275,29 +257,27 @@ router.get("/:roomId", auth, async (req, res) => {
             })
         );
 
-        // Đổi thứ tự messages thành tăng dần (oldest first)
-        // => Điều này sẽ giúp client dễ append lên đầu khi load thêm cũ
+        // Nếu cần sắp xếp theo thứ tự tăng dần (oldest first) để phù hợp với lazy loading phía client
         messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-        // Lấy thông tin members của room
-        const members = await Promise.all(
-            room.members.map(async (m) => {
-                return await User.findById(m.user).select(
-                    "_id username avatar email"
-                );
-            })
+        // Lấy thông tin members, tối ưu bằng truy vấn tất cả cùng một lúc
+        const memberIds = room.members.map((m) => m.user);
+        const members = await User.find({ _id: { $in: memberIds } }).select(
+            "_id username avatar email"
         );
+
         const roomObj = room.toObject();
         roomObj.members = members;
         if (!roomObj.isGroup && roomObj.members.length === 2) {
             const otherMember = members.find(
                 (m) => m._id.toString() !== userId.toString()
             );
-            roomObj.name = otherMember.username;
-            roomObj.icon = otherMember.avatar;
+            if (otherMember) {
+                roomObj.name = otherMember.username;
+                roomObj.icon = otherMember.avatar;
+            }
         }
 
-        // Tính hasMore: nếu offset + số bản ghi đã trả về < tổng, tức vẫn còn.
         const hasMore = offset + messages.length < totalMessages;
 
         return res.json({
