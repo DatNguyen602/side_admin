@@ -132,4 +132,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-./chat-history.txt
+.chat-history.txt
