@@ -15,7 +15,11 @@ const CONFIG_PATH = "config.json";
 const BANNER_PATH = path.join("assets", "banner.txt");
 const PROMPT_FOLDER = "prompts";
 
-const AVAILABLE_MODELS = ["llama-3.2-1b-instruct", "tinyllama-1.1b-chat-v1.0"];
+const AVAILABLE_MODELS = [
+    "llama-3.2-1b-instruct",
+    "tinyllama-1.1b-chat-v1.0",
+    "phi-4-mini-reasoning",
+];
 
 let CONFIG = {
     temperature: 0.3,
