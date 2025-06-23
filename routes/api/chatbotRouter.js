@@ -8,6 +8,21 @@ const fetch = require("node-fetch");
 const Answer = require("../../models/Answer");
 require("dotenv").config();
 
+const { LMStudioClient } = require("@lmstudio/sdk");
+
+const lmClient = new LMStudioClient();
+let lmModel = null;
+
+async function ensureModelLoaded() {
+    if (!lmModel) {
+        lmModel = await lmClient.llm.model("llama-3.2-1b-instruct");
+        console.log("✅ LMStudio model loaded: llama-3.2-1b-instruct");
+    }
+}
+(async () => {
+    await ensureModelLoaded();
+})();
+
 const tokenizer = new natural.WordTokenizer();
 const TfIdf = natural.TfIdf;
 
@@ -139,36 +154,36 @@ router.post("/chat", async (req, res) => {
             return res.json({
                 answer: bestMatch.geminiAnswer,
                 confidence: highestScore.toFixed(3),
-                source: "cached-gemini",
+                source: "cached",
             });
         }
 
         // Chưa có geminiAnswer → tạo mới từ Gemini
         const prompt = `
-        User's Question:
-        "${message}"
+            User's Question:
+            "${message}"
 
-        Suggested Answer:
-        "${bestMatch.defaultAnswer || "No answer available."}"
+            Suggested Answer:
+            "${bestMatch.defaultAnswer || "No answer available."}"
 
-        🎯 Task:
-        Improve the suggested answer to sound more helpful, friendly, and professional — like a Piaggio expert talking to a curious customer in an easy-to-understand and respectful way.
+            🎯 Task:
+            Improve the suggested answer to sound more helpful, friendly, and professional — like a Piaggio expert talking to a curious customer in an easy-to-understand and respectful way.
 
-        🔍 Important:
-        Only discuss topics related to **Piaggio** — its vehicles, history, technology, services, or brand values. 
-        If the current answer is outdated, incomplete, or unclear, feel free to enhance it — but only with information about Piaggio.
-        If the user's question is not related to Piaggio, kindly avoid answering or gently let them know you're focused on Piaggio topics.
+            🔍 Important:
+            Only discuss topics related to **Piaggio** — its vehicles, history, technology, services, or brand values. 
+            If the current answer is outdated, incomplete, or unclear, feel free to enhance it — but only with information about Piaggio.
+            If the user's question is not related to Piaggio, kindly avoid answering or gently let them know you're focused on Piaggio topics.
 
-        📌 Style Guidelines:
-        - Keep the answer in the same language as the question.
-        - Be informative but conversational — confident yet warm.
-        - Avoid comparing Piaggio with any other brands or mentioning competitors.
-        - If needed, enrich the answer with extra Piaggio facts, insights, or practical tips.
-        - Return just one polished, natural-sounding answer — no bullet points or side notes.
+            📌 Style Guidelines:
+            - Keep the answer in the same language as the question.
+            - Be informative but conversational — confident yet warm.
+            - Avoid comparing Piaggio with any other brands or mentioning competitors.
+            - If needed, enrich the answer with extra Piaggio facts, insights, or practical tips.
+            - Return just one polished, natural-sounding answer — no bullet points or side notes.
 
-        ✅ Output:
-        [One friendly, knowledgeable response — focused entirely on Piaggio.]
-        `;
+            ✅ Output:
+            [One friendly, knowledgeable response — focused entirely on Piaggio.]
+            `;
 
         const geminiRes = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
@@ -198,23 +213,23 @@ router.post("/chat", async (req, res) => {
 
     // Không tìm thấy câu giống → tạo mới hoàn toàn từ Gemini
     const fallbackPrompt = `
-    User's Question:
-    "${message}"
+        User's Question:
+        "${message}"
 
-    🎯 Task:
-    Answer the question in a helpful, natural, and expert manner — but only if it is clearly related to **Piaggio**, the Italian vehicle manufacturer.
+        🎯 Task:
+        Answer the question in a helpful, natural, and expert manner — but only if it is clearly related to **Piaggio**, the Italian vehicle manufacturer.
 
-    📌 Requirements:
-    - Only answer if the question is about Piaggio — its scooters, motorcycles, technologies, history, services, or brand.
-    - If the question is not related to Piaggio, respond politely by explaining that your knowledge is limited to Piaggio topics.
-    - Do NOT include or refer to any other brands, companies, or comparisons.
-    - Use the same language as the user's question.
-    - Keep the tone warm, professional, and easy to understand.
-    - Output just one clear and concise answer — no footnotes, no lists, no extra formatting.
+        📌 Requirements:
+        - Only answer if the question is about Piaggio — its scooters, motorcycles, technologies, history, services, or brand.
+        - If the question is not related to Piaggio, respond politely by explaining that your knowledge is limited to Piaggio topics.
+        - Do NOT include or refer to any other brands, companies, or comparisons.
+        - Use the same language as the user's question.
+        - Keep the tone warm, professional, and easy to understand.
+        - Output just one clear and concise answer — no footnotes, no lists, no extra formatting.
 
-    ✅ Output:
-    [One friendly, informative answer about Piaggio or a polite refusal if not applicable.]
-    `;
+        ✅ Output:
+        [One friendly, informative answer about Piaggio or a polite refusal if not applicable.]
+        `;
 
     const fallbackRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
@@ -241,6 +256,138 @@ router.post("/chat", async (req, res) => {
 
     return res.json({
         answer: generatedAnswer,
+        confidence: "0.000",
+        source: "generated-new",
+    });
+});
+
+router.post("/chat_local", async (req, res) => {
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: "Message is required" });
+
+    if (containsBannedBrand(message)) {
+        return res.json({
+            answer: "Xin lỗi, tôi chỉ có thể trả lời các câu hỏi liên quan đến Piaggio.",
+            confidence: "1.000",
+            source: "blocked-brand",
+        });
+    }
+
+    const processedMessage = preprocess(message).join(" ");
+    const userVector = buildVectorFromText(processedMessage);
+
+    const allAnswers = await Answer.find({});
+    let bestMatch = null;
+    let highestScore = -1;
+
+    for (let item of allAnswers) {
+        const score = cosine(userVector, item.vector);
+        if (score > highestScore) {
+            highestScore = score;
+            bestMatch = item;
+        }
+    }
+
+    const THRESHOLD = 0.75;
+    await ensureModelLoaded();
+
+    // Nếu câu hỏi gần giống câu đã có
+    if (highestScore >= THRESHOLD && bestMatch) {
+        if (bestMatch.geminiAnswer) {
+            return res.json({
+                answer: bestMatch.geminiAnswer,
+                confidence: highestScore.toFixed(3),
+                source: "cached",
+            });
+        }
+
+        const prompt = `
+            User's Question:
+            "${message}"
+
+            Suggested Answer:
+            "${bestMatch.defaultAnswer || "No answer available."}"
+
+            🎯 Task:
+            Improve the suggested answer to make it sound more helpful, friendly, and professional — like a Piaggio expert speaking with a curious customer.
+
+            🧭 Context:
+            You are a knowledgeable Piaggio representative. Your goal is to ensure every answer feels clear, warm, and brand-consistent. You may expand or rewrite the suggested answer to better suit the user's question — but only using accurate and relevant Piaggio information.
+
+            📌 Rules:
+            - Focus strictly on Piaggio topics: its scooters, motorcycles, technologies, services, brand history, or customer experience.
+            - If the suggested answer is incomplete, outdated, or unclear, feel free to enhance it with verified Piaggio facts.
+            - If the user's question is unrelated to Piaggio, politely explain that you specialize in Piaggio information and cannot help with unrelated topics.
+
+            📝 Style Guide:
+            - Keep the same language as the question.
+            - Use a warm, respectful, and confident tone — like a helpful Piaggio advisor.
+            - Avoid all comparisons with other brands.
+            - Return a single, fluent, natural-sounding answer. No lists, notes, or markdown formatting.
+
+            ✅ Output:
+            [A single improved answer, focused only on Piaggio — helpful, accurate, and friendly.]
+            `;
+
+        const result = await lmModel.respond(prompt, {
+            temperature: 0.7,
+            maxTokens: 512,
+        });
+
+        const text = result?.content?.trim();
+
+        if (text) {
+            bestMatch.geminiAnswer = text;
+            await bestMatch.save();
+        }
+
+        return res.json({
+            answer: text || bestMatch.defaultAnswer,
+            confidence: highestScore.toFixed(3),
+            source: "generated-from-default",
+        });
+    }
+
+    // Nếu không khớp — tạo mới hoàn toàn bằng LMSS
+    const fallbackPrompt = `
+        User's Question:
+        "${message}"
+
+        🎯 Task:
+        Respond helpfully and clearly — but only if the question relates directly to Piaggio, the Italian manufacturer of scooters and motorcycles.
+
+        🧭 Context:
+        You are answering as a knowledgeable Piaggio expert. Only provide a response if the question concerns Piaggio's products, technologies, services, company history, or brand experience.
+
+        📌 Rules:
+        - If the question is about Piaggio, provide a warm, informative, and expert response.
+        - If the question is unrelated to Piaggio, politely explain that your expertise is limited to Piaggio topics.
+        - Never reference or compare with other brands or products.
+        - Use the same language as the user's question.
+        - Keep the tone friendly, respectful, and natural.
+        - Do not include bullet points, numbered lists, footnotes, or special formatting.
+
+        ✅ Output:
+        [A single friendly and informative Piaggio-focused answer, or a gentle refusal if off-topic.]
+        `;
+
+    const result = await lmModel.respond(fallbackPrompt, {
+        temperature: 0.7,
+        maxTokens: 512,
+    });
+
+    const answer =
+        result?.content?.trim() || "Tôi chưa có câu trả lời phù hợp.";
+
+    await Answer.create({
+        question: message,
+        geminiAnswer: answer,
+        vector: userVector,
+        source: "manual",
+    });
+
+    return res.json({
+        answer,
         confidence: "0.000",
         source: "generated-new",
     });

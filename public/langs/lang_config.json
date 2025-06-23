@@ -1,0 +1,17 @@
+{
+  "langs": [
+    {
+      "code": "vn"
+    },
+    {
+      "code": "ko"
+    },
+    {
+      "code": "en"
+    },
+    {
+      "code": "zh_cn"
+    }
+  ],
+  "fallback": "en"
+}

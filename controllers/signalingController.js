@@ -72,23 +72,45 @@ const initializeSignaling = (server) => {
             const parsed = safeParse(rawData);
             if (!parsed) return;
 
-            const otherId = (
-                parsed.room.members?.find(
-                    (u) => u.user._id !== socket.userId
-                ) ?? {}
-            ).user._id;
-            console.log(socket.userId + " / " + otherId);
-            if (parsed.message.type === "candidate") {
-                rtcMapcandidate.set(otherId, parsed);
-            } else if (parsed.message.type === "offer") {
-                rtcMapoffer.set(otherId, parsed);
+            const { message, room } = parsed;
+            // Lấy targetUserId từ payload nếu có, nếu không thì xác định từ room.members.
+            let targetUserId = parsed.targetUserId;
+            if (!targetUserId && room && room.members) {
+                targetUserId = (
+                    room.members.find((u) => u.user._id !== socket.userId) ?? {}
+                ).user?._id;
+            }
+            if (!targetUserId) return;
+
+            // Gán thông tin về người gửi và người nhận để phân biệt rõ trong quá trình setup.
+            parsed.senderId = socket.userId;
+            parsed.receiverId = targetUserId;
+
+            // Có thể lưu lại các tín hiệu đặc biệt như "offer" hoặc "candidate" nếu cần xử lý lại (dùng để gọi lại nếu phía nhận đang offline)
+            if (message.type === "offer") {
+                rtcMapoffer.set(targetUserId, parsed);
+            } else if (message.type === "candidate") {
+                rtcMapcandidate.set(targetUserId, parsed);
             }
 
-            const socketOther = userSocketMap.get(otherId);
-            console.log(socketOther);
-            if (socketOther) {
-                io.to(socketOther).emit("signal", parsed);
-                io.to(socketOther).emit("signal", parsed);
+            // Hàm gửi tín hiệu đến tất cả các socket của target (người nhận)
+            const sendToTarget = () => {
+                const targetSockets = userSocketMap.get(targetUserId);
+                if (targetSockets && targetSockets.size > 0) {
+                    targetSockets.forEach((socketId) => {
+                        io.to(socketId).emit("signal", parsed);
+                    });
+                    return true;
+                }
+                return false;
+            };
+
+            // Cố gắng gửi ngay tức thì
+            if (!sendToTarget()) {
+                // Nếu người nhận chưa online, chờ 3 giây rồi thử gửi lại.
+                setTimeout(() => {
+                    sendToTarget();
+                }, 3000); // 3000 ms = 3 giây
             }
         });
 

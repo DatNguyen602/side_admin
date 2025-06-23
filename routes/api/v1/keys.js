@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const rbac = require("../middleware/rbac");
-const c = require("../controllers/keyController");
+const rbac = require("../../../middleware/rbac");
+const c = require("../../../controllers/keyController");
 
 router.get("/", c.list);
 router.get("/verify/:token", c.verify);

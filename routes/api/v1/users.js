@@ -1,12 +1,12 @@
 // routes/users.js
 const router = require("express").Router();
-const auth = require("../middleware/auth");
-const rbac = require("../middleware/rbac");
-const { login } = require("../controllers/authController");
-const { list, get } = require("../controllers/userController");
-const User = require("../models/User");
-const Room = require("../models/Room");
-const FriendRequest = require("../models/FriendRequest");
+const auth = require("../../../middleware/auth");
+const rbac = require("../../../middleware/rbac");
+const { login } = require("../../../controllers/authController");
+const { list, get } = require("../../../controllers/userController");
+const User = require("../../../models/User");
+const Room = require("../../../models/Room");
+const FriendRequest = require("../../../models/FriendRequest");
 const escapeStringRegexp = require("escape-string-regexp");
 const mongoose = require("mongoose");
 
@@ -382,8 +382,8 @@ router.post("/friends/unrequests", auth, async (req, res) => {
   }
 });
 
-router.use("/rooms", require("./api/rooms"));
-router.use("/messages", require("./api/messages"));
+router.use("/rooms", require("../rooms"));
+router.use("/messages", require("../messages"));
 
 router.use(auth);
 router.get("/", rbac("user:read"), list);

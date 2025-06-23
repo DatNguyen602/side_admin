@@ -65,10 +65,12 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/media", require("./routes/media"));
-app.use("/api/v1/users", require("./routes/users"));
-app.use("/api/v1/agencies", require("./routes/agencies"));
-app.use("/api/v1/branches", require("./routes/branches"));
-app.use("/api/v1/keys", require("./routes/keys"));
+app.use("/api/v1/users", require("./routes/api/v1/users"));
+app.use("/api/v1/agencies", require("./routes/api/v1/agencies"));
+app.use("/api/v1/branches", require("./routes/api/v1/branches"));
+app.use("/api/v1/keys", require("./routes/api/v1/keys"));
+app.use("/api/v1/sfu", require("./routes/api/v1/sfuroom"));
+app.use("/api/v1/langs", require("./routes/api/v1/langs"));
 app.use("/admin", require("./routes/admin"));
 app.use("/viewer", require("./routes/viewer"));
 app.use("/", require("./routes/adminAuth"));
@@ -79,21 +81,13 @@ app.use("/channels", require("./routes/channelRouter"));
 app.use("/chatbot", require("./routes/api/chatbotRouter"));
 
 app.use("/public", express.static(path.join(__dirname, "public")));
-app.use("/js", express.static(path.join(__dirname, "public/js"))); // nếu cần
+app.use("/js", express.static(path.join(__dirname, "public/js")));
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 app.get("*", (req, res, next) => {
     res.locals.request = req;
     next();
 });
-app.use((req, res, next) => {
-    res.setHeader(
-        "Content-Security-Policy",
-        "default-src 'self'; script-src 'self' https://cdn.tailwindcss.com;"
-    );
-    next();
-});
-
 // Health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
