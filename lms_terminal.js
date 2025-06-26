@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const { LMStudioClient } = require("@lmstudio/sdk");
 const inquirer = require("inquirer");
 const chalk = require("chalk");
@@ -17,8 +15,8 @@ const PROMPT_FOLDER = "prompts";
 
 const AVAILABLE_MODELS = [
     "llama-3.2-1b-instruct",
-    "tinyllama-1.1b-chat-v1.0",
     "phi-4-mini-reasoning",
+    "tinyllama-1.1b-chat-v1.0",
 ];
 
 let CONFIG = {

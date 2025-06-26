@@ -4,24 +4,8 @@
         "answer": "Hi there! How can I assist you today?"
     },
     {
-        "question": "What is your name?",
-        "answer": "I'm your assistant bot, here to help!"
-    },
-    {
-        "question": "How do I reset my password?",
-        "answer": "To reset your password, click on 'Forgot password' on the login page."
-    },
-    {
         "question": "Chào bạn",
         "answer": "Xin chào! Tôi có thể giúp gì cho bạn?"
-    },
-    {
-        "question": "Tôi cần hỗ trợ đổi mật khẩu",
-        "answer": "Bạn hãy nhấn vào 'Quên mật khẩu' để đổi mật khẩu mới nhé."
-    },
-    {
-        "question": "Bạn là ai?",
-        "answer": "Tôi là chatbot hỗ trợ bạn trong hệ thống này."
     },
     {
         "question": "Which are steps of Pre-Delivery Process?",

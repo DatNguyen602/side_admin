@@ -8,21 +8,6 @@ const fetch = require("node-fetch");
 const Answer = require("../../models/Answer");
 require("dotenv").config();
 
-const { LMStudioClient } = require("@lmstudio/sdk");
-
-const lmClient = new LMStudioClient();
-let lmModel = null;
-
-async function ensureModelLoaded() {
-    if (!lmModel) {
-        lmModel = await lmClient.llm.model("llama-3.2-1b-instruct");
-        console.log("✅ LMStudio model loaded: llama-3.2-1b-instruct");
-    }
-}
-(async () => {
-    await ensureModelLoaded();
-})();
-
 const tokenizer = new natural.WordTokenizer();
 const TfIdf = natural.TfIdf;
 
@@ -107,7 +92,7 @@ const bannedBrands = [
     "dream",
     "winner",
     "exciter",
-    "xe vinfast",
+    "vinfast",
     "peugeot",
     "sirius",
 ];
@@ -256,138 +241,6 @@ router.post("/chat", async (req, res) => {
 
     return res.json({
         answer: generatedAnswer,
-        confidence: "0.000",
-        source: "generated-new",
-    });
-});
-
-router.post("/chat_local", async (req, res) => {
-    const { message } = req.body;
-    if (!message) return res.status(400).json({ error: "Message is required" });
-
-    if (containsBannedBrand(message)) {
-        return res.json({
-            answer: "Xin lỗi, tôi chỉ có thể trả lời các câu hỏi liên quan đến Piaggio.",
-            confidence: "1.000",
-            source: "blocked-brand",
-        });
-    }
-
-    const processedMessage = preprocess(message).join(" ");
-    const userVector = buildVectorFromText(processedMessage);
-
-    const allAnswers = await Answer.find({});
-    let bestMatch = null;
-    let highestScore = -1;
-
-    for (let item of allAnswers) {
-        const score = cosine(userVector, item.vector);
-        if (score > highestScore) {
-            highestScore = score;
-            bestMatch = item;
-        }
-    }
-
-    const THRESHOLD = 0.75;
-    await ensureModelLoaded();
-
-    // Nếu câu hỏi gần giống câu đã có
-    if (highestScore >= THRESHOLD && bestMatch) {
-        if (bestMatch.geminiAnswer) {
-            return res.json({
-                answer: bestMatch.geminiAnswer,
-                confidence: highestScore.toFixed(3),
-                source: "cached",
-            });
-        }
-
-        const prompt = `
-            User's Question:
-            "${message}"
-
-            Suggested Answer:
-            "${bestMatch.defaultAnswer || "No answer available."}"
-
-            🎯 Task:
-            Improve the suggested answer to make it sound more helpful, friendly, and professional — like a Piaggio expert speaking with a curious customer.
-
-            🧭 Context:
-            You are a knowledgeable Piaggio representative. Your goal is to ensure every answer feels clear, warm, and brand-consistent. You may expand or rewrite the suggested answer to better suit the user's question — but only using accurate and relevant Piaggio information.
-
-            📌 Rules:
-            - Focus strictly on Piaggio topics: its scooters, motorcycles, technologies, services, brand history, or customer experience.
-            - If the suggested answer is incomplete, outdated, or unclear, feel free to enhance it with verified Piaggio facts.
-            - If the user's question is unrelated to Piaggio, politely explain that you specialize in Piaggio information and cannot help with unrelated topics.
-
-            📝 Style Guide:
-            - Keep the same language as the question.
-            - Use a warm, respectful, and confident tone — like a helpful Piaggio advisor.
-            - Avoid all comparisons with other brands.
-            - Return a single, fluent, natural-sounding answer. No lists, notes, or markdown formatting.
-
-            ✅ Output:
-            [A single improved answer, focused only on Piaggio — helpful, accurate, and friendly.]
-            `;
-
-        const result = await lmModel.respond(prompt, {
-            temperature: 0.7,
-            maxTokens: 512,
-        });
-
-        const text = result?.content?.trim();
-
-        if (text) {
-            bestMatch.geminiAnswer = text;
-            await bestMatch.save();
-        }
-
-        return res.json({
-            answer: text || bestMatch.defaultAnswer,
-            confidence: highestScore.toFixed(3),
-            source: "generated-from-default",
-        });
-    }
-
-    // Nếu không khớp — tạo mới hoàn toàn bằng LMSS
-    const fallbackPrompt = `
-        User's Question:
-        "${message}"
-
-        🎯 Task:
-        Respond helpfully and clearly — but only if the question relates directly to Piaggio, the Italian manufacturer of scooters and motorcycles.
-
-        🧭 Context:
-        You are answering as a knowledgeable Piaggio expert. Only provide a response if the question concerns Piaggio's products, technologies, services, company history, or brand experience.
-
-        📌 Rules:
-        - If the question is about Piaggio, provide a warm, informative, and expert response.
-        - If the question is unrelated to Piaggio, politely explain that your expertise is limited to Piaggio topics.
-        - Never reference or compare with other brands or products.
-        - Use the same language as the user's question.
-        - Keep the tone friendly, respectful, and natural.
-        - Do not include bullet points, numbered lists, footnotes, or special formatting.
-
-        ✅ Output:
-        [A single friendly and informative Piaggio-focused answer, or a gentle refusal if off-topic.]
-        `;
-
-    const result = await lmModel.respond(fallbackPrompt, {
-        temperature: 0.7,
-        maxTokens: 512,
-    });
-
-    const answer =
-        result?.content?.trim() || "Tôi chưa có câu trả lời phù hợp.";
-
-    await Answer.create({
-        question: message,
-        geminiAnswer: answer,
-        vector: userVector,
-        source: "manual",
-    });
-
-    return res.json({
-        answer,
         confidence: "0.000",
         source: "generated-new",
     });
