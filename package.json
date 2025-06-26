@@ -6,6 +6,7 @@
     "scripts": {
         "start": "node app.js",
         "dev": "nodemon app.js",
+        "cluster": "nodemon cluster.js",
         "seed": "node scripts/seed.js",
         "token": "node scripts/get-token.js",
         "build": "echo 'No build step needed'",
@@ -48,6 +49,7 @@
         "natural": "^8.1.0",
         "nodemailer": "^7.0.3",
         "npm": "^10.9.2",
+        "open": "^8.4.2",
         "ora": "^5.4.1",
         "passport": "^0.7.0",
         "passport-facebook": "^3.0.0",
@@ -63,6 +65,7 @@
         "eslint": "^8.57.1",
         "globals": "^16.2.0",
         "nodemon": "^2.0.22",
+        "prettier-plugin-ejs": "^1.0.3",
         "tailwindcss": "^3.4.17"
     },
     "nodemonConfig": {

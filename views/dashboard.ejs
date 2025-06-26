@@ -1,120 +1,110 @@
-<% layout('layouts/main') %> <% // Nếu res.locals.user chưa được set
-(undefined), gán về object rỗng const perms = (typeof user !== 'undefined' &&
+<% layout('layouts/main') %>
+<% const perms = (typeof user !== 'undefined' &&
 user && user?.role && user.role.permissions) ? user.role.permissions : []; %>
 <div>
-    <h2 class="font-bold">Admin Dashboard</h2>
-    <hr />
-    <div
-        class="container flex justify-center md:justify-between flex-wrap gap-1 p-4 mb-6"
+  <h2 class="font-bold">Admin Dashboard</h2>
+  <hr />
+  <div
+    class="container flex justify-center md:justify-between flex-wrap gap-1 p-4 mb-6"
+  >
+    <a
+      href="<%= (user?.protected || perms.includes('user:read')) ? '/admin/users' : '' %>"
+      class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('user:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
     >
-        <a
-            href="<%= (user?.protected || perms.includes('user:read')) ? '/admin/users' : '' %>"
-            class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('user:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
-        >
-            <h2 class="">Users</h2>
-            <p class="px-4"><%= stats.userCount %></p>
-        </a>
-        <a
-            href="<%= (user?.protected || perms.includes('agency:read')) ? '/admin/agencies' : '' %>"
-            class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('agency:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
-        >
-            <h2 class="">Agencies</h2>
-            <p class="px-4"><%= stats.agencyCount %></p>
-        </a>
-        <a
-            href="<%= (user?.protected || perms.includes('branch:read')) ? '/admin/branches' : '' %>"
-            class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('branch:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
-        >
-            <h2 class="">Branches</h2>
-            <p class="px-4"><%= stats.branchCount %></p>
-        </a>
-        <a
-            href="<%= (user?.protected || perms.includes('key:read')) ? '/admin/keys' : '' %>"
-            class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('key:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
-        >
-            <h2 class="">Keys</h2>
-            <p class="px-4"><%= stats.keyCount %></p>
-        </a>
-    </div>
+      <h2 class="">Users</h2>
+      <p class="px-4"><%= stats.userCount %></p>
+    </a>
+    <a
+      href="<%= (user?.protected || perms.includes('agency:read')) ? '/admin/agencies' : '' %>"
+      class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('agency:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
+    >
+      <h2 class="">Agencies</h2>
+      <p class="px-4"><%= stats.agencyCount %></p>
+    </a>
+    <a
+      href="<%= (user?.protected || perms.includes('branch:read')) ? '/admin/branches' : '' %>"
+      class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('branch:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
+    >
+      <h2 class="">Branches</h2>
+      <p class="px-4"><%= stats.branchCount %></p>
+    </a>
+    <a
+      href="<%= (user?.protected || perms.includes('key:read')) ? '/admin/keys' : '' %>"
+      class="card w-[90%] md:w-[24%] rounded-xl bg-gray-200 <%= (user?.protected || perms.includes('key:read')) ? 'hover:bg-gray-300' : 'cursor-not-allowed text-gray-500' %> p-4 transition"
+    >
+      <h2 class="">Keys</h2>
+      <p class="px-4"><%= stats.keyCount %></p>
+    </a>
+  </div>
 
-    <% if (user?.protected || perms.includes('session:read')) { %>
-    <h2 class="font-bold">Phiên làm việc gần đây</h2>
-    <hr />
-    <div class="overflow-x-auto mx-auto mt-4 px-4">
-        <table class="w-full border border-gray-300 rounded-lg shadow-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th
-                        class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
-                    >
-                        User
-                    </th>
-                    <th
-                        class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
-                    >
-                        Email
-                    </th>
-                    <th
-                        class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
-                    >
-                        Key Token
-                    </th>
-                    <th
-                        class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300 text-center"
-                    >
-                        Key Status
-                    </th>
-                    <th
-                        class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
-                    >
-                        Bắt đầu
-                    </th>
-                    <th
-                        class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
-                    >
-                        Kết thúc
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <% sessions.forEach(session => { %>
-                <tr class="hover:bg-gray-50 transition duration-200">
-                    <td
-                        class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"
-                    >
-                        <%= session?.user?.username %>
-                    </td>
-                    <td
-                        class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"
-                    >
-                        <%= session?.user?.email %>
-                    </td>
-                    <td
-                        class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"
-                    >
-                        <%= session?.key?.token %>
-                    </td>
-                    <td
-                        class="px-4 py-3 border-b border-gray-200 text-center <%= session?.key?.status === 'issued' ? 'text-green-500' : 'text-red-500' %> text-sm font-medium"
-                    >
-                        <%= session?.key?.status === 'issued' ? 'Active' :
+  <% if (user?.protected || perms.includes('session:read')) { %>
+  <h2 class="font-bold">Phiên làm việc gần đây</h2>
+  <hr />
+  <div class="overflow-x-auto mx-auto mt-4 px-4">
+    <table class="w-full border border-gray-300 rounded-lg shadow-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th
+            class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
+          >
+            User
+          </th>
+          <th
+            class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
+          >
+            Email
+          </th>
+          <th
+            class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
+          >
+            Key Token
+          </th>
+          <th
+            class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300 text-center"
+          >
+            Key Status
+          </th>
+          <th
+            class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
+          >
+            Bắt đầu
+          </th>
+          <th
+            class="text-left px-4 py-3 text-gray-700 uppercase text-sm font-semibold border-b border-gray-300"
+          >
+            Kết thúc
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% sessions.forEach(session => { %>
+        <tr class="hover:bg-gray-50 transition duration-200">
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+            <%= session?.user?.username %>
+          </td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+            <%= session?.user?.email %>
+          </td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+            <%= session?.key?.token %>
+          </td>
+          <td
+            class="px-4 py-3 border-b border-gray-200 text-center <%= session?.key?.status === 'issued' ? 'text-green-500' : 'text-red-500' %> text-sm font-medium"
+          >
+            <%= session?.key?.status === 'issued' ? 'Active' :
                         'InActive' %>
-                    </td>
-                    <td
-                        class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"
-                    >
-                        <%= session.startedAt.toLocaleString() %>
-                    </td>
-                    <td
-                        class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700"
-                    >
-                        <%= session.endedAt ? session.endedAt.toLocaleString() :
+          </td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+            <%= session.startedAt.toLocaleString() %>
+          </td>
+          <td class="px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+            <%= session.endedAt ? session.endedAt.toLocaleString() :
                         'Đang hoạt động' %>
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
-    <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
 </div>

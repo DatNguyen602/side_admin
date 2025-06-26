@@ -21,8 +21,11 @@ async function deleteAllCollectionsExceptUser() {
     }
 }
 
-router.use("/", SMRouter);
+router.use("/auth", SMRouter);
 
+router.get("/", (req, res) => {
+    res.redirect("/login");
+});
 // GET login form
 router.get("/login", async (req, res) => {
     const protectedUserCount = await User.countDocuments({ protected: true });
